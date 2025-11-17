@@ -71,7 +71,7 @@ function MedicationList() {
         await medicationService.deleteMedication(id);
         toast.success('Medication deleted successfully');
         fetchMedications();
-      } catch (error) {
+      } catch {
         toast.error('Failed to delete medication');
       }
     }

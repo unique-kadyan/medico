@@ -48,7 +48,7 @@ function PatientForm() {
     try {
       const data = await patientService.getPatientById(id);
       setFormData(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch patient details');
     }
   };
@@ -73,7 +73,7 @@ function PatientForm() {
         toast.success('Patient created successfully');
       }
       navigate('/patients');
-    } catch (error) {
+    } catch {
       toast.error(id ? 'Failed to update patient' : 'Failed to create patient');
     } finally {
       setLoading(false);

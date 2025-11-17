@@ -47,7 +47,7 @@ function PharmacistForm() {
         phone: pharmacist.phone || "",
         role: "PHARMACIST",
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch pharmacist details");
     }
   };

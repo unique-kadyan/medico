@@ -12,16 +12,12 @@ import {
 } from "@mui/material";
 import {
   ArrowBack as BackIcon,
-  CheckCircle as ApproveIcon,
-  Cancel as RejectIcon,
 } from "@mui/icons-material";
-import { useSelector } from "react-redux";
 import otRequestService from "../../services/otRequestService";
 
 function OTRequestDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
   const [otRequest, setOtRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

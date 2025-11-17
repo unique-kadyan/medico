@@ -47,7 +47,7 @@ function ReceptionistForm() {
         phone: receptionist.phone || "",
         role: "RECEPTIONIST",
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch receptionist details");
     }
   };

@@ -62,7 +62,7 @@ function Login() {
         password: formData.password,
       });
 
-      const { token, ...userData } = response;
+      const { ...userData } = response;
       dispatch(loginSuccess(userData));
       toast.success('Login successful!');
       navigate('/dashboard');
@@ -195,7 +195,7 @@ function Login() {
 
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link
                   href="/register"
                   underline="hover"
