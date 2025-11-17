@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/auth/**"))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
 
@@ -51,6 +52,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/assignments/doctor/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE")
                         .requestMatchers("/api/assignments/patient/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE")
 
+                        .requestMatchers("/api/nurse-assignments/**").hasAnyRole("ADMIN", "NURSE")
+
                         .requestMatchers("/api/appointments/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "RECEPTIONIST")
 
                         .requestMatchers("/api/medication-requests/approve/**").hasRole("ADMIN")
@@ -61,11 +64,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/lab-tests/*/results").hasAnyRole("ADMIN", "LAB_TECHNICIAN")
                         .requestMatchers("/api/lab-tests/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "LAB_TECHNICIAN", "PATIENT")
 
+                        .requestMatchers("/api/files/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "LAB_TECHNICIAN", "PHARMACIST", "RECEPTIONIST")
+
                         .requestMatchers("/api/notifications/**").authenticated()
 
                         .requestMatchers("/api/monitoring/**").hasRole("ADMIN")
 
-                        .requestMatchers("/api/async/**/batch/**").hasRole("ADMIN")
+                        .requestMatchers("/api/async/*/batch/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
@@ -94,11 +99,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 
+                        .requestMatchers("/api/pending-users/**").hasAnyRole("ADMIN", "DOCTOR_SUPERVISOR", "NURSE_MANAGER", "NURSE_SUPERVISOR")
+
                         .requestMatchers("/api/users/profile", "/api/users/me").authenticated()
+                        .requestMatchers("/api/users").hasRole("ADMIN")
                         .requestMatchers("/api/users/{id}").hasRole("ADMIN")
 
                         .requestMatchers("/api/patients").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "RECEPTIONIST")
@@ -119,6 +128,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/assignments/doctor/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE")
                         .requestMatchers("/api/assignments/patient/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE")
 
+                        .requestMatchers("/api/nurse-assignments/**").hasAnyRole("ADMIN", "NURSE")
+
                         .requestMatchers("/api/appointments/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "RECEPTIONIST", "PATIENT")
 
                         .requestMatchers("/api/medications/**").hasAnyRole("ADMIN", "PHARMACIST", "DOCTOR")
@@ -132,11 +143,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/lab-tests/*/results").hasAnyRole("ADMIN", "LAB_TECHNICIAN")
                         .requestMatchers("/api/lab-tests/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "LAB_TECHNICIAN", "PATIENT")
 
+                        .requestMatchers("/api/files/**").hasAnyRole("ADMIN", "DOCTOR", "NURSE", "LAB_TECHNICIAN", "PHARMACIST", "RECEPTIONIST")
+
                         .requestMatchers("/api/notifications/**").authenticated()
 
                         .requestMatchers("/api/monitoring/**").hasRole("ADMIN")
 
-                        .requestMatchers("/api/async/**/batch/**").hasRole("ADMIN")
+                        .requestMatchers("/api/async/*/batch/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

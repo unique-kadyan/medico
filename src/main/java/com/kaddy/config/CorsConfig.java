@@ -16,11 +16,11 @@ public class CorsConfig implements WebMvcConfigurer {
         String[] origins = allowedOrigins.split(",");
 
         registry.addMapping("/api/**")
-            .allowedOrigins(origins)
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-            .allowedHeaders("Authorization", "Content-Type", "Accept")
-            .exposedHeaders("Authorization", "X-Total-Count")
-            .allowCredentials(true)
-            .maxAge(3600); // Cache preflight response for 1 hour
+                .allowedOrigins(origins)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                .allowedHeaders("Authorization", "Content-Type", "Accept", "X-API-Key", "X-CSRF-Token")
+                .exposedHeaders("Authorization", "X-Total-Count", "X-CSRF-Token")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }

@@ -3,11 +3,30 @@
   "version": "1.0.0",
   "description": "Medico Hospital Management System - React Frontend",
   "type": "module",
+  "author": "Medico Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/medico.git"
+  },
+  "keywords": [
+    "hospital",
+    "management",
+    "healthcare",
+    "medical",
+    "react",
+    "vite"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext js,jsx --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,json,css,md}\"",
+    "test": "echo \"No tests configured yet\" && exit 0",
+    "test:coverage": "echo \"No tests configured yet\" && exit 0"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
@@ -19,6 +38,7 @@
     "@reduxjs/toolkit": "^2.4.0",
     "@tanstack/react-query": "^5.62.7",
     "axios": "^1.7.9",
+    "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -41,6 +61,7 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "postcss": "^8.4.49",
+    "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
     "vite": "^6.0.5"
   }

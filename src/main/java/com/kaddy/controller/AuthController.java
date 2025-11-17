@@ -41,12 +41,36 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "User registration", description = "Register a new user")
+    @Operation(summary = "User registration", description = "Register a new user - For public self-registration only")
     public ResponseEntity<AuthenticationResponse> register(
             @Valid @RequestBody RegisterRequest request) {
         log.info("Registration request received for username: {}", request.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authenticationService.register(request));
+    }
+
+    @PostMapping("/admin/create-user")
+    @Operation(summary = "Admin creates user", description = "Admin directly creates a user without approval (Admin only)")
+    public ResponseEntity<?> adminCreateUser(@Valid @RequestBody RegisterRequest request) {
+        try {
+            log.info("Admin user creation request received for username: {} with role: {}",
+                    request.getUsername(), request.getRole());
+
+            AuthenticationResponse response = authenticationService.register(request);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of(
+                            "message", "User created successfully",
+                            "userId", response.getUserId(),
+                            "username", response.getUsername(),
+                            "email", response.getEmail(),
+                            "role", response.getRole()
+                    ));
+        } catch (Exception e) {
+            log.error("Error creating user by admin for username: {}", request.getUsername(), e);
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
     }
 
     @PostMapping(value = "/register-with-documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

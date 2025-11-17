@@ -16,10 +16,25 @@ import DoctorDetail from "./pages/doctors/DoctorDetail";
 import DoctorForm from "./pages/doctors/DoctorForm";
 import NurseList from "./pages/nurses/NurseList";
 import NurseForm from "./pages/nurses/NurseForm";
-import AssignmentList from "./pages/assignments/AssignmentList";
+import PharmacistList from "./pages/pharmacists/PharmacistList";
+import PharmacistForm from "./pages/pharmacists/PharmacistForm";
+import LabTechnicianList from "./pages/lab-technicians/LabTechnicianList";
+import LabTechnicianForm from "./pages/lab-technicians/LabTechnicianForm";
+import ReceptionistList from "./pages/receptionists/ReceptionistList";
+import ReceptionistForm from "./pages/receptionists/ReceptionistForm";
+import DoctorAssignmentList from "./pages/assignments/DoctorAssignmentList";
+import NurseAssignmentList from "./pages/assignments/NurseAssignmentList";
 import LabTestList from "./pages/labTests/LabTestList";
 import MedicationRequestList from "./pages/medicationRequests/MedicationRequestList";
 import PendingApprovals from "./pages/approvals/PendingApprovals";
+import Reports from "./pages/reports/Reports";
+import OTRequestList from "./pages/otRequests/OTRequestList";
+import OTRequestForm from "./pages/otRequests/OTRequestForm";
+import OTRequestDetail from "./pages/otRequests/OTRequestDetail";
+import EmergencyDashboard from "./pages/emergency/EmergencyDashboard";
+import EmergencyAdmitForm from "./pages/emergency/EmergencyAdmitForm";
+import EmergencyRoomDetail from "./pages/emergency/EmergencyRoomDetail";
+import EmergencyPatientDetail from "./pages/emergency/EmergencyPatientDetail";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -88,7 +103,8 @@ function App() {
         <Route path="appointments">
           <Route index element={<AppointmentList />} />
           <Route path="new" element={<AppointmentForm />} />
-          <Route path=":id/edit" element={<AppointmentForm />} />
+          <Route path="edit/:id" element={<AppointmentForm />} />
+          <Route path=":id" element={<AppointmentForm />} />
         </Route>
 
         <Route path="doctors">
@@ -104,8 +120,30 @@ function App() {
           <Route path="edit/:id" element={<NurseForm />} />
         </Route>
 
-        <Route path="assignments">
-          <Route index element={<AssignmentList />} />
+        <Route path="pharmacists">
+          <Route index element={<PharmacistList />} />
+          <Route path="new" element={<PharmacistForm />} />
+          <Route path="edit/:id" element={<PharmacistForm />} />
+        </Route>
+
+        <Route path="lab-technicians">
+          <Route index element={<LabTechnicianList />} />
+          <Route path="new" element={<LabTechnicianForm />} />
+          <Route path="edit/:id" element={<LabTechnicianForm />} />
+        </Route>
+
+        <Route path="receptionists">
+          <Route index element={<ReceptionistList />} />
+          <Route path="new" element={<ReceptionistForm />} />
+          <Route path="edit/:id" element={<ReceptionistForm />} />
+        </Route>
+
+        <Route path="doctor-assignments">
+          <Route index element={<DoctorAssignmentList />} />
+        </Route>
+
+        <Route path="nurse-assignments">
+          <Route index element={<NurseAssignmentList />} />
         </Route>
 
         <Route path="lab-tests">
@@ -118,6 +156,23 @@ function App() {
 
         <Route path="approvals">
           <Route index element={<PendingApprovals />} />
+        </Route>
+
+        <Route path="reports">
+          <Route index element={<Reports />} />
+        </Route>
+
+        <Route path="ot-requests">
+          <Route index element={<OTRequestList />} />
+          <Route path="new" element={<OTRequestForm />} />
+          <Route path=":id" element={<OTRequestDetail />} />
+        </Route>
+
+        <Route path="emergency">
+          <Route index element={<EmergencyDashboard />} />
+          <Route path="admit" element={<EmergencyAdmitForm />} />
+          <Route path="rooms/:id" element={<EmergencyRoomDetail />} />
+          <Route path="patients/:id" element={<EmergencyPatientDetail />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

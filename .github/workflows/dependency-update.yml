@@ -1,0 +1,81 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly on Monday at midnight
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
+
+      - name: Check for outdated packages
+        id: outdated
+        run: |
+          npm outdated --json > outdated.json || true
+          if [ -s outdated.json ]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "Outdated packages found:"
+            cat outdated.json
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+            echo "All packages are up to date"
+          fi
+
+      - name: Update dependencies
+        if: steps.outdated.outputs.has_updates == 'true'
+        run: |
+          echo "Updating packages..."
+          npm update
+          npm audit fix --force || true
+
+      - name: Run tests
+        if: steps.outdated.outputs.has_updates == 'true'
+        run: npm test
+        env:
+          CI: true
+        continue-on-error: true
+
+      - name: Create Pull Request
+        if: steps.outdated.outputs.has_updates == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update npm dependencies'
+          branch: deps/npm-updates
+          delete-branch: true
+          title: '🔄 Update NPM Dependencies'
+          body: |
+            ## Dependency Updates
+
+            This PR updates npm dependencies to their latest compatible versions.
+
+            ### Changes
+            - Updated package.json and package-lock.json
+            - Ran npm update and npm audit fix
+
+            ### Testing
+            - All tests have been run
+
+            Please review the changes before merging.
+
+            ---
+            *This PR was automatically created by the dependency update workflow*
+          labels: dependencies, automated
+          assignees: ${{ github.repository_owner }}

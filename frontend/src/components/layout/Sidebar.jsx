@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Drawer,
   List,
@@ -19,17 +20,40 @@ import {
   Science as LabIcon,
   AssignmentInd as AssignmentIcon,
   HowToReg as ApprovalIcon,
+  MedicalServices as OTIcon,
+  EmergencyShare as EmergencyIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePermissions } from '../../hooks/usePermissions';
 import { PERMISSIONS } from '../../utils/permissions';
+import dashboardService from '../../services/dashboardService';
 
 const drawerWidth = 260;
 
 function Sidebar({ open }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { can, canAny } = usePermissions();
+  const { can, canAny, isAnyRole } = usePermissions();
+  const [stats, setStats] = useState({
+    totalPatients: 0,
+    todayAppointments: 0,
+  });
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const data = await dashboardService.getDashboardStats();
+      setStats({
+        totalPatients: data.totalPatients || 0,
+        todayAppointments: data.todayAppointments || 0,
+      });
+    } catch (error) {
+      console.error('Error fetching sidebar stats:', error);
+    }
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -61,9 +85,33 @@ function Sidebar({ open }) {
       show: can(PERMISSIONS.VIEW_NURSES)
     },
     {
-      text: 'Assignments',
+      text: 'Pharmacists',
       icon: <AssignmentIcon />,
-      path: '/assignments',
+      path: '/pharmacists',
+      show: can(PERMISSIONS.VIEW_PHARMACISTS)
+    },
+    {
+      text: 'Lab Technicians',
+      icon: <LabIcon />,
+      path: '/lab-technicians',
+      show: can(PERMISSIONS.VIEW_LAB_TECHNICIANS)
+    },
+    {
+      text: 'Receptionists',
+      icon: <AssignmentIcon />,
+      path: '/receptionists',
+      show: can(PERMISSIONS.VIEW_RECEPTIONISTS)
+    },
+    {
+      text: 'Doctor Assignments',
+      icon: <AssignmentIcon />,
+      path: '/doctor-assignments',
+      show: can(PERMISSIONS.ASSIGN_DOCTOR_TO_PATIENT)
+    },
+    {
+      text: 'Nurse Assignments',
+      icon: <AssignmentIcon />,
+      path: '/nurse-assignments',
       show: can(PERMISSIONS.ASSIGN_DOCTOR_TO_PATIENT)
     },
     {
@@ -76,7 +124,7 @@ function Sidebar({ open }) {
       text: 'Medications',
       icon: <MedicationIcon />,
       path: '/medications',
-      show: can(PERMISSIONS.VIEW_MEDICATIONS)
+      show: can(PERMISSIONS.VIEW_MEDICATIONS) || isAnyRole(['PHARMACIST', 'ADMIN'])
     },
     {
       text: 'Med Requests',
@@ -89,6 +137,18 @@ function Sidebar({ open }) {
       icon: <LabIcon />,
       path: '/lab-tests',
       show: canAny([PERMISSIONS.VIEW_LAB_TESTS, PERMISSIONS.VIEW_OWN_LAB_TESTS, PERMISSIONS.UPLOAD_LAB_RESULTS])
+    },
+    {
+      text: 'OT Requests',
+      icon: <OTIcon />,
+      path: '/ot-requests',
+      show: isAnyRole(['DOCTOR', 'NURSE', 'ADMIN'])
+    },
+    {
+      text: 'Emergency',
+      icon: <EmergencyIcon />,
+      path: '/emergency',
+      show: isAnyRole(['DOCTOR', 'NURSE', 'ADMIN'])
     },
     {
       text: 'Pending Approvals',
@@ -104,7 +164,6 @@ function Sidebar({ open }) {
     },
   ];
 
-  // Filter menu items based on permissions
   const menuItems = allMenuItems.filter(item => item.show);
 
   return (
@@ -190,7 +249,7 @@ function Sidebar({ open }) {
               }}
             >
               <Typography variant="h4" color="primary.main" fontWeight={700}>
-                150
+                {stats.totalPatients}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 Total Patients
@@ -206,7 +265,7 @@ function Sidebar({ open }) {
               }}
             >
               <Typography variant="h4" color="success.main" fontWeight={700}>
-                89
+                {stats.todayAppointments}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 Today's Appointments

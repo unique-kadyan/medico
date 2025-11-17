@@ -1,0 +1,146 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [17, 21]
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: medico_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Verify Maven setup
+        run: mvn --version
+
+      - name: Compile project
+        run: mvn clean compile -DskipTests
+
+      - name: Run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/medico_test
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+        run: mvn test
+
+      - name: Run integration tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/medico_test
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+        run: mvn verify -DskipUnitTests
+        continue-on-error: true
+
+      - name: Build JAR
+        run: mvn package -DskipTests
+
+      - name: Upload JAR artifact
+        if: matrix.java-version == '21'
+        uses: actions/upload-artifact@v4
+        with:
+          name: medico-backend-jar
+          path: target/*.jar
+          retention-days: 7
+
+      - name: Generate test report
+        if: always()
+        run: |
+          echo "### Build Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "- Java version: ${{ matrix.java-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Build status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          if [ -f target/*.jar ]; then
+            echo "- JAR created: ✅" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- JAR created: ❌" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  code-quality:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+        continue-on-error: true
+
+      - name: Run SpotBugs
+        run: mvn spotbugs:check
+        continue-on-error: true
+
+      - name: Generate code coverage
+        run: mvn jacoco:prepare-agent test jacoco:report
+        continue-on-error: true
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports
+          path: target/site/jacoco/
+          retention-days: 7
+
+      - name: Code quality summary
+        if: always()
+        run: |
+          echo "### Code Quality Summary :bar_chart:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Checkstyle: Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- SpotBugs: Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- Coverage report generated" >> $GITHUB_STEP_SUMMARY

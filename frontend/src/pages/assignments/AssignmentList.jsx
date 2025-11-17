@@ -193,7 +193,7 @@ function AssignmentList() {
             startIcon={<AddIcon />}
             onClick={() => setOpenDialog(true)}
           >
-            Assign Doctor
+            Assign Doctor / Nurse
           </Button>
         )}
       </Box>
@@ -347,7 +347,7 @@ function AssignmentList() {
                 onChange={(e) => setSelectedStaffId(e.target.value)}
               >
                 {nurses.map((nurse) => (
-                  <MenuItem key={nurse.id} value={nurse.id}>
+                  <MenuItem key={nurse.userId} value={nurse.userId}>
                     {nurse.firstName} {nurse.lastName} - {nurse.email}
                   </MenuItem>
                 ))}
