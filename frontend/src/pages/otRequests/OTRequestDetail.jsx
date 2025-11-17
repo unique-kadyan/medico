@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -31,11 +31,7 @@ function OTRequestDetail() {
     CANCELLED: "default",
   };
 
-  useEffect(() => {
-    fetchOTRequest();
-  }, [id]);
-
-  const fetchOTRequest = async () => {
+  const fetchOTRequest = useCallback(async () => {
     try {
       setLoading(true);
       const data = await otRequestService.getOTRequestById(id);
@@ -47,7 +43,11 @@ function OTRequestDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchOTRequest();
+  }, [fetchOTRequest]);
 
   const formatDateTime = (dateString) => {
     if (!dateString) return "N/A";

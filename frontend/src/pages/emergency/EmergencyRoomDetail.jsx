@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -56,11 +56,7 @@ function EmergencyRoomDetail() {
     "RESERVED",
   ];
 
-  useEffect(() => {
-    fetchRoomDetails();
-  }, [id]);
-
-  const fetchRoomDetails = async () => {
+  const fetchRoomDetails = useCallback(async () => {
     try {
       setLoading(true);
       const data = await emergencyRoomService.getEmergencyRoomById(id);
@@ -73,7 +69,11 @@ function EmergencyRoomDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchRoomDetails();
+  }, [fetchRoomDetails]);
 
   const handleUpdateStatus = async () => {
     try {

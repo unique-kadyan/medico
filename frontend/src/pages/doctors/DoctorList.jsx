@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -45,15 +45,7 @@ function DoctorList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
-  useEffect(() => {
-    fetchDoctors();
-  }, []);
-
-  useEffect(() => {
-    filterDoctors();
-  }, [searchQuery, doctors]);
-
-  const fetchDoctors = async () => {
+  const fetchDoctors = useCallback(async () => {
     try {
       setLoading(true);
       const data = await doctorService.getAllDoctors();
@@ -65,9 +57,9 @@ function DoctorList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filterDoctors = () => {
+  const filterDoctors = useCallback(() => {
     if (!searchQuery.trim()) {
       setFilteredDoctors(doctors);
       return;
@@ -85,7 +77,15 @@ function DoctorList() {
         doctor.phone?.includes(query)
     );
     setFilteredDoctors(filtered);
-  };
+  }, [searchQuery, doctors]);
+
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
+
+  useEffect(() => {
+    filterDoctors();
+  }, [filterDoctors]);
 
   const handleAddDoctor = () => {
     navigate('/doctors/new');

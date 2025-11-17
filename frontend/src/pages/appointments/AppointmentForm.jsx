@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -49,14 +49,7 @@ function AppointmentForm() {
     duration: 30,
   });
 
-  useEffect(() => {
-    fetchPatientsAndDoctors();
-    if (isEditMode) {
-      fetchAppointment();
-    }
-  }, [id]);
-
-  const fetchPatientsAndDoctors = async () => {
+  const fetchPatientsAndDoctors = useCallback(async () => {
     try {
       const [patientsData, doctorsData] = await Promise.all([
         patientService.getAllPatients(),
@@ -68,9 +61,9 @@ function AppointmentForm() {
       toast.error('Failed to load patients and doctors');
       console.error('Error fetching data:', error);
     }
-  };
+  }, []);
 
-  const fetchAppointment = async () => {
+  const fetchAppointment = useCallback(async () => {
     try {
       setInitialLoading(true);
       const data = await appointmentService.getAppointmentById(id);
@@ -91,7 +84,14 @@ function AppointmentForm() {
     } finally {
       setInitialLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchPatientsAndDoctors();
+    if (isEditMode) {
+      fetchAppointment();
+    }
+  }, [isEditMode, fetchPatientsAndDoctors, fetchAppointment]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -56,11 +56,7 @@ function OTRequestList() {
     CANCELLED: "default",
   };
 
-  useEffect(() => {
-    fetchOTRequests();
-  }, [filterStatus]);
-
-  const fetchOTRequests = async () => {
+  const fetchOTRequests = useCallback(async () => {
     try {
       setLoading(true);
       let data;
@@ -77,7 +73,11 @@ function OTRequestList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus]);
+
+  useEffect(() => {
+    fetchOTRequests();
+  }, [fetchOTRequests]);
 
   const handleAction = (type, requestId) => {
     setActionDialog({ open: true, type, requestId });

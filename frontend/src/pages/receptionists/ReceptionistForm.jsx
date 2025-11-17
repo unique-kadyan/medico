@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -28,13 +28,7 @@ function ReceptionistForm() {
     role: "RECEPTIONIST",
   });
 
-  useEffect(() => {
-    if (id) {
-      fetchReceptionist();
-    }
-  }, [id]);
-
-  const fetchReceptionist = async () => {
+  const fetchReceptionist = useCallback(async () => {
     try {
       const response = await api.get(`/users/${id}`);
       const receptionist = response.data;
@@ -50,7 +44,13 @@ function ReceptionistForm() {
     } catch {
       toast.error("Failed to fetch receptionist details");
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchReceptionist();
+    }
+  }, [id, fetchReceptionist]);
 
   const handleChange = (e) => {
     setFormData({
