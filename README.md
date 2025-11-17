@@ -64,8 +64,8 @@ Medico is a full-featured Hospital Management System with integrated Pharmacy Ma
 
 ## 🛠️ Technology Stack
 
-- **Framework**: Spring Boot 3.2.1
-- **Java Version**: 17 (LTS)
+- **Framework**: Spring Boot 3.5.7
+- **Java Version**: 25
 - **Database**: H2 (Development), PostgreSQL (Production-ready)
 - **Security**: Spring Security with role-based access control
 - **API Documentation**: Swagger/OpenAPI 3.0
@@ -87,7 +87,7 @@ Medico is a full-featured Hospital Management System with integrated Pharmacy Ma
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Java 17 or higher
+- Java 25 or higher
 - Maven 3.9+
 - Your favorite IDE (IntelliJ IDEA, Eclipse, VS Code)
 
@@ -218,7 +218,7 @@ For development, the following endpoints are publicly accessible:
 ### Competitive Advantages
 - **Integrated Solution**: Single system for hospital and pharmacy (no separate systems)
 - **Cost-Effective**: Suitable for 50-300 bed hospitals
-- **Modern Technology**: Built with latest Spring Boot and Java 17
+- **Modern Technology**: Built with latest Spring Boot and Java 25
 - **Scalable Architecture**: Microservice-ready design
 - **Comprehensive API**: RESTful APIs for integration with other systems
 
