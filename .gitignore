@@ -1,0 +1,100 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+logs/
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ========================================================================
+# SECURITY: Sensitive Configuration Files
+# ========================================================================
+# NEVER commit these files containing secrets!
+.env
+*.env
+application-local.properties
+application-secrets.properties
+
+# SSL/TLS certificates and keystores
+*.p12
+*.jks
+*.keystore
+*.truststore
+*.pem
+*.key
+*.crt
+*.cer
+
+# Database files
+*.db
+*.sqlite
+*.h2.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+*.md
+*.bat
+*.sql
+*.claude/*
+.claude/
+.vscode/
+*.vscode/*
+node_modules/
+*node_modules/*

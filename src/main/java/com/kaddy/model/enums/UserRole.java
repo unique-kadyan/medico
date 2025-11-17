@@ -1,0 +1,14 @@
+package com.kaddy.model.enums;
+
+public enum UserRole {
+    ADMIN,
+    DOCTOR,
+    DOCTOR_SUPERVISOR,
+    NURSE,
+    NURSE_MANAGER,
+    NURSE_SUPERVISOR,
+    PHARMACIST,
+    RECEPTIONIST,
+    LAB_TECHNICIAN,
+    PATIENT
+}
