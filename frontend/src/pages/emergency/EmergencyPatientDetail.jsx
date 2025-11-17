@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -60,11 +60,7 @@ function EmergencyPatientDetail() {
   const conditionOptions = ["CRITICAL", "SERIOUS", "STABLE", "IMPROVING"];
   const triageLevels = [1, 2, 3, 4, 5];
 
-  useEffect(() => {
-    fetchPatientDetails();
-  }, [id]);
-
-  const fetchPatientDetails = async () => {
+  const fetchPatientDetails = useCallback(async () => {
     try {
       setLoading(true);
       const data = await emergencyPatientService.getEmergencyPatientById(id);
@@ -80,7 +76,11 @@ function EmergencyPatientDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchPatientDetails();
+  }, [fetchPatientDetails]);
 
   const handleUpdate = async () => {
     try {

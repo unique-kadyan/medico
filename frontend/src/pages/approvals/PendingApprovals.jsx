@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -35,6 +35,16 @@ import pendingUserService from '../../services/pendingUserService';
 import { usePermissions } from '../../hooks/usePermissions';
 import { PERMISSIONS } from '../../utils/permissions';
 
+const roleFilters = [
+  { label: 'All', value: 'ALL' },
+  { label: 'Doctors', value: 'DOCTOR' },
+  { label: 'Doctor Supervisors', value: 'DOCTOR_SUPERVISOR' },
+  { label: 'Nurses', value: 'NURSE' },
+  { label: 'Nurse Managers', value: 'NURSE_MANAGER' },
+  { label: 'Nurse Supervisors', value: 'NURSE_SUPERVISOR' },
+  { label: 'Receptionists', value: 'RECEPTIONIST' },
+];
+
 const PendingApprovals = () => {
   const { can } = usePermissions();
 
@@ -49,25 +59,7 @@ const PendingApprovals = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const roleFilters = [
-    { label: 'All', value: 'ALL' },
-    { label: 'Doctors', value: 'DOCTOR' },
-    { label: 'Doctor Supervisors', value: 'DOCTOR_SUPERVISOR' },
-    { label: 'Nurses', value: 'NURSE' },
-    { label: 'Nurse Managers', value: 'NURSE_MANAGER' },
-    { label: 'Nurse Supervisors', value: 'NURSE_SUPERVISOR' },
-    { label: 'Receptionists', value: 'RECEPTIONIST' },
-  ];
-
-  useEffect(() => {
-    fetchPendingUsers();
-  }, []);
-
-  useEffect(() => {
-    filterUsers();
-  }, [currentTab, pendingUsers]);
-
-  const fetchPendingUsers = async () => {
+  const fetchPendingUsers = useCallback(async () => {
     try {
       setLoading(true);
       const data = await pendingUserService.getAllPendingUsers();
@@ -78,16 +70,24 @@ const PendingApprovals = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filterUsers = () => {
+  const filterUsers = useCallback(() => {
     const selectedFilter = roleFilters[currentTab].value;
     if (selectedFilter === 'ALL') {
       setFilteredUsers(pendingUsers);
     } else {
       setFilteredUsers(pendingUsers.filter(user => user.requestedRole === selectedFilter));
     }
-  };
+  }, [currentTab, pendingUsers]);
+
+  useEffect(() => {
+    fetchPendingUsers();
+  }, [fetchPendingUsers]);
+
+  useEffect(() => {
+    filterUsers();
+  }, [filterUsers]);
 
   const handleViewDetails = (user) => {
     setSelectedUser(user);

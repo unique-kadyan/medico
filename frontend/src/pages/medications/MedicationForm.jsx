@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -64,13 +64,7 @@ function MedicationForm() {
     storageInstructions: "",
   });
 
-  useEffect(() => {
-    if (id) {
-      fetchMedication();
-    }
-  }, [id]);
-
-  const fetchMedication = async () => {
+  const fetchMedication = useCallback(async () => {
     try {
       const data = await medicationService.getMedicationById(id);
       setFormData({
@@ -97,7 +91,13 @@ function MedicationForm() {
       toast.error("Failed to fetch medication details");
       console.error("Error fetching medication:", error);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchMedication();
+    }
+  }, [id, fetchMedication]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -22,11 +22,7 @@ function PatientDetail() {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPatient();
-  }, [id]);
-
-  const fetchPatient = async () => {
+  const fetchPatient = useCallback(async () => {
     try {
       const data = await patientService.getPatientById(id);
       setPatient(data);
@@ -36,7 +32,11 @@ function PatientDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchPatient();
+  }, [fetchPatient]);
 
   if (loading) {
     return (

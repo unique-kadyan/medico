@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -60,13 +60,7 @@ function DoctorForm() {
 
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (isEditMode) {
-      fetchDoctor();
-    }
-  }, [id]);
-
-  const fetchDoctor = async () => {
+  const fetchDoctor = useCallback(async () => {
     try {
       setLoading(true);
       const data = await doctorService.getDoctorById(id);
@@ -91,7 +85,13 @@ function DoctorForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (isEditMode) {
+      fetchDoctor();
+    }
+  }, [isEditMode, fetchDoctor]);
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;

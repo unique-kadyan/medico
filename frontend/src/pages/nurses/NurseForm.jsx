@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -28,13 +28,7 @@ function NurseForm() {
     role: "NURSE",
   });
 
-  useEffect(() => {
-    if (id) {
-      fetchNurse();
-    }
-  }, [id]);
-
-  const fetchNurse = async () => {
+  const fetchNurse = useCallback(async () => {
     try {
       const response = await api.get(`/users/${id}`);
       const nurse = response.data;
@@ -50,7 +44,13 @@ function NurseForm() {
     } catch {
       toast.error("Failed to fetch nurse details");
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchNurse();
+    }
+  }, [id, fetchNurse]);
 
   const handleChange = (e) => {
     setFormData({

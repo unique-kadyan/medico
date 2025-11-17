@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Grid,
@@ -60,11 +60,7 @@ function Dashboard() {
   const [monthlyPatients, setMonthlyPatients] = useState([]);
   const [appointmentsByType, setAppointmentsByType] = useState([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const promises = [];
       const promiseTypes = [];
@@ -115,7 +111,11 @@ function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [can, canAny]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const StatCard = ({ title, value, icon, color, trend }) => (
     <Card sx={{ height: "100%", position: "relative", overflow: "visible" }}>

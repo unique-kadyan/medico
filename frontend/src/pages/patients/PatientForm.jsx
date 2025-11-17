@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -38,20 +38,20 @@ function PatientForm() {
     chronicConditions: '',
   });
 
-  useEffect(() => {
-    if (id) {
-      fetchPatient();
-    }
-  }, [id]);
-
-  const fetchPatient = async () => {
+  const fetchPatient = useCallback(async () => {
     try {
       const data = await patientService.getPatientById(id);
       setFormData(data);
     } catch {
       toast.error('Failed to fetch patient details');
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchPatient();
+    }
+  }, [id, fetchPatient]);
 
   const handleChange = (e) => {
     setFormData({
