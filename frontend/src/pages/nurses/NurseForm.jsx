@@ -68,12 +68,13 @@ function NurseForm() {
         await api.put(`/users/${id}`, formData);
         toast.success("Nurse updated successfully");
       } else {
-        await api.post("/auth/register", formData);
+        await api.post("/auth/admin/create-user", formData);
         toast.success("Nurse created successfully");
       }
       navigate("/nurses");
     } catch (error) {
-      toast.error(id ? "Failed to update nurse" : "Failed to create nurse");
+      const errorMessage = error.response?.data?.message || (id ? "Failed to update nurse" : "Failed to create nurse");
+      toast.error(errorMessage);
       console.error("Error:", error);
     } finally {
       setLoading(false);

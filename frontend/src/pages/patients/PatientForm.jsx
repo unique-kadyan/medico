@@ -23,13 +23,19 @@ function PatientForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    age: '',
+    patientId: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
     gender: 'MALE',
     phone: '',
     email: '',
     address: '',
+    emergencyContact: '',
+    emergencyContactPhone: '',
     bloodGroup: 'O_POSITIVE',
+    allergies: '',
+    chronicConditions: '',
   });
 
   useEffect(() => {
@@ -96,9 +102,22 @@ function PatientForm() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Full Name"
-                  name="name"
-                  value={formData.name}
+                  label="Patient ID"
+                  name="patientId"
+                  value={formData.patientId}
+                  onChange={handleChange}
+                  required
+                  disabled={id}
+                  helperText="Unique identifier for the patient"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  name="firstName"
+                  value={formData.firstName}
                   onChange={handleChange}
                   required
                 />
@@ -107,12 +126,26 @@ function PatientForm() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Age"
-                  name="age"
-                  type="number"
-                  value={formData.age}
+                  label="Last Name"
+                  name="lastName"
+                  value={formData.lastName}
                   onChange={handleChange}
                   required
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Date of Birth"
+                  name="dateOfBirth"
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={handleChange}
+                  required
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 
@@ -142,7 +175,6 @@ function PatientForm() {
                   name="bloodGroup"
                   value={formData.bloodGroup}
                   onChange={handleChange}
-                  required
                 >
                   {BLOOD_GROUPS.map((group) => (
                     <MenuItem key={group} value={group}>
@@ -159,7 +191,6 @@ function PatientForm() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  required
                 />
               </Grid>
 
@@ -171,7 +202,6 @@ function PatientForm() {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
                 />
               </Grid>
 
@@ -184,7 +214,52 @@ function PatientForm() {
                   onChange={handleChange}
                   multiline
                   rows={3}
-                  required
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Emergency Contact Name"
+                  name="emergencyContact"
+                  value={formData.emergencyContact}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Emergency Contact Phone"
+                  name="emergencyContactPhone"
+                  value={formData.emergencyContactPhone}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Allergies"
+                  name="allergies"
+                  value={formData.allergies}
+                  onChange={handleChange}
+                  multiline
+                  rows={2}
+                  helperText="List any known allergies"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Chronic Conditions"
+                  name="chronicConditions"
+                  value={formData.chronicConditions}
+                  onChange={handleChange}
+                  multiline
+                  rows={2}
+                  helperText="List any chronic medical conditions"
                 />
               </Grid>
 

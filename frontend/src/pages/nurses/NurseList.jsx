@@ -120,8 +120,8 @@ function NurseList() {
                   </TableRow>
                 ) : (
                   nurses.map((nurse) => (
-                    <TableRow key={nurse.id}>
-                      <TableCell>#{nurse.id}</TableCell>
+                    <TableRow key={nurse.userId}>
+                      <TableCell>#{nurse.userId}</TableCell>
                       <TableCell>
                         {nurse.firstName} {nurse.lastName}
                       </TableCell>
@@ -140,7 +140,7 @@ function NurseList() {
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => navigate(`/nurses/${nurse.id}`)}
+                              onClick={() => navigate(`/nurses/${nurse.userId}`)}
                             >
                               <ViewIcon />
                             </IconButton>
@@ -148,7 +148,7 @@ function NurseList() {
                               <IconButton
                                 size="small"
                                 color="primary"
-                                onClick={() => navigate(`/nurses/edit/${nurse.id}`)}
+                                onClick={() => navigate(`/nurses/edit/${nurse.userId}`)}
                               >
                                 <EditIcon />
                               </IconButton>
@@ -157,7 +157,7 @@ function NurseList() {
                               <IconButton
                                 size="small"
                                 color="error"
-                                onClick={() => handleDelete(nurse.id)}
+                                onClick={() => handleDelete(nurse.userId)}
                               >
                                 <DeleteIcon />
                               </IconButton>

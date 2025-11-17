@@ -13,8 +13,15 @@ import {
   TableRow,
   Chip,
   CircularProgress,
+  IconButton,
+  Paper,
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Visibility as ViewIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import appointmentService from '../../services/appointmentService';
@@ -39,6 +46,21 @@ function AppointmentList() {
       toast.error('Failed to fetch appointments');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) {
+      return;
+    }
+
+    try {
+      await appointmentService.cancelAppointment(id);
+      toast.success('Appointment cancelled successfully');
+      fetchAppointments();
+    } catch (error) {
+      toast.error('Failed to cancel appointment');
+      console.error('Error cancelling appointment:', error);
     }
   };
 
@@ -83,26 +105,29 @@ function AppointmentList() {
 
       <Card>
         <CardContent>
-          <TableContainer>
+          <TableContainer component={Paper} elevation={0}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Patient</TableCell>
-                  <TableCell>Doctor</TableCell>
-                  <TableCell>Date & Time</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell><strong>ID</strong></TableCell>
+                  <TableCell><strong>Patient</strong></TableCell>
+                  <TableCell><strong>Doctor</strong></TableCell>
+                  <TableCell><strong>Date & Time</strong></TableCell>
+                  <TableCell><strong>Type</strong></TableCell>
+                  <TableCell><strong>Status</strong></TableCell>
+                  <TableCell align="center"><strong>Actions</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {appointments.length > 0 ? (
                   appointments.map((appointment) => (
                     <TableRow key={appointment.id} hover>
-                      <TableCell>{appointment.id}</TableCell>
+                      <TableCell>#{appointment.id}</TableCell>
                       <TableCell>{appointment.patientName || 'N/A'}</TableCell>
                       <TableCell>{appointment.doctorName || 'N/A'}</TableCell>
-                      <TableCell>{new Date(appointment.appointmentDate).toLocaleString()}</TableCell>
+                      <TableCell>
+                        {new Date(appointment.appointmentDateTime).toLocaleString()}
+                      </TableCell>
                       <TableCell>
                         <Chip label={appointment.type} size="small" variant="outlined" />
                       </TableCell>
@@ -113,11 +138,43 @@ function AppointmentList() {
                           color={getStatusColor(appointment.status)}
                         />
                       </TableCell>
+                      <TableCell align="center">
+                        <Box display="flex" gap={0.5} justifyContent="center">
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => navigate(`/appointments/${appointment.id}`)}
+                            title="View Details"
+                          >
+                            <ViewIcon />
+                          </IconButton>
+                          {can(PERMISSIONS.EDIT_APPOINTMENT) && (
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => navigate(`/appointments/edit/${appointment.id}`)}
+                              title="Edit Appointment"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          )}
+                          {can(PERMISSIONS.CANCEL_APPOINTMENT) && (
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleDelete(appointment.id)}
+                              title="Cancel Appointment"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          )}
+                        </Box>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={7} align="center">
                       <Typography variant="body2" color="text.secondary" py={4}>
                         No appointments found
                       </Typography>

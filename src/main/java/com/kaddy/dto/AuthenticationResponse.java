@@ -19,7 +19,9 @@ public class AuthenticationResponse {
     private String email;
     private String firstName;
     private String lastName;
+    private String phone;
     private UserRole role;
     private Long userId;
     private List<String> permissions;
+    private Boolean enabled;
 }

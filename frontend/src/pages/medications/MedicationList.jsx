@@ -33,7 +33,7 @@ import { PERMISSIONS } from '../../utils/permissions';
 
 function MedicationList() {
   const navigate = useNavigate();
-  const { can } = usePermissions();
+  const { can, isAnyRole } = usePermissions();
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -109,7 +109,7 @@ function MedicationList() {
             Manage medications and stock levels
           </Typography>
         </div>
-        {can(PERMISSIONS.ADD_MEDICATION) && (
+        {(can(PERMISSIONS.ADD_MEDICATION) || isAnyRole(['PHARMACIST', 'ADMIN'])) && (
           <Button
             variant="contained"
             startIcon={<AddIcon />}
