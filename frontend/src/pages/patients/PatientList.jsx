@@ -60,7 +60,7 @@ function PatientList() {
         await patientService.deletePatient(id);
         toast.success('Patient deleted successfully');
         fetchPatients();
-      } catch (error) {
+      } catch {
         toast.error('Failed to delete patient');
       }
     }

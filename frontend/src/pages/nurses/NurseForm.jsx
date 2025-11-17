@@ -47,7 +47,7 @@ function NurseForm() {
         phone: nurse.phone || "",
         role: "NURSE",
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch nurse details");
     }
   };

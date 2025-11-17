@@ -268,7 +268,7 @@ function Sidebar({ open }) {
                 {stats.todayAppointments}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Today's Appointments
+                Today&apos;s Appointments
               </Typography>
             </Box>
           </Box>

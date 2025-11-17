@@ -28,7 +28,6 @@ import {
   Visibility as ViewIcon,
   Delete as DeleteIcon,
   AttachFile as AttachFileIcon,
-  Download as DownloadIcon,
   OpenInNew as OpenInNewIcon,
 } from "@mui/icons-material";
 import { toast } from "sonner";

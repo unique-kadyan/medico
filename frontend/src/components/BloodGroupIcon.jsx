@@ -36,7 +36,6 @@ const BloodGroupIcon = ({ bloodGroup, size = 'medium' }) => {
 
   const formatted = formatBloodGroup(bloodGroup);
   const color = getBloodGroupColor(bloodGroup);
-  const isPositive = bloodGroup.includes('POSITIVE');
 
   return (
     <Box

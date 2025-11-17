@@ -42,7 +42,7 @@ function AppointmentList() {
     try {
       const data = await appointmentService.getAllAppointments();
       setAppointments(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch appointments');
     } finally {
       setLoading(false);

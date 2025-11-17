@@ -41,28 +41,33 @@ api.interceptors.response.use(
     }
 
     switch (response.status) {
-      case 401:
+      case 401: {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "/login";
         toast.error("Session expired. Please login again.");
         break;
+      }
 
-      case 403:
+      case 403: {
         toast.error("You do not have permission to perform this action.");
         break;
+      }
 
-      case 404:
+      case 404: {
         toast.error("Resource not found.");
         break;
+      }
 
-      case 500:
+      case 500: {
         toast.error("Server error. Please try again later.");
         break;
+      }
 
-      default:
+      default: {
         const message = response.data?.message || "An error occurred";
         toast.error(message);
+      }
     }
 
     return Promise.reject(error);

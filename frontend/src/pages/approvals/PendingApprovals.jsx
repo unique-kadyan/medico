@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -31,13 +31,11 @@ import {
   Visibility as ViewIcon,
   Description as DocumentIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import pendingUserService from '../../services/pendingUserService';
 import { usePermissions } from '../../hooks/usePermissions';
 import { PERMISSIONS } from '../../utils/permissions';
 
 const PendingApprovals = () => {
-  const navigate = useNavigate();
   const { can } = usePermissions();
 
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -160,7 +158,7 @@ const PendingApprovals = () => {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">
-          You don't have permission to view pending registrations
+          You don&apos;t have permission to view pending registrations
         </Alert>
       </Box>
     );
@@ -193,7 +191,7 @@ const PendingApprovals = () => {
             scrollButtons="auto"
             sx={{ mb: 2 }}
           >
-            {roleFilters.map((filter, index) => (
+            {roleFilters.map((filter) => (
               <Tab key={filter.value} label={filter.label} />
             ))}
           </Tabs>
@@ -349,7 +347,7 @@ const PendingApprovals = () => {
                 <Typography variant="body2" color="textSecondary" gutterBottom>
                   Uploaded Documents ({selectedUser.documentCount})
                 </Typography>
-                {selectedUser.documents && selectedUser.documents.map((doc, index) => (
+                {selectedUser.documents && selectedUser.documents.map((doc) => (
                   <Chip
                     key={doc.id}
                     icon={<DocumentIcon />}

@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Grid,
   Card,
   CardContent,
   Typography,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -15,7 +14,7 @@ import {
   Chip,
   IconButton,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   TrendingUp,
   People,
@@ -23,16 +22,28 @@ import {
   CalendarMonth,
   Medication,
   Visibility,
-} from '@mui/icons-material';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useNavigate } from 'react-router-dom';
-import patientService from '../../services/patientService';
-import appointmentService from '../../services/appointmentService';
-import dashboardService from '../../services/dashboardService';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { useNavigate } from "react-router-dom";
+import patientService from "../../services/patientService";
+import appointmentService from "../../services/appointmentService";
+import dashboardService from "../../services/dashboardService";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
-const COLORS = ['#2196f3', '#4caf50', '#ff9800', '#f44336', '#9c27b0'];
+const COLORS = ["#2196f3", "#4caf50", "#ff9800", "#f44336", "#9c27b0"];
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -58,32 +69,32 @@ function Dashboard() {
       const promises = [];
       const promiseTypes = [];
 
-      // Only fetch dashboard stats if user has permission to view system stats
       if (can(PERMISSIONS.VIEW_SYSTEM_STATS)) {
         promises.push(dashboardService.getDashboardStats());
-        promiseTypes.push('stats');
+        promiseTypes.push("stats");
       }
 
-      // Only fetch patients if user has permission to view patients
-      if (canAny([PERMISSIONS.VIEW_ALL_PATIENTS, PERMISSIONS.VIEW_ASSIGNED_PATIENTS])) {
+      if (
+        canAny([
+          PERMISSIONS.VIEW_ALL_PATIENTS,
+          PERMISSIONS.VIEW_ASSIGNED_PATIENTS,
+        ])
+      ) {
         promises.push(patientService.getAllPatients({ limit: 5 }));
-        promiseTypes.push('patients');
+        promiseTypes.push("patients");
       }
 
-      // Only fetch appointments if user has permission to view appointments
       if (can(PERMISSIONS.VIEW_APPOINTMENTS)) {
         promises.push(appointmentService.getTodaysAppointments());
-        promiseTypes.push('appointments');
+        promiseTypes.push("appointments");
       }
 
-      // Execute all permitted API calls
       const results = await Promise.all(promises);
 
-      // Process results based on what was fetched
       results.forEach((result, index) => {
         const type = promiseTypes[index];
 
-        if (type === 'stats') {
+        if (type === "stats") {
           setStats({
             totalPatients: result.totalPatients || 0,
             totalDoctors: result.totalDoctors || 0,
@@ -92,24 +103,30 @@ function Dashboard() {
           });
           setMonthlyPatients(result.monthlyPatients || []);
           setAppointmentsByType(result.appointmentsByType || []);
-        } else if (type === 'patients') {
+        } else if (type === "patients") {
           setRecentPatients(result.slice(0, 5) || []);
-        } else if (type === 'appointments') {
+        } else if (type === "appointments") {
           setUpcomingAppointments(result.slice(0, 5) || []);
         }
       });
     } catch (error) {
       // Silently handle errors to avoid showing permission errors to user
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const StatCard = ({ title, value, icon, color, trend }) => (
-    <Card sx={{ height: '100%', position: 'relative', overflow: 'visible' }}>
+    <Card sx={{ height: "100%", position: "relative", overflow: "visible" }}>
       <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
           <Box>
             <Typography color="text.secondary" variant="body2" gutterBottom>
               {title}
@@ -118,8 +135,10 @@ function Dashboard() {
               {value}
             </Typography>
             {trend && (
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                <TrendingUp sx={{ fontSize: 16, color: 'success.main', mr: 0.5 }} />
+              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                <TrendingUp
+                  sx={{ fontSize: 16, color: "success.main", mr: 0.5 }}
+                />
                 <Typography variant="caption" color="success.main">
                   {trend}
                 </Typography>
@@ -132,9 +151,9 @@ function Dashboard() {
               height: 60,
               borderRadius: 2,
               bgcolor: `${color}.50`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             {icon}
@@ -146,7 +165,14 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -154,24 +180,22 @@ function Dashboard() {
 
   return (
     <Box>
-      {/* Page Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" fontWeight={700} gutterBottom>
           Dashboard
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Welcome back! Here's what's happening today.
+          Welcome back! Here&apos;s what&apos;s happening today.
         </Typography>
       </Box>
 
-      {/* Stats Cards - Only show if user has VIEW_SYSTEM_STATS permission */}
       {can(PERMISSIONS.VIEW_SYSTEM_STATS) && (
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Total Patients"
               value={stats.totalPatients}
-              icon={<People sx={{ fontSize: 32, color: 'primary.main' }} />}
+              icon={<People sx={{ fontSize: 32, color: "primary.main" }} />}
               color="primary"
             />
           </Grid>
@@ -179,7 +203,9 @@ function Dashboard() {
             <StatCard
               title="Total Doctors"
               value={stats.totalDoctors}
-              icon={<LocalHospital sx={{ fontSize: 32, color: 'success.main' }} />}
+              icon={
+                <LocalHospital sx={{ fontSize: 32, color: "success.main" }} />
+              }
               color="success"
             />
           </Grid>
@@ -187,7 +213,9 @@ function Dashboard() {
             <StatCard
               title="Today's Appointments"
               value={stats.todayAppointments}
-              icon={<CalendarMonth sx={{ fontSize: 32, color: 'warning.main' }} />}
+              icon={
+                <CalendarMonth sx={{ fontSize: 32, color: "warning.main" }} />
+              }
               color="warning"
             />
           </Grid>
@@ -195,14 +223,13 @@ function Dashboard() {
             <StatCard
               title="Low Stock Alerts"
               value={stats.lowStockMedications}
-              icon={<Medication sx={{ fontSize: 32, color: 'error.main' }} />}
+              icon={<Medication sx={{ fontSize: 32, color: "error.main" }} />}
               color="error"
             />
           </Grid>
         </Grid>
       )}
 
-      {/* Charts - Only show if user has VIEW_SYSTEM_STATS permission */}
       {can(PERMISSIONS.VIEW_SYSTEM_STATS) && (
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={8}>
@@ -218,7 +245,12 @@ function Dashboard() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="patients" stroke="#2196f3" strokeWidth={2} />
+                    <Line
+                      type="monotone"
+                      dataKey="patients"
+                      stroke="#2196f3"
+                      strokeWidth={2}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -244,7 +276,10 @@ function Dashboard() {
                       dataKey="value"
                     >
                       {appointmentsByType.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -256,18 +291,29 @@ function Dashboard() {
         </Grid>
       )}
 
-      {/* Recent Activity Tables */}
       <Grid container spacing={3}>
-        {/* Recent Patients - Only show if user has permission to view patients */}
-        {canAny([PERMISSIONS.VIEW_ALL_PATIENTS, PERMISSIONS.VIEW_ASSIGNED_PATIENTS]) && (
+        {canAny([
+          PERMISSIONS.VIEW_ALL_PATIENTS,
+          PERMISSIONS.VIEW_ASSIGNED_PATIENTS,
+        ]) && (
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 2,
+                  }}
+                >
                   <Typography variant="h6" fontWeight={600}>
                     Recent Patients
                   </Typography>
-                  <IconButton size="small" onClick={() => navigate('/patients')}>
+                  <IconButton
+                    size="small"
+                    onClick={() => navigate("/patients")}
+                  >
                     <Visibility />
                   </IconButton>
                 </Box>
@@ -289,7 +335,11 @@ function Dashboard() {
                             <TableCell>{patient.age}</TableCell>
                             <TableCell>{patient.phone}</TableCell>
                             <TableCell>
-                              <Chip label="Active" size="small" color="success" />
+                              <Chip
+                                label="Active"
+                                size="small"
+                                color="success"
+                              />
                             </TableCell>
                           </TableRow>
                         ))
@@ -310,16 +360,25 @@ function Dashboard() {
           </Grid>
         )}
 
-        {/* Upcoming Appointments - Only show if user has permission to view appointments */}
         {can(PERMISSIONS.VIEW_APPOINTMENTS) && (
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 2,
+                  }}
+                >
                   <Typography variant="h6" fontWeight={600}>
                     Upcoming Appointments
                   </Typography>
-                  <IconButton size="small" onClick={() => navigate('/appointments')}>
+                  <IconButton
+                    size="small"
+                    onClick={() => navigate("/appointments")}
+                  >
                     <Visibility />
                   </IconButton>
                 </Box>
@@ -344,7 +403,11 @@ function Dashboard() {
                               <Chip
                                 label={appointment.status}
                                 size="small"
-                                color={appointment.status === 'SCHEDULED' ? 'primary' : 'default'}
+                                color={
+                                  appointment.status === "SCHEDULED"
+                                    ? "primary"
+                                    : "default"
+                                }
                               />
                             </TableCell>
                           </TableRow>

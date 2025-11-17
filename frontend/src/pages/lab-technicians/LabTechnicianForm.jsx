@@ -47,7 +47,7 @@ function LabTechnicianForm() {
         phone: labTechnician.phone || "",
         role: "LAB_TECHNICIAN",
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch lab technician details");
     }
   };

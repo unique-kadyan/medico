@@ -28,7 +28,6 @@ import {
   PersonAdd as AssignIcon,
 } from "@mui/icons-material";
 import { toast } from "sonner";
-import api from "../../services/api";
 import assignmentService from "../../services/assignmentService";
 import doctorService from "../../services/doctorService";
 import patientService from "../../services/patientService";
