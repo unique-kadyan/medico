@@ -1,17 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
-import authService from '../../services/authService';
+import { createSlice } from "@reduxjs/toolkit";
+import authService from "../../services/authService";
 
 const loadUser = () => {
   try {
     const user = authService.getCurrentUser();
-    if (user && typeof user === 'object') {
+    if (user && typeof user === "object") {
       return user;
     }
     return null;
   } catch (error) {
-    console.error('Error loading user from localStorage:', error);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    console.error("Error loading user from localStorage:", error);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     return null;
   }
 };
@@ -24,7 +24,7 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     loginStart: (state) => {

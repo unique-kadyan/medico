@@ -315,8 +315,8 @@ function OTRequestList() {
               actionDialog.type === "reject"
                 ? "Rejection Reason (Required)"
                 : actionDialog.type === "complete"
-                ? "Post-Operative Notes"
-                : "Notes (Optional)"
+                  ? "Post-Operative Notes"
+                  : "Notes (Optional)"
             }
             value={actionNotes}
             onChange={(e) => setActionNotes(e.target.value)}

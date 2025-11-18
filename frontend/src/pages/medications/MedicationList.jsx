@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -17,26 +17,26 @@ import {
   InputAdornment,
   CircularProgress,
   Alert,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Search as SearchIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Warning as WarningIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import medicationService from '../../services/medicationService';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import medicationService from "../../services/medicationService";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 function MedicationList() {
   const navigate = useNavigate();
   const { can, isAnyRole } = usePermissions();
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [lowStockCount, setLowStockCount] = useState(0);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function MedicationList() {
       const data = await medicationService.getAllMedications();
       setMedications(data);
     } catch (error) {
-      toast.error('Failed to fetch medications');
+      toast.error("Failed to fetch medications");
       console.error(error);
     } finally {
       setLoading(false);
@@ -66,21 +66,21 @@ function MedicationList() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this medication?')) {
+    if (window.confirm("Are you sure you want to delete this medication?")) {
       try {
         await medicationService.deleteMedication(id);
-        toast.success('Medication deleted successfully');
+        toast.success("Medication deleted successfully");
         fetchMedications();
       } catch {
-        toast.error('Failed to delete medication');
+        toast.error("Failed to delete medication");
       }
     }
   };
 
   const getStockStatus = (quantity) => {
-    if (quantity === 0) return { label: 'Out of Stock', color: 'error' };
-    if (quantity < 10) return { label: 'Low Stock', color: 'warning' };
-    return { label: 'In Stock', color: 'success' };
+    if (quantity === 0) return { label: "Out of Stock", color: "error" };
+    if (quantity < 10) return { label: "Low Stock", color: "warning" };
+    return { label: "In Stock", color: "success" };
   };
 
   const filteredMedications = medications.filter(
@@ -92,7 +92,7 @@ function MedicationList() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -100,7 +100,14 @@ function MedicationList() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <div>
           <Typography variant="h4" fontWeight={700}>
             Medication Inventory
@@ -109,11 +116,12 @@ function MedicationList() {
             Manage medications and stock levels
           </Typography>
         </div>
-        {(can(PERMISSIONS.ADD_MEDICATION) || isAnyRole(['PHARMACIST', 'ADMIN'])) && (
+        {(can(PERMISSIONS.ADD_MEDICATION) ||
+          isAnyRole(["PHARMACIST", "ADMIN"])) && (
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/medications/new')}
+            onClick={() => navigate("/medications/new")}
           >
             Add Medication
           </Button>
@@ -122,7 +130,8 @@ function MedicationList() {
 
       {lowStockCount > 0 && (
         <Alert severity="warning" icon={<WarningIcon />} sx={{ mb: 3 }}>
-          <strong>{lowStockCount}</strong> medication(s) are running low on stock!
+          <strong>{lowStockCount}</strong> medication(s) are running low on
+          stock!
         </Alert>
       )}
 
@@ -165,29 +174,45 @@ function MedicationList() {
                       <TableRow key={medication.id} hover>
                         <TableCell>{medication.id}</TableCell>
                         <TableCell>
-                          <Typography fontWeight={600}>{medication.name}</Typography>
+                          <Typography fontWeight={600}>
+                            {medication.name}
+                          </Typography>
                         </TableCell>
                         <TableCell>
-                          <Chip label={medication.category} size="small" variant="outlined" />
+                          <Chip
+                            label={medication.category}
+                            size="small"
+                            variant="outlined"
+                          />
                         </TableCell>
                         <TableCell>{medication.manufacturer}</TableCell>
                         <TableCell>
                           <Typography
                             fontWeight={600}
-                            color={medication.quantity < 10 ? 'error' : 'text.primary'}
+                            color={
+                              medication.quantity < 10
+                                ? "error"
+                                : "text.primary"
+                            }
                           >
                             {medication.quantity}
                           </Typography>
                         </TableCell>
                         <TableCell>${medication.price?.toFixed(2)}</TableCell>
                         <TableCell>
-                          <Chip label={stockStatus.label} size="small" color={stockStatus.color} />
+                          <Chip
+                            label={stockStatus.label}
+                            size="small"
+                            color={stockStatus.color}
+                          />
                         </TableCell>
                         <TableCell align="right">
                           {can(PERMISSIONS.EDIT_MEDICATION) && (
                             <IconButton
                               size="small"
-                              onClick={() => navigate(`/medications/${medication.id}/edit`)}
+                              onClick={() =>
+                                navigate(`/medications/${medication.id}/edit`)
+                              }
                               color="info"
                             >
                               <EditIcon />

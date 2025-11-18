@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { Box, useMediaQuery, useTheme } from '@mui/material';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import MobileNav from './MobileNav';
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import MobileNav from "./MobileNav";
 
 function Layout() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   const handleSidebarToggle = () => {
@@ -15,7 +15,13 @@ function Layout() {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        bgcolor: "background.default",
+      }}
+    >
       {/* Sidebar - Desktop only */}
       {!isMobile && (
         <Sidebar open={sidebarOpen} onToggle={handleSidebarToggle} />
@@ -26,10 +32,10 @@ function Layout() {
         component="main"
         sx={{
           flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          minHeight: '100vh',
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          minHeight: "100vh",
         }}
       >
         {/* Header */}

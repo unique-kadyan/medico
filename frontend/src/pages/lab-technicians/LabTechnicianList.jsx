@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -15,18 +15,18 @@ import {
   Chip,
   IconButton,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import api from '../../services/api';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import api from "../../services/api";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 function LabTechnicianList() {
   const navigate = useNavigate();
@@ -42,35 +42,44 @@ function LabTechnicianList() {
     try {
       setLoading(true);
       // Fetch all users and filter by LAB_TECHNICIAN role
-      const response = await api.get('/users');
-      const labTechnicianUsers = response.data.filter(user => user.role === 'LAB_TECHNICIAN');
+      const response = await api.get("/users");
+      const labTechnicianUsers = response.data.filter(
+        (user) => user.role === "LAB_TECHNICIAN"
+      );
       setLabTechnicians(labTechnicianUsers);
     } catch (error) {
-      toast.error('Failed to load lab technicians');
-      console.error('Error fetching lab technicians:', error);
+      toast.error("Failed to load lab technicians");
+      console.error("Error fetching lab technicians:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this lab technician?')) {
+    if (
+      !window.confirm("Are you sure you want to delete this lab technician?")
+    ) {
       return;
     }
 
     try {
       await api.delete(`/users/${id}`);
-      toast.success('Lab technician deleted successfully');
+      toast.success("Lab technician deleted successfully");
       fetchLabTechnicians();
     } catch (error) {
-      toast.error('Failed to delete lab technician');
-      console.error('Error deleting lab technician:', error);
+      toast.error("Failed to delete lab technician");
+      console.error("Error deleting lab technician:", error);
     }
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -78,7 +87,12 @@ function LabTechnicianList() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" fontWeight={600}>
           Lab Technicians
         </Typography>
@@ -86,7 +100,7 @@ function LabTechnicianList() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/lab-technicians/new')}
+            onClick={() => navigate("/lab-technicians/new")}
           >
             Add Lab Technician
           </Button>
@@ -99,13 +113,26 @@ function LabTechnicianList() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>ID</strong></TableCell>
-                  <TableCell><strong>Name</strong></TableCell>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Phone</strong></TableCell>
-                  <TableCell><strong>Status</strong></TableCell>
-                  {(can(PERMISSIONS.EDIT_LAB_TECHNICIAN) || can(PERMISSIONS.DELETE_LAB_TECHNICIAN)) && (
-                    <TableCell align="center"><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>ID</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Email</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Phone</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Status</strong>
+                  </TableCell>
+                  {(can(PERMISSIONS.EDIT_LAB_TECHNICIAN) ||
+                    can(PERMISSIONS.DELETE_LAB_TECHNICIAN)) && (
+                    <TableCell align="center">
+                      <strong>Actions</strong>
+                    </TableCell>
                   )}
                 </TableRow>
               </TableHead>
@@ -126,21 +153,26 @@ function LabTechnicianList() {
                         {labTechnician.firstName} {labTechnician.lastName}
                       </TableCell>
                       <TableCell>{labTechnician.email}</TableCell>
-                      <TableCell>{labTechnician.phone || '-'}</TableCell>
+                      <TableCell>{labTechnician.phone || "-"}</TableCell>
                       <TableCell>
                         <Chip
-                          label={labTechnician.enabled ? 'Active' : 'Inactive'}
+                          label={labTechnician.enabled ? "Active" : "Inactive"}
                           size="small"
-                          color={labTechnician.enabled ? 'success' : 'default'}
+                          color={labTechnician.enabled ? "success" : "default"}
                         />
                       </TableCell>
-                      {(can(PERMISSIONS.EDIT_LAB_TECHNICIAN) || can(PERMISSIONS.DELETE_LAB_TECHNICIAN)) && (
+                      {(can(PERMISSIONS.EDIT_LAB_TECHNICIAN) ||
+                        can(PERMISSIONS.DELETE_LAB_TECHNICIAN)) && (
                         <TableCell align="center">
                           <Box display="flex" gap={0.5} justifyContent="center">
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => navigate(`/lab-technicians/${labTechnician.userId}`)}
+                              onClick={() =>
+                                navigate(
+                                  `/lab-technicians/${labTechnician.userId}`
+                                )
+                              }
                             >
                               <ViewIcon />
                             </IconButton>
@@ -148,7 +180,11 @@ function LabTechnicianList() {
                               <IconButton
                                 size="small"
                                 color="primary"
-                                onClick={() => navigate(`/lab-technicians/edit/${labTechnician.userId}`)}
+                                onClick={() =>
+                                  navigate(
+                                    `/lab-technicians/edit/${labTechnician.userId}`
+                                  )
+                                }
                               >
                                 <EditIcon />
                               </IconButton>
@@ -157,7 +193,9 @@ function LabTechnicianList() {
                               <IconButton
                                 size="small"
                                 color="error"
-                                onClick={() => handleDelete(labTechnician.userId)}
+                                onClick={() =>
+                                  handleDelete(labTechnician.userId)
+                                }
                               >
                                 <DeleteIcon />
                               </IconButton>

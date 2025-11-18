@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -24,25 +24,25 @@ import {
   Tab,
   Alert,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   CheckCircle as ApproveIcon,
   Cancel as RejectIcon,
   Visibility as ViewIcon,
   Description as DocumentIcon,
-} from '@mui/icons-material';
-import pendingUserService from '../../services/pendingUserService';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import pendingUserService from "../../services/pendingUserService";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 const roleFilters = [
-  { label: 'All', value: 'ALL' },
-  { label: 'Doctors', value: 'DOCTOR' },
-  { label: 'Doctor Supervisors', value: 'DOCTOR_SUPERVISOR' },
-  { label: 'Nurses', value: 'NURSE' },
-  { label: 'Nurse Managers', value: 'NURSE_MANAGER' },
-  { label: 'Nurse Supervisors', value: 'NURSE_SUPERVISOR' },
-  { label: 'Receptionists', value: 'RECEPTIONIST' },
+  { label: "All", value: "ALL" },
+  { label: "Doctors", value: "DOCTOR" },
+  { label: "Doctor Supervisors", value: "DOCTOR_SUPERVISOR" },
+  { label: "Nurses", value: "NURSE" },
+  { label: "Nurse Managers", value: "NURSE_MANAGER" },
+  { label: "Nurse Supervisors", value: "NURSE_SUPERVISOR" },
+  { label: "Receptionists", value: "RECEPTIONIST" },
 ];
 
 const PendingApprovals = () => {
@@ -55,9 +55,9 @@ const PendingApprovals = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectionReason, setRejectionReason] = useState("");
   const [currentTab, setCurrentTab] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchPendingUsers = useCallback(async () => {
     try {
@@ -66,7 +66,9 @@ const PendingApprovals = () => {
       setPendingUsers(data);
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch pending registrations');
+      setError(
+        err.response?.data?.message || "Failed to fetch pending registrations"
+      );
     } finally {
       setLoading(false);
     }
@@ -74,10 +76,12 @@ const PendingApprovals = () => {
 
   const filterUsers = useCallback(() => {
     const selectedFilter = roleFilters[currentTab].value;
-    if (selectedFilter === 'ALL') {
+    if (selectedFilter === "ALL") {
       setFilteredUsers(pendingUsers);
     } else {
-      setFilteredUsers(pendingUsers.filter(user => user.requestedRole === selectedFilter));
+      setFilteredUsers(
+        pendingUsers.filter((user) => user.requestedRole === selectedFilter)
+      );
     }
   }, [currentTab, pendingUsers]);
 
@@ -97,57 +101,61 @@ const PendingApprovals = () => {
   const handleApprove = async (userId) => {
     try {
       const result = await pendingUserService.approveRegistration(userId);
-      setSuccessMessage(result.message || 'Registration approved successfully');
+      setSuccessMessage(result.message || "Registration approved successfully");
       fetchPendingUsers();
       setViewDialogOpen(false);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to approve registration');
+      setError(err.response?.data?.message || "Failed to approve registration");
     }
   };
 
   const handleRejectClick = (user) => {
     setSelectedUser(user);
-    setRejectionReason('');
+    setRejectionReason("");
     setRejectDialogOpen(true);
   };
 
   const handleRejectConfirm = async () => {
     if (!rejectionReason.trim()) {
-      setError('Rejection reason is required');
+      setError("Rejection reason is required");
       return;
     }
 
     try {
-      const result = await pendingUserService.rejectRegistration(selectedUser.id, rejectionReason);
-      setSuccessMessage(result.message || 'Registration rejected successfully');
+      const result = await pendingUserService.rejectRegistration(
+        selectedUser.id,
+        rejectionReason
+      );
+      setSuccessMessage(result.message || "Registration rejected successfully");
       fetchPendingUsers();
       setRejectDialogOpen(false);
       setViewDialogOpen(false);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to reject registration');
+      setError(err.response?.data?.message || "Failed to reject registration");
     }
   };
 
   const getRoleChipColor = (role) => {
     switch (role) {
-      case 'DOCTOR':
-      case 'DOCTOR_SUPERVISOR':
-        return 'primary';
-      case 'NURSE':
-      case 'NURSE_MANAGER':
-      case 'NURSE_SUPERVISOR':
-        return 'secondary';
-      case 'RECEPTIONIST':
-        return 'info';
+      case "DOCTOR":
+      case "DOCTOR_SUPERVISOR":
+        return "primary";
+      case "NURSE":
+      case "NURSE_MANAGER":
+      case "NURSE_SUPERVISOR":
+        return "secondary";
+      case "RECEPTIONIST":
+        return "info";
       default:
-        return 'default';
+        return "default";
     }
   };
 
   const formatRoleName = (role) => {
-    return role.split('_').map(word =>
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(' ');
+    return role
+      .split("_")
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(" ");
   };
 
   const formatDate = (dateString) => {
@@ -171,7 +179,11 @@ const PendingApprovals = () => {
       </Typography>
 
       {successMessage && (
-        <Alert severity="success" onClose={() => setSuccessMessage('')} sx={{ mb: 2 }}>
+        <Alert
+          severity="success"
+          onClose={() => setSuccessMessage("")}
+          sx={{ mb: 2 }}
+        >
           {successMessage}
         </Alert>
       )}
@@ -197,11 +209,16 @@ const PendingApprovals = () => {
           </Tabs>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
               <CircularProgress />
             </Box>
           ) : filteredUsers.length === 0 ? (
-            <Typography variant="body1" color="textSecondary" align="center" sx={{ p: 4 }}>
+            <Typography
+              variant="body1"
+              color="textSecondary"
+              align="center"
+              sx={{ p: 4 }}
+            >
               No pending registrations found
             </Typography>
           ) : (
@@ -227,7 +244,7 @@ const PendingApprovals = () => {
                         {user.firstName} {user.lastName}
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.phone || 'N/A'}</TableCell>
+                      <TableCell>{user.phone || "N/A"}</TableCell>
                       <TableCell>
                         <Chip
                           label={formatRoleName(user.requestedRole)}
@@ -254,9 +271,9 @@ const PendingApprovals = () => {
                           <ViewIcon />
                         </IconButton>
                         {can(PERMISSIONS.APPROVE_DOCTOR_REGISTRATION) ||
-                         can(PERMISSIONS.APPROVE_NURSE_REGISTRATION) ||
-                         can(PERMISSIONS.APPROVE_RECEPTIONIST_REGISTRATION) ||
-                         can(PERMISSIONS.APPROVE_SUPERVISOR_REGISTRATION) ? (
+                        can(PERMISSIONS.APPROVE_NURSE_REGISTRATION) ||
+                        can(PERMISSIONS.APPROVE_RECEPTIONIST_REGISTRATION) ||
+                        can(PERMISSIONS.APPROVE_SUPERVISOR_REGISTRATION) ? (
                           <IconButton
                             color="success"
                             size="small"
@@ -313,7 +330,9 @@ const PendingApprovals = () => {
                 <Typography variant="body2" color="textSecondary">
                   First Name
                 </Typography>
-                <Typography variant="body1">{selectedUser.firstName}</Typography>
+                <Typography variant="body1">
+                  {selectedUser.firstName}
+                </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body2" color="textSecondary">
@@ -325,7 +344,9 @@ const PendingApprovals = () => {
                 <Typography variant="body2" color="textSecondary">
                   Phone
                 </Typography>
-                <Typography variant="body1">{selectedUser.phone || 'N/A'}</Typography>
+                <Typography variant="body1">
+                  {selectedUser.phone || "N/A"}
+                </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body2" color="textSecondary">
@@ -341,21 +362,24 @@ const PendingApprovals = () => {
                 <Typography variant="body2" color="textSecondary">
                   Requested At
                 </Typography>
-                <Typography variant="body1">{formatDate(selectedUser.requestedAt)}</Typography>
+                <Typography variant="body1">
+                  {formatDate(selectedUser.requestedAt)}
+                </Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body2" color="textSecondary" gutterBottom>
                   Uploaded Documents ({selectedUser.documentCount})
                 </Typography>
-                {selectedUser.documents && selectedUser.documents.map((doc) => (
-                  <Chip
-                    key={doc.id}
-                    icon={<DocumentIcon />}
-                    label={doc.fileName}
-                    size="small"
-                    sx={{ mr: 1, mb: 1 }}
-                  />
-                ))}
+                {selectedUser.documents &&
+                  selectedUser.documents.map((doc) => (
+                    <Chip
+                      key={doc.id}
+                      icon={<DocumentIcon />}
+                      label={doc.fileName}
+                      size="small"
+                      sx={{ mr: 1, mb: 1 }}
+                    />
+                  ))}
               </Grid>
             </Grid>
           )}
@@ -391,7 +415,12 @@ const PendingApprovals = () => {
       </Dialog>
 
       {/* Reject Dialog */}
-      <Dialog open={rejectDialogOpen} onClose={() => setRejectDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={rejectDialogOpen}
+        onClose={() => setRejectDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Reject Registration</DialogTitle>
         <DialogContent>
           <Typography variant="body2" gutterBottom>

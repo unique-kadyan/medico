@@ -63,10 +63,10 @@ function AssignmentList() {
         patientService.getAllPatients(),
       ]);
 
-      console.log('Fetched data:', {
+      console.log("Fetched data:", {
         doctors: doctorsData?.length || 0,
         nurses: nursesData?.length || 0,
-        patients: patientsData?.length || 0
+        patients: patientsData?.length || 0,
       });
 
       setDoctors(doctorsData || []);
@@ -83,7 +83,10 @@ function AssignmentList() {
               allAssignments.push(...patientAssignments);
             }
           } catch (assignError) {
-            console.error(`Error fetching assignments for patient ${patient.id}:`, assignError);
+            console.error(
+              `Error fetching assignments for patient ${patient.id}:`,
+              assignError
+            );
           }
         }
       }
@@ -160,7 +163,11 @@ function AssignmentList() {
   const getPatientName = (patientId) => {
     const patient = patients.find((p) => p.id === patientId);
     if (!patient) return "Unknown";
-    return patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || "Unknown";
+    return (
+      patient.name ||
+      `${patient.firstName || ""} ${patient.lastName || ""}`.trim() ||
+      "Unknown"
+    );
   };
 
   if (loading) {
@@ -318,7 +325,9 @@ function AssignmentList() {
             >
               {patients.map((patient) => (
                 <MenuItem key={patient.id} value={patient.id}>
-                  {patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim()} - {patient.email}
+                  {patient.name ||
+                    `${patient.firstName || ""} ${patient.lastName || ""}`.trim()}{" "}
+                  - {patient.email}
                 </MenuItem>
               ))}
             </TextField>

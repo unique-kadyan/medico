@@ -73,7 +73,11 @@ function LabTechnicianForm() {
       }
       navigate("/lab-technicians");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || (id ? "Failed to update lab technician" : "Failed to create lab technician");
+      const errorMessage =
+        error.response?.data?.message ||
+        (id
+          ? "Failed to update lab technician"
+          : "Failed to create lab technician");
       toast.error(errorMessage);
       console.error("Error:", error);
     } finally {
@@ -84,7 +88,10 @@ function LabTechnicianForm() {
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate("/lab-technicians")}>
+        <Button
+          startIcon={<BackIcon />}
+          onClick={() => navigate("/lab-technicians")}
+        >
           Back to Lab Technicians
         </Button>
       </Box>
@@ -95,7 +102,9 @@ function LabTechnicianForm() {
             {id ? "Edit Lab Technician" : "Add New Lab Technician"}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {id ? "Update lab technician information" : "Enter lab technician details"}
+            {id
+              ? "Update lab technician information"
+              : "Enter lab technician details"}
           </Typography>
 
           <form onSubmit={handleSubmit}>

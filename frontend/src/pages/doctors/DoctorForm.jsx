@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Card,
@@ -12,27 +12,27 @@ import {
   Switch,
   CircularProgress,
   MenuItem,
-} from '@mui/material';
-import { Save as SaveIcon, ArrowBack as BackIcon } from '@mui/icons-material';
-import { toast } from 'sonner';
-import doctorService from '../../services/doctorService';
+} from "@mui/material";
+import { Save as SaveIcon, ArrowBack as BackIcon } from "@mui/icons-material";
+import { toast } from "sonner";
+import doctorService from "../../services/doctorService";
 
 const SPECIALIZATIONS = [
-  'CARDIOLOGY',
-  'NEUROLOGY',
-  'PEDIATRICS',
-  'ORTHOPEDICS',
-  'DERMATOLOGY',
-  'GENERAL_MEDICINE',
-  'PSYCHIATRY',
-  'SURGERY',
-  'OPHTHALMOLOGY',
-  'ENT',
-  'GYNECOLOGY',
-  'UROLOGY',
-  'ONCOLOGY',
-  'RADIOLOGY',
-  'ANESTHESIOLOGY',
+  "CARDIOLOGY",
+  "NEUROLOGY",
+  "PEDIATRICS",
+  "ORTHOPEDICS",
+  "DERMATOLOGY",
+  "GENERAL_MEDICINE",
+  "PSYCHIATRY",
+  "SURGERY",
+  "OPHTHALMOLOGY",
+  "ENT",
+  "GYNECOLOGY",
+  "UROLOGY",
+  "ONCOLOGY",
+  "RADIOLOGY",
+  "ANESTHESIOLOGY",
 ];
 
 function DoctorForm() {
@@ -43,17 +43,17 @@ function DoctorForm() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    doctorId: '',
-    firstName: '',
-    lastName: '',
-    specialization: '',
-    licenseNumber: '',
-    phone: '',
-    email: '',
-    department: '',
+    doctorId: "",
+    firstName: "",
+    lastName: "",
+    specialization: "",
+    licenseNumber: "",
+    phone: "",
+    email: "",
+    department: "",
     yearsOfExperience: 0,
-    qualification: '',
-    about: '',
+    qualification: "",
+    about: "",
     availableForConsultation: true,
     active: true,
   });
@@ -65,23 +65,23 @@ function DoctorForm() {
       setLoading(true);
       const data = await doctorService.getDoctorById(id);
       setFormData({
-        doctorId: data.doctorId || '',
-        firstName: data.firstName || '',
-        lastName: data.lastName || '',
-        specialization: data.specialization || '',
-        licenseNumber: data.licenseNumber || '',
-        phone: data.phone || '',
-        email: data.email || '',
-        department: data.department || '',
+        doctorId: data.doctorId || "",
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+        specialization: data.specialization || "",
+        licenseNumber: data.licenseNumber || "",
+        phone: data.phone || "",
+        email: data.email || "",
+        department: data.department || "",
         yearsOfExperience: data.yearsOfExperience || 0,
-        qualification: data.qualification || '',
-        about: data.about || '',
+        qualification: data.qualification || "",
+        about: data.about || "",
         availableForConsultation: data.availableForConsultation ?? true,
         active: data.active ?? true,
       });
     } catch (error) {
-      toast.error('Failed to fetch doctor details');
-      console.error('Error fetching doctor:', error);
+      toast.error("Failed to fetch doctor details");
+      console.error("Error fetching doctor:", error);
     } finally {
       setLoading(false);
     }
@@ -97,12 +97,12 @@ function DoctorForm() {
     const { name, value, checked, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
 
     // Clear error for this field
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -110,22 +110,22 @@ function DoctorForm() {
     const newErrors = {};
 
     if (!formData.doctorId.trim()) {
-      newErrors.doctorId = 'Doctor ID is required';
+      newErrors.doctorId = "Doctor ID is required";
     }
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = "First name is required";
     }
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = "Last name is required";
     }
     if (!formData.specialization) {
-      newErrors.specialization = 'Specialization is required';
+      newErrors.specialization = "Specialization is required";
     }
     if (formData.yearsOfExperience < 0) {
-      newErrors.yearsOfExperience = 'Years of experience cannot be negative';
+      newErrors.yearsOfExperience = "Years of experience cannot be negative";
     }
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = "Invalid email format";
     }
 
     setErrors(newErrors);
@@ -136,7 +136,7 @@ function DoctorForm() {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
+      toast.error("Please fix the errors in the form");
       return;
     }
 
@@ -145,29 +145,30 @@ function DoctorForm() {
 
       if (isEditMode) {
         await doctorService.updateDoctor(id, formData);
-        toast.success('Doctor updated successfully');
+        toast.success("Doctor updated successfully");
       } else {
         await doctorService.createDoctor(formData);
-        toast.success('Doctor created successfully');
+        toast.success("Doctor created successfully");
       }
 
-      navigate('/doctors');
+      navigate("/doctors");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to save doctor';
+      const errorMessage =
+        error.response?.data?.message || "Failed to save doctor";
       toast.error(errorMessage);
-      console.error('Error saving doctor:', error);
+      console.error("Error saving doctor:", error);
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/doctors');
+    navigate("/doctors");
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -177,10 +178,12 @@ function DoctorForm() {
     <Box>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" fontWeight={700} gutterBottom>
-          {isEditMode ? 'Edit Doctor' : 'Add New Doctor'}
+          {isEditMode ? "Edit Doctor" : "Add New Doctor"}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {isEditMode ? 'Update doctor information' : 'Enter doctor details to add to the system'}
+          {isEditMode
+            ? "Update doctor information"
+            : "Enter doctor details to add to the system"}
         </Typography>
       </Box>
 
@@ -256,7 +259,7 @@ function DoctorForm() {
                 >
                   {SPECIALIZATIONS.map((spec) => (
                     <MenuItem key={spec} value={spec}>
-                      {spec.replace(/_/g, ' ')}
+                      {spec.replace(/_/g, " ")}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -398,16 +401,26 @@ function DoctorForm() {
 
               {/* Actions */}
               <Grid item xs={12}>
-                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                   <Button
                     type="submit"
                     variant="contained"
-                    startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
+                    startIcon={
+                      saving ? <CircularProgress size={20} /> : <SaveIcon />
+                    }
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : isEditMode ? 'Update Doctor' : 'Add Doctor'}
+                    {saving
+                      ? "Saving..."
+                      : isEditMode
+                        ? "Update Doctor"
+                        : "Add Doctor"}
                   </Button>
-                  <Button variant="outlined" startIcon={<BackIcon />} onClick={handleCancel}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<BackIcon />}
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </Button>
                 </Box>

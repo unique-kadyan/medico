@@ -160,7 +160,10 @@ function LabTestList() {
 
       if (selectedFile) {
         toast.info("Uploading file...");
-        const uploadResponse = await fileService.uploadFile(selectedFile, "lab-tests");
+        const uploadResponse = await fileService.uploadFile(
+          selectedFile,
+          "lab-tests"
+        );
         finalUploadData.resultFilePath = uploadResponse.filePath;
       }
 
@@ -290,7 +293,9 @@ function LabTestList() {
                       <TableCell>
                         {test.patientName || `Patient ID: ${test.patientId}`}
                       </TableCell>
-                      <TableCell>{test.testName || test.testType || "N/A"}</TableCell>
+                      <TableCell>
+                        {test.testName || test.testType || "N/A"}
+                      </TableCell>
                       <TableCell>
                         {test.doctorName || `Doctor ID: ${test.doctorId}`}
                       </TableCell>
@@ -298,10 +303,12 @@ function LabTestList() {
                         {test.orderedDate
                           ? new Date(test.orderedDate).toLocaleDateString()
                           : test.sampleCollectedDate
-                          ? new Date(test.sampleCollectedDate).toLocaleDateString()
-                          : test.resultDate
-                          ? new Date(test.resultDate).toLocaleDateString()
-                          : "-"}
+                            ? new Date(
+                                test.sampleCollectedDate
+                              ).toLocaleDateString()
+                            : test.resultDate
+                              ? new Date(test.resultDate).toLocaleDateString()
+                              : "-"}
                       </TableCell>
                       <TableCell>
                         <Chip
@@ -359,7 +366,8 @@ function LabTestList() {
         <DialogTitle>
           <Box display="flex" alignItems="center" gap={1}>
             <UploadIcon />
-            Upload Test Results - {selectedTest?.testName || selectedTest?.testType}
+            Upload Test Results -{" "}
+            {selectedTest?.testName || selectedTest?.testType}
           </Box>
         </DialogTitle>
         <DialogContent>
@@ -586,7 +594,9 @@ function LabTestList() {
                     </Typography>
                     <Typography variant="body1">
                       {viewTest?.sampleCollectedDate
-                        ? new Date(viewTest.sampleCollectedDate).toLocaleString()
+                        ? new Date(
+                            viewTest.sampleCollectedDate
+                          ).toLocaleString()
                         : "Not collected yet"}
                     </Typography>
                   </Box>
@@ -686,7 +696,9 @@ function LabTestList() {
                           window.open(viewTest.resultFilePath, "_blank");
                         } else {
                           // Use fileService to get the correct backend URL
-                          const fileUrl = fileService.getFileUrl(viewTest.resultFilePath);
+                          const fileUrl = fileService.getFileUrl(
+                            viewTest.resultFilePath
+                          );
                           window.open(fileUrl, "_blank");
                         }
                       }}

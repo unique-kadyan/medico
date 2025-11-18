@@ -70,7 +70,10 @@ function DoctorAssignmentList() {
               allAssignments.push(...patientAssignments);
             }
           } catch (assignError) {
-            console.error(`Error fetching assignments for patient ${patient.id}:`, assignError);
+            console.error(
+              `Error fetching assignments for patient ${patient.id}:`,
+              assignError
+            );
           }
         }
       }
@@ -103,9 +106,7 @@ function DoctorAssignmentList() {
       setAssignedAs("PRIMARY");
       fetchData();
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to assign doctor"
-      );
+      toast.error(error.response?.data?.message || "Failed to assign doctor");
       console.error("Error assigning doctor:", error);
     }
   };
@@ -133,7 +134,11 @@ function DoctorAssignmentList() {
   const getPatientName = (patientId) => {
     const patient = patients.find((p) => p.id === patientId);
     if (!patient) return "Unknown";
-    return patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || "Unknown";
+    return (
+      patient.name ||
+      `${patient.firstName || ""} ${patient.lastName || ""}`.trim() ||
+      "Unknown"
+    );
   };
 
   if (loading) {
@@ -277,7 +282,9 @@ function DoctorAssignmentList() {
             >
               {patients.map((patient) => (
                 <MenuItem key={patient.id} value={patient.id}>
-                  {patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim()} - {patient.email}
+                  {patient.name ||
+                    `${patient.firstName || ""} ${patient.lastName || ""}`.trim()}{" "}
+                  - {patient.email}
                 </MenuItem>
               ))}
             </TextField>

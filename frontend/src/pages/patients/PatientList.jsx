@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -16,27 +16,27 @@ import {
   Chip,
   InputAdornment,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Search as SearchIcon,
   Edit as EditIcon,
   Visibility as ViewIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import patientService from '../../services/patientService';
-import BloodGroupIcon from '../../components/BloodGroupIcon';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import patientService from "../../services/patientService";
+import BloodGroupIcon from "../../components/BloodGroupIcon";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 function PatientList() {
   const navigate = useNavigate();
   const { can } = usePermissions();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchPatients();
@@ -47,7 +47,7 @@ function PatientList() {
       const data = await patientService.getAllPatients();
       setPatients(data);
     } catch (error) {
-      toast.error('Failed to fetch patients');
+      toast.error("Failed to fetch patients");
       console.error(error);
     } finally {
       setLoading(false);
@@ -55,13 +55,13 @@ function PatientList() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this patient?')) {
+    if (window.confirm("Are you sure you want to delete this patient?")) {
       try {
         await patientService.deletePatient(id);
-        toast.success('Patient deleted successfully');
+        toast.success("Patient deleted successfully");
         fetchPatients();
       } catch {
-        toast.error('Failed to delete patient');
+        toast.error("Failed to delete patient");
       }
     }
   };
@@ -75,7 +75,7 @@ function PatientList() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -83,7 +83,14 @@ function PatientList() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <div>
           <Typography variant="h4" fontWeight={700}>
             Patients
@@ -96,7 +103,7 @@ function PatientList() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/patients/new')}
+            onClick={() => navigate("/patients/new")}
           >
             Add Patient
           </Button>
@@ -147,13 +154,18 @@ function PatientList() {
                         <Chip
                           label={patient.gender}
                           size="small"
-                          color={patient.gender === 'MALE' ? 'primary' : 'secondary'}
+                          color={
+                            patient.gender === "MALE" ? "primary" : "secondary"
+                          }
                         />
                       </TableCell>
                       <TableCell>{patient.phone}</TableCell>
                       <TableCell>{patient.email}</TableCell>
                       <TableCell>
-                        <BloodGroupIcon bloodGroup={patient.bloodGroup} size="small" />
+                        <BloodGroupIcon
+                          bloodGroup={patient.bloodGroup}
+                          size="small"
+                        />
                       </TableCell>
                       <TableCell align="right">
                         {can(PERMISSIONS.VIEW_PATIENT_DETAILS) && (
@@ -168,7 +180,9 @@ function PatientList() {
                         {can(PERMISSIONS.EDIT_PATIENT) && (
                           <IconButton
                             size="small"
-                            onClick={() => navigate(`/patients/${patient.id}/edit`)}
+                            onClick={() =>
+                              navigate(`/patients/${patient.id}/edit`)
+                            }
                             color="info"
                           >
                             <EditIcon />

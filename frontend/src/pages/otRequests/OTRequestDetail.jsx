@@ -10,9 +10,7 @@ import {
   Divider,
   Alert,
 } from "@mui/material";
-import {
-  ArrowBack as BackIcon,
-} from "@mui/icons-material";
+import { ArrowBack as BackIcon } from "@mui/icons-material";
 import otRequestService from "../../services/otRequestService";
 
 function OTRequestDetail() {
