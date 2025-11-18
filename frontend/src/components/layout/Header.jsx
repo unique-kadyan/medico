@@ -139,10 +139,18 @@ function Header({ onMenuClick }) {
           open={Boolean(notifAnchorEl)}
           onClose={handleMenuClose}
           PaperProps={{
-            sx: { width: 320, maxHeight: 400 }
+            sx: { width: 320, maxHeight: 400 },
           }}
         >
-          <Box sx={{ px: 2, py: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box
+            sx={{
+              px: 2,
+              py: 1.5,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Typography variant="h6" fontWeight={600}>
               Notifications
             </Typography>
@@ -162,7 +170,11 @@ function Header({ onMenuClick }) {
           <Divider />
           {notifications.length === 0 ? (
             <MenuItem disabled>
-              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', width: '100%', py: 2 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ textAlign: "center", width: "100%", py: 2 }}
+              >
                 No notifications
               </Typography>
             </MenuItem>

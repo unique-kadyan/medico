@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -9,23 +9,23 @@ import {
   MenuItem,
   Grid,
   CircularProgress,
-} from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import appointmentService from '../../services/appointmentService';
-import patientService from '../../services/patientService';
-import doctorService from '../../services/doctorService';
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import appointmentService from "../../services/appointmentService";
+import patientService from "../../services/patientService";
+import doctorService from "../../services/doctorService";
 
 const APPOINTMENT_STATUSES = [
-  { value: 'SCHEDULED', label: 'Scheduled' },
-  { value: 'CONFIRMED', label: 'Confirmed' },
-  { value: 'IN_PROGRESS', label: 'In Progress' },
-  { value: 'COMPLETED', label: 'Completed' },
-  { value: 'CANCELLED', label: 'Cancelled' },
-  { value: 'NO_SHOW', label: 'No Show' },
+  { value: "SCHEDULED", label: "Scheduled" },
+  { value: "CONFIRMED", label: "Confirmed" },
+  { value: "IN_PROGRESS", label: "In Progress" },
+  { value: "COMPLETED", label: "Completed" },
+  { value: "CANCELLED", label: "Cancelled" },
+  { value: "NO_SHOW", label: "No Show" },
 ];
 
 function AppointmentForm() {
@@ -38,14 +38,14 @@ function AppointmentForm() {
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [formData, setFormData] = useState({
-    patientId: '',
-    doctorId: '',
+    patientId: "",
+    doctorId: "",
     appointmentDateTime: new Date(),
-    status: 'SCHEDULED',
-    reasonForVisit: '',
-    symptoms: '',
-    diagnosis: '',
-    notes: '',
+    status: "SCHEDULED",
+    reasonForVisit: "",
+    symptoms: "",
+    diagnosis: "",
+    notes: "",
     duration: 30,
   });
 
@@ -58,8 +58,8 @@ function AppointmentForm() {
       setPatients(patientsData);
       setDoctors(doctorsData);
     } catch (error) {
-      toast.error('Failed to load patients and doctors');
-      console.error('Error fetching data:', error);
+      toast.error("Failed to load patients and doctors");
+      console.error("Error fetching data:", error);
     }
   }, []);
 
@@ -68,19 +68,21 @@ function AppointmentForm() {
       setInitialLoading(true);
       const data = await appointmentService.getAppointmentById(id);
       setFormData({
-        patientId: data.patientId || '',
-        doctorId: data.doctorId || '',
-        appointmentDateTime: data.appointmentDateTime ? new Date(data.appointmentDateTime) : new Date(),
-        status: data.status || 'SCHEDULED',
-        reasonForVisit: data.reasonForVisit || '',
-        symptoms: data.symptoms || '',
-        diagnosis: data.diagnosis || '',
-        notes: data.notes || '',
+        patientId: data.patientId || "",
+        doctorId: data.doctorId || "",
+        appointmentDateTime: data.appointmentDateTime
+          ? new Date(data.appointmentDateTime)
+          : new Date(),
+        status: data.status || "SCHEDULED",
+        reasonForVisit: data.reasonForVisit || "",
+        symptoms: data.symptoms || "",
+        diagnosis: data.diagnosis || "",
+        notes: data.notes || "",
         duration: data.duration || 30,
       });
     } catch (error) {
-      toast.error('Failed to fetch appointment details');
-      console.error('Error fetching appointment:', error);
+      toast.error("Failed to fetch appointment details");
+      console.error("Error fetching appointment:", error);
     } finally {
       setInitialLoading(false);
     }
@@ -113,15 +115,15 @@ function AppointmentForm() {
 
     // Validation
     if (!formData.patientId) {
-      toast.error('Please select a patient');
+      toast.error("Please select a patient");
       return;
     }
     if (!formData.doctorId) {
-      toast.error('Please select a doctor');
+      toast.error("Please select a doctor");
       return;
     }
     if (!formData.appointmentDateTime) {
-      toast.error('Please select appointment date and time');
+      toast.error("Please select appointment date and time");
       return;
     }
 
@@ -136,19 +138,19 @@ function AppointmentForm() {
 
       if (isEditMode) {
         await appointmentService.updateAppointment(id, appointmentData);
-        toast.success('Appointment updated successfully');
+        toast.success("Appointment updated successfully");
       } else {
         await appointmentService.createAppointment(appointmentData);
-        toast.success('Appointment created successfully');
+        toast.success("Appointment created successfully");
       }
-      navigate('/appointments');
+      navigate("/appointments");
     } catch (error) {
       toast.error(
         isEditMode
-          ? 'Failed to update appointment'
-          : 'Failed to create appointment'
+          ? "Failed to update appointment"
+          : "Failed to create appointment"
       );
-      console.error('Error saving appointment:', error);
+      console.error("Error saving appointment:", error);
     } finally {
       setLoading(false);
     }
@@ -156,7 +158,12 @@ function AppointmentForm() {
 
   if (initialLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -166,10 +173,12 @@ function AppointmentForm() {
     <Box>
       <Box mb={3}>
         <Typography variant="h4" fontWeight={700}>
-          {isEditMode ? 'Edit Appointment' : 'Book New Appointment'}
+          {isEditMode ? "Edit Appointment" : "Book New Appointment"}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {isEditMode ? 'Update appointment details' : 'Schedule a new appointment for a patient'}
+          {isEditMode
+            ? "Update appointment details"
+            : "Schedule a new appointment for a patient"}
         </Typography>
       </Box>
 
@@ -215,7 +224,8 @@ function AppointmentForm() {
                   </MenuItem>
                   {doctors.map((doctor) => (
                     <MenuItem key={doctor.id} value={doctor.id}>
-                      Dr. {doctor.firstName} {doctor.lastName} - {doctor.specialization}
+                      Dr. {doctor.firstName} {doctor.lastName} -{" "}
+                      {doctor.specialization}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -326,22 +336,18 @@ function AppointmentForm() {
                 <Box display="flex" gap={2} justifyContent="flex-end">
                   <Button
                     variant="outlined"
-                    onClick={() => navigate('/appointments')}
+                    onClick={() => navigate("/appointments")}
                     disabled={loading}
                   >
                     Cancel
                   </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={loading}
-                  >
+                  <Button type="submit" variant="contained" disabled={loading}>
                     {loading ? (
                       <CircularProgress size={24} />
                     ) : isEditMode ? (
-                      'Update Appointment'
+                      "Update Appointment"
                     ) : (
-                      'Book Appointment'
+                      "Book Appointment"
                     )}
                   </Button>
                 </Box>

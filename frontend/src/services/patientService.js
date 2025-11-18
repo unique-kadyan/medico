@@ -1,9 +1,9 @@
-import api from './api';
+import api from "./api";
 
 const patientService = {
   // Get all patients
   getAllPatients: async (params = {}) => {
-    const response = await api.get('/patients', { params });
+    const response = await api.get("/patients", { params });
     return response.data;
   },
 
@@ -15,7 +15,7 @@ const patientService = {
 
   // Search patients
   searchPatients: async (query) => {
-    const response = await api.get('/patients/search', {
+    const response = await api.get("/patients/search", {
       params: { query },
     });
     return response.data;
@@ -35,7 +35,7 @@ const patientService = {
 
   // Create patient
   createPatient: async (patientData) => {
-    const response = await api.post('/patients', patientData);
+    const response = await api.post("/patients", patientData);
     return response.data;
   },
 
@@ -53,13 +53,13 @@ const patientService = {
 
   // Get patient statistics
   getPatientStatistics: async () => {
-    const response = await api.get('/async/patients/statistics');
+    const response = await api.get("/async/patients/statistics");
     return response.data;
   },
 
   // Batch create patients
   createPatientsBatch: async (patients) => {
-    const response = await api.post('/async/patients/batch', patients);
+    const response = await api.post("/async/patients/batch", patients);
     return response.data;
   },
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -9,33 +9,42 @@ import {
   Grid,
   MenuItem,
   CircularProgress,
-} from '@mui/material';
-import { ArrowBack as BackIcon, Save as SaveIcon } from '@mui/icons-material';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import patientService from '../../services/patientService';
+} from "@mui/material";
+import { ArrowBack as BackIcon, Save as SaveIcon } from "@mui/icons-material";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import patientService from "../../services/patientService";
 
-const BLOOD_GROUPS = ['A_POSITIVE', 'A_NEGATIVE', 'B_POSITIVE', 'B_NEGATIVE', 'AB_POSITIVE', 'AB_NEGATIVE', 'O_POSITIVE', 'O_NEGATIVE'];
-const GENDERS = ['MALE', 'FEMALE', 'OTHER'];
+const BLOOD_GROUPS = [
+  "A_POSITIVE",
+  "A_NEGATIVE",
+  "B_POSITIVE",
+  "B_NEGATIVE",
+  "AB_POSITIVE",
+  "AB_NEGATIVE",
+  "O_POSITIVE",
+  "O_NEGATIVE",
+];
+const GENDERS = ["MALE", "FEMALE", "OTHER"];
 
 function PatientForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    patientId: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: 'MALE',
-    phone: '',
-    email: '',
-    address: '',
-    emergencyContact: '',
-    emergencyContactPhone: '',
-    bloodGroup: 'O_POSITIVE',
-    allergies: '',
-    chronicConditions: '',
+    patientId: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "MALE",
+    phone: "",
+    email: "",
+    address: "",
+    emergencyContact: "",
+    emergencyContactPhone: "",
+    bloodGroup: "O_POSITIVE",
+    allergies: "",
+    chronicConditions: "",
   });
 
   const fetchPatient = useCallback(async () => {
@@ -43,7 +52,7 @@ function PatientForm() {
       const data = await patientService.getPatientById(id);
       setFormData(data);
     } catch {
-      toast.error('Failed to fetch patient details');
+      toast.error("Failed to fetch patient details");
     }
   }, [id]);
 
@@ -67,14 +76,14 @@ function PatientForm() {
     try {
       if (id) {
         await patientService.updatePatient(id, formData);
-        toast.success('Patient updated successfully');
+        toast.success("Patient updated successfully");
       } else {
         await patientService.createPatient(formData);
-        toast.success('Patient created successfully');
+        toast.success("Patient created successfully");
       }
-      navigate('/patients');
+      navigate("/patients");
     } catch {
-      toast.error(id ? 'Failed to update patient' : 'Failed to create patient');
+      toast.error(id ? "Failed to update patient" : "Failed to create patient");
     } finally {
       setLoading(false);
     }
@@ -82,8 +91,8 @@ function PatientForm() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate('/patients')}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Button startIcon={<BackIcon />} onClick={() => navigate("/patients")}>
           Back to Patients
         </Button>
       </Box>
@@ -91,10 +100,10 @@ function PatientForm() {
       <Card>
         <CardContent>
           <Typography variant="h5" fontWeight={700} gutterBottom>
-            {id ? 'Edit Patient' : 'Add New Patient'}
+            {id ? "Edit Patient" : "Add New Patient"}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {id ? 'Update patient information' : 'Enter patient details'}
+            {id ? "Update patient information" : "Enter patient details"}
           </Typography>
 
           <form onSubmit={handleSubmit}>
@@ -178,7 +187,7 @@ function PatientForm() {
                 >
                   {BLOOD_GROUPS.map((group) => (
                     <MenuItem key={group} value={group}>
-                      {group.replace('_', ' ')}
+                      {group.replace("_", " ")}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -264,10 +273,12 @@ function PatientForm() {
               </Grid>
 
               <Grid item xs={12}>
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                <Box
+                  sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}
+                >
                   <Button
                     variant="outlined"
-                    onClick={() => navigate('/patients')}
+                    onClick={() => navigate("/patients")}
                     disabled={loading}
                   >
                     Cancel
@@ -275,10 +286,12 @@ function PatientForm() {
                   <Button
                     type="submit"
                     variant="contained"
-                    startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+                    startIcon={
+                      loading ? <CircularProgress size={20} /> : <SaveIcon />
+                    }
                     disabled={loading}
                   >
-                    {id ? 'Update Patient' : 'Create Patient'}
+                    {id ? "Update Patient" : "Create Patient"}
                   </Button>
                 </Box>
               </Grid>

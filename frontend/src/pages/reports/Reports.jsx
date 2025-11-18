@@ -1,4 +1,4 @@
-import { Box, Typography, Paper, Grid } from '@mui/material';
+import { Box, Typography, Paper, Grid } from "@mui/material";
 
 function Reports() {
   return (
@@ -14,7 +14,8 @@ function Reports() {
               Hospital Reports Dashboard
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              View and generate various hospital reports including patient records, appointments, medications, and more.
+              View and generate various hospital reports including patient
+              records, appointments, medications, and more.
             </Typography>
           </Paper>
         </Grid>
@@ -25,7 +26,8 @@ function Reports() {
               Patient Reports
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Access patient admission records, discharge summaries, and medical history reports.
+              Access patient admission records, discharge summaries, and medical
+              history reports.
             </Typography>
           </Paper>
         </Grid>
@@ -36,7 +38,8 @@ function Reports() {
               Appointment Reports
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              View appointment statistics, doctor schedules, and appointment history.
+              View appointment statistics, doctor schedules, and appointment
+              history.
             </Typography>
           </Paper>
         </Grid>
@@ -47,7 +50,8 @@ function Reports() {
               Medication Reports
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Monitor medication inventory, dispensing records, and stock levels.
+              Monitor medication inventory, dispensing records, and stock
+              levels.
             </Typography>
           </Paper>
         </Grid>
@@ -58,7 +62,8 @@ function Reports() {
               Financial Reports
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Generate billing reports, revenue analysis, and financial summaries.
+              Generate billing reports, revenue analysis, and financial
+              summaries.
             </Typography>
           </Paper>
         </Grid>

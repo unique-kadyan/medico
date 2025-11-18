@@ -73,7 +73,9 @@ function NurseForm() {
       }
       navigate("/nurses");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || (id ? "Failed to update nurse" : "Failed to create nurse");
+      const errorMessage =
+        error.response?.data?.message ||
+        (id ? "Failed to update nurse" : "Failed to create nurse");
       toast.error(errorMessage);
       console.error("Error:", error);
     } finally {

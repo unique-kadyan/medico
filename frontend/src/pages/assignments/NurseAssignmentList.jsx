@@ -52,7 +52,9 @@ function NurseAssignmentList() {
     try {
       setLoading(true);
       const [nursesData, patientsData] = await Promise.all([
-        api.get("/users").then((res) => res.data.filter((u) => u.role === "NURSE")),
+        api
+          .get("/users")
+          .then((res) => res.data.filter((u) => u.role === "NURSE")),
         patientService.getAllPatients(),
       ]);
 
@@ -90,9 +92,7 @@ function NurseAssignmentList() {
       setAssignedAs("PRIMARY");
       fetchData();
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to assign nurse"
-      );
+      toast.error(error.response?.data?.message || "Failed to assign nurse");
       console.error("Error assigning nurse:", error);
     }
   };
@@ -120,7 +120,11 @@ function NurseAssignmentList() {
   const getPatientName = (patientId) => {
     const patient = patients.find((p) => p.id === patientId);
     if (!patient) return "Unknown";
-    return patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || "Unknown";
+    return (
+      patient.name ||
+      `${patient.firstName || ""} ${patient.lastName || ""}`.trim() ||
+      "Unknown"
+    );
   };
 
   if (loading) {
@@ -198,9 +202,7 @@ function NurseAssignmentList() {
                       <TableCell>
                         {getPatientName(assignment.patientId)}
                       </TableCell>
-                      <TableCell>
-                        {getNurseName(assignment.nurseId)}
-                      </TableCell>
+                      <TableCell>{getNurseName(assignment.nurseId)}</TableCell>
                       <TableCell>
                         <Chip
                           label={assignment.assignedAs || "PRIMARY"}
@@ -264,7 +266,9 @@ function NurseAssignmentList() {
             >
               {patients.map((patient) => (
                 <MenuItem key={patient.id} value={patient.id}>
-                  {patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`.trim()} - {patient.email}
+                  {patient.name ||
+                    `${patient.firstName || ""} ${patient.lastName || ""}`.trim()}{" "}
+                  - {patient.email}
                 </MenuItem>
               ))}
             </TextField>

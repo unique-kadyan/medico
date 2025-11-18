@@ -1,9 +1,9 @@
-import api from './api';
+import api from "./api";
 
 const appointmentService = {
   // Get all appointments
   getAllAppointments: async (params = {}) => {
-    const response = await api.get('/appointments', { params });
+    const response = await api.get("/appointments", { params });
     return response.data;
   },
 
@@ -33,19 +33,19 @@ const appointmentService = {
 
   // Get today's appointments
   getTodaysAppointments: async () => {
-    const response = await api.get('/appointments/today');
+    const response = await api.get("/appointments/today");
     return response.data;
   },
 
   // Get upcoming appointments
   getUpcomingAppointments: async () => {
-    const response = await api.get('/appointments/upcoming');
+    const response = await api.get("/appointments/upcoming");
     return response.data;
   },
 
   // Create appointment
   createAppointment: async (appointmentData) => {
-    const response = await api.post('/appointments', appointmentData);
+    const response = await api.post("/appointments", appointmentData);
     return response.data;
   },
 

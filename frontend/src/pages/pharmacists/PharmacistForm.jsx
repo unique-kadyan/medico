@@ -73,7 +73,9 @@ function PharmacistForm() {
       }
       navigate("/pharmacists");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || (id ? "Failed to update pharmacist" : "Failed to create pharmacist");
+      const errorMessage =
+        error.response?.data?.message ||
+        (id ? "Failed to update pharmacist" : "Failed to create pharmacist");
       toast.error(errorMessage);
       console.error("Error:", error);
     } finally {
@@ -84,7 +86,10 @@ function PharmacistForm() {
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate("/pharmacists")}>
+        <Button
+          startIcon={<BackIcon />}
+          onClick={() => navigate("/pharmacists")}
+        >
           Back to Pharmacists
         </Button>
       </Box>

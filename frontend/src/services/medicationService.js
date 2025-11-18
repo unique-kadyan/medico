@@ -1,9 +1,9 @@
-import api from './api';
+import api from "./api";
 
 const medicationService = {
   // Get all medications
   getAllMedications: async (params = {}) => {
-    const response = await api.get('/medications', { params });
+    const response = await api.get("/medications", { params });
     return response.data;
   },
 
@@ -15,7 +15,7 @@ const medicationService = {
 
   // Search medications
   searchMedications: async (query) => {
-    const response = await api.get('/medications/search', {
+    const response = await api.get("/medications/search", {
       params: { query },
     });
     return response.data;
@@ -23,7 +23,7 @@ const medicationService = {
 
   // Get low stock medications
   getLowStockMedications: async (threshold = 10) => {
-    const response = await api.get('/medications/low-stock', {
+    const response = await api.get("/medications/low-stock", {
       params: { threshold },
     });
     return response.data;
@@ -37,7 +37,7 @@ const medicationService = {
 
   // Create medication
   createMedication: async (medicationData) => {
-    const response = await api.post('/medications', medicationData);
+    const response = await api.post("/medications", medicationData);
     return response.data;
   },
 
@@ -61,13 +61,16 @@ const medicationService = {
 
   // Get inventory alerts
   getInventoryAlerts: async () => {
-    const response = await api.get('/async/medications/inventory-alerts');
+    const response = await api.get("/async/medications/inventory-alerts");
     return response.data;
   },
 
   // Batch import medications
   importMedicationsBatch: async (medications) => {
-    const response = await api.post('/async/medications/batch-import', medications);
+    const response = await api.post(
+      "/async/medications/batch-import",
+      medications
+    );
     return response.data;
   },
 };

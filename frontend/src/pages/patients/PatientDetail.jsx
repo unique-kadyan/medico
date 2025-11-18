@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -10,11 +10,11 @@ import {
   Chip,
   Divider,
   CircularProgress,
-} from '@mui/material';
-import { ArrowBack as BackIcon, Edit as EditIcon } from '@mui/icons-material';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import patientService from '../../services/patientService';
+} from "@mui/material";
+import { ArrowBack as BackIcon, Edit as EditIcon } from "@mui/icons-material";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import patientService from "../../services/patientService";
 
 function PatientDetail() {
   const { id } = useParams();
@@ -27,7 +27,7 @@ function PatientDetail() {
       const data = await patientService.getPatientById(id);
       setPatient(data);
     } catch (error) {
-      toast.error('Failed to fetch patient details');
+      toast.error("Failed to fetch patient details");
       console.error(error);
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ function PatientDetail() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -48,9 +48,13 @@ function PatientDetail() {
 
   if (!patient) {
     return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
+      <Box sx={{ p: 4, textAlign: "center" }}>
         <Typography>Patient not found</Typography>
-        <Button startIcon={<BackIcon />} onClick={() => navigate('/patients')} sx={{ mt: 2 }}>
+        <Button
+          startIcon={<BackIcon />}
+          onClick={() => navigate("/patients")}
+          sx={{ mt: 2 }}
+        >
           Back to Patients
         </Button>
       </Box>
@@ -63,15 +67,22 @@ function PatientDetail() {
         {label}
       </Typography>
       <Typography variant="body1" fontWeight={500}>
-        {value || 'N/A'}
+        {value || "N/A"}
       </Typography>
     </Box>
   );
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate('/patients')}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Button startIcon={<BackIcon />} onClick={() => navigate("/patients")}>
           Back to Patients
         </Button>
         <Button
@@ -86,14 +97,14 @@ function PatientDetail() {
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
+            <CardContent sx={{ textAlign: "center" }}>
               <Avatar
                 sx={{
                   width: 120,
                   height: 120,
-                  mx: 'auto',
+                  mx: "auto",
                   mb: 2,
-                  bgcolor: 'primary.main',
+                  bgcolor: "primary.main",
                   fontSize: 48,
                 }}
               >
@@ -110,7 +121,7 @@ function PatientDetail() {
               <Chip
                 label={patient.gender}
                 size="small"
-                color={patient.gender === 'MALE' ? 'primary' : 'secondary'}
+                color={patient.gender === "MALE" ? "primary" : "secondary"}
               />
             </CardContent>
           </Card>

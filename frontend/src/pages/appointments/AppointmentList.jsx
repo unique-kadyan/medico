@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -15,18 +15,18 @@ import {
   CircularProgress,
   IconButton,
   Paper,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import appointmentService from '../../services/appointmentService';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import appointmentService from "../../services/appointmentService";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 function AppointmentList() {
   const navigate = useNavigate();
@@ -43,39 +43,43 @@ function AppointmentList() {
       const data = await appointmentService.getAllAppointments();
       setAppointments(data);
     } catch {
-      toast.error('Failed to fetch appointments');
+      toast.error("Failed to fetch appointments");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to cancel this appointment?')) {
+    if (!window.confirm("Are you sure you want to cancel this appointment?")) {
       return;
     }
 
     try {
       await appointmentService.cancelAppointment(id);
-      toast.success('Appointment cancelled successfully');
+      toast.success("Appointment cancelled successfully");
       fetchAppointments();
     } catch (error) {
-      toast.error('Failed to cancel appointment');
-      console.error('Error cancelling appointment:', error);
+      toast.error("Failed to cancel appointment");
+      console.error("Error cancelling appointment:", error);
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'SCHEDULED': return 'primary';
-      case 'COMPLETED': return 'success';
-      case 'CANCELLED': return 'error';
-      default: return 'default';
+      case "SCHEDULED":
+        return "primary";
+      case "COMPLETED":
+        return "success";
+      case "CANCELLED":
+        return "error";
+      default:
+        return "default";
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -83,7 +87,14 @@ function AppointmentList() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <div>
           <Typography variant="h4" fontWeight={700}>
             Appointments
@@ -96,7 +107,7 @@ function AppointmentList() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/appointments/new')}
+            onClick={() => navigate("/appointments/new")}
           >
             Book Appointment
           </Button>
@@ -109,13 +120,27 @@ function AppointmentList() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>ID</strong></TableCell>
-                  <TableCell><strong>Patient</strong></TableCell>
-                  <TableCell><strong>Doctor</strong></TableCell>
-                  <TableCell><strong>Date & Time</strong></TableCell>
-                  <TableCell><strong>Type</strong></TableCell>
-                  <TableCell><strong>Status</strong></TableCell>
-                  <TableCell align="center"><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>ID</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Patient</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Doctor</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Date & Time</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Type</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Status</strong>
+                  </TableCell>
+                  <TableCell align="center">
+                    <strong>Actions</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -123,13 +148,19 @@ function AppointmentList() {
                   appointments.map((appointment) => (
                     <TableRow key={appointment.id} hover>
                       <TableCell>#{appointment.id}</TableCell>
-                      <TableCell>{appointment.patientName || 'N/A'}</TableCell>
-                      <TableCell>{appointment.doctorName || 'N/A'}</TableCell>
+                      <TableCell>{appointment.patientName || "N/A"}</TableCell>
+                      <TableCell>{appointment.doctorName || "N/A"}</TableCell>
                       <TableCell>
-                        {new Date(appointment.appointmentDateTime).toLocaleString()}
+                        {new Date(
+                          appointment.appointmentDateTime
+                        ).toLocaleString()}
                       </TableCell>
                       <TableCell>
-                        <Chip label={appointment.type} size="small" variant="outlined" />
+                        <Chip
+                          label={appointment.type}
+                          size="small"
+                          variant="outlined"
+                        />
                       </TableCell>
                       <TableCell>
                         <Chip
@@ -143,7 +174,9 @@ function AppointmentList() {
                           <IconButton
                             size="small"
                             color="primary"
-                            onClick={() => navigate(`/appointments/${appointment.id}`)}
+                            onClick={() =>
+                              navigate(`/appointments/${appointment.id}`)
+                            }
                             title="View Details"
                           >
                             <ViewIcon />
@@ -152,7 +185,9 @@ function AppointmentList() {
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => navigate(`/appointments/edit/${appointment.id}`)}
+                              onClick={() =>
+                                navigate(`/appointments/edit/${appointment.id}`)
+                              }
                               title="Edit Appointment"
                             >
                               <EditIcon />

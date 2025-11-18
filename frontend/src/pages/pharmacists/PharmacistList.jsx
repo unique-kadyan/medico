@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -15,18 +15,18 @@ import {
   Chip,
   IconButton,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import api from '../../services/api';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import api from "../../services/api";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 function PharmacistList() {
   const navigate = useNavigate();
@@ -42,35 +42,42 @@ function PharmacistList() {
     try {
       setLoading(true);
       // Fetch all users and filter by PHARMACIST role
-      const response = await api.get('/users');
-      const pharmacistUsers = response.data.filter(user => user.role === 'PHARMACIST');
+      const response = await api.get("/users");
+      const pharmacistUsers = response.data.filter(
+        (user) => user.role === "PHARMACIST"
+      );
       setPharmacists(pharmacistUsers);
     } catch (error) {
-      toast.error('Failed to load pharmacists');
-      console.error('Error fetching pharmacists:', error);
+      toast.error("Failed to load pharmacists");
+      console.error("Error fetching pharmacists:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this pharmacist?')) {
+    if (!window.confirm("Are you sure you want to delete this pharmacist?")) {
       return;
     }
 
     try {
       await api.delete(`/users/${id}`);
-      toast.success('Pharmacist deleted successfully');
+      toast.success("Pharmacist deleted successfully");
       fetchPharmacists();
     } catch (error) {
-      toast.error('Failed to delete pharmacist');
-      console.error('Error deleting pharmacist:', error);
+      toast.error("Failed to delete pharmacist");
+      console.error("Error deleting pharmacist:", error);
     }
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -78,7 +85,12 @@ function PharmacistList() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" fontWeight={600}>
           Pharmacists
         </Typography>
@@ -86,7 +98,7 @@ function PharmacistList() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/pharmacists/new')}
+            onClick={() => navigate("/pharmacists/new")}
           >
             Add Pharmacist
           </Button>
@@ -99,13 +111,26 @@ function PharmacistList() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>ID</strong></TableCell>
-                  <TableCell><strong>Name</strong></TableCell>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Phone</strong></TableCell>
-                  <TableCell><strong>Status</strong></TableCell>
-                  {(can(PERMISSIONS.EDIT_PHARMACIST) || can(PERMISSIONS.DELETE_PHARMACIST)) && (
-                    <TableCell align="center"><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>ID</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Email</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Phone</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Status</strong>
+                  </TableCell>
+                  {(can(PERMISSIONS.EDIT_PHARMACIST) ||
+                    can(PERMISSIONS.DELETE_PHARMACIST)) && (
+                    <TableCell align="center">
+                      <strong>Actions</strong>
+                    </TableCell>
                   )}
                 </TableRow>
               </TableHead>
@@ -126,21 +151,24 @@ function PharmacistList() {
                         {pharmacist.firstName} {pharmacist.lastName}
                       </TableCell>
                       <TableCell>{pharmacist.email}</TableCell>
-                      <TableCell>{pharmacist.phone || '-'}</TableCell>
+                      <TableCell>{pharmacist.phone || "-"}</TableCell>
                       <TableCell>
                         <Chip
-                          label={pharmacist.enabled ? 'Active' : 'Inactive'}
+                          label={pharmacist.enabled ? "Active" : "Inactive"}
                           size="small"
-                          color={pharmacist.enabled ? 'success' : 'default'}
+                          color={pharmacist.enabled ? "success" : "default"}
                         />
                       </TableCell>
-                      {(can(PERMISSIONS.EDIT_PHARMACIST) || can(PERMISSIONS.DELETE_PHARMACIST)) && (
+                      {(can(PERMISSIONS.EDIT_PHARMACIST) ||
+                        can(PERMISSIONS.DELETE_PHARMACIST)) && (
                         <TableCell align="center">
                           <Box display="flex" gap={0.5} justifyContent="center">
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => navigate(`/pharmacists/${pharmacist.userId}`)}
+                              onClick={() =>
+                                navigate(`/pharmacists/${pharmacist.userId}`)
+                              }
                             >
                               <ViewIcon />
                             </IconButton>
@@ -148,7 +176,11 @@ function PharmacistList() {
                               <IconButton
                                 size="small"
                                 color="primary"
-                                onClick={() => navigate(`/pharmacists/edit/${pharmacist.userId}`)}
+                                onClick={() =>
+                                  navigate(
+                                    `/pharmacists/edit/${pharmacist.userId}`
+                                  )
+                                }
                               >
                                 <EditIcon />
                               </IconButton>

@@ -124,7 +124,10 @@ function EmergencyRoomDetail() {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Button startIcon={<BackIcon />} onClick={() => navigate("/emergency")}>
+          <Button
+            startIcon={<BackIcon />}
+            onClick={() => navigate("/emergency")}
+          >
             Back
           </Button>
           <Typography variant="h4" fontWeight={600}>
@@ -253,15 +256,15 @@ function EmergencyRoomDetail() {
                         room.currentOccupancy === room.capacity
                           ? "error"
                           : room.currentOccupancy > 0
-                          ? "warning.main"
-                          : "success.main"
+                            ? "warning.main"
+                            : "success.main"
                       }
                     >
                       {room.currentOccupancy === room.capacity
                         ? "Full"
                         : room.currentOccupancy > 0
-                        ? "Partially Occupied"
-                        : "Empty"}
+                          ? "Partially Occupied"
+                          : "Empty"}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -320,7 +323,10 @@ function EmergencyRoomDetail() {
         )}
       </Grid>
 
-      <Dialog open={openStatusDialog} onClose={() => setOpenStatusDialog(false)}>
+      <Dialog
+        open={openStatusDialog}
+        onClose={() => setOpenStatusDialog(false)}
+      >
         <DialogTitle>Update Room Status</DialogTitle>
         <DialogContent>
           <FormControl fullWidth sx={{ mt: 2 }}>

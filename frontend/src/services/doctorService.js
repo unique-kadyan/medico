@@ -1,9 +1,9 @@
-import api from './api';
+import api from "./api";
 
 const doctorService = {
   // Get all doctors
   getAllDoctors: async (params = {}) => {
-    const response = await api.get('/doctors', { params });
+    const response = await api.get("/doctors", { params });
     return response.data;
   },
 
@@ -15,7 +15,7 @@ const doctorService = {
 
   // Search doctors
   searchDoctors: async (query) => {
-    const response = await api.get('/doctors/search', {
+    const response = await api.get("/doctors/search", {
       params: { query },
     });
     return response.data;
@@ -29,7 +29,7 @@ const doctorService = {
 
   // Get available doctors
   getAvailableDoctors: async (date) => {
-    const response = await api.get('/doctors/available', {
+    const response = await api.get("/doctors/available", {
       params: { date },
     });
     return response.data;
@@ -37,7 +37,7 @@ const doctorService = {
 
   // Create doctor
   createDoctor: async (doctorData) => {
-    const response = await api.post('/doctors', doctorData);
+    const response = await api.post("/doctors", doctorData);
     return response.data;
   },
 

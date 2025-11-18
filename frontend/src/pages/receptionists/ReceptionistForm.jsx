@@ -73,7 +73,11 @@ function ReceptionistForm() {
       }
       navigate("/receptionists");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || (id ? "Failed to update receptionist" : "Failed to create receptionist");
+      const errorMessage =
+        error.response?.data?.message ||
+        (id
+          ? "Failed to update receptionist"
+          : "Failed to create receptionist");
       toast.error(errorMessage);
       console.error("Error:", error);
     } finally {
@@ -84,7 +88,10 @@ function ReceptionistForm() {
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate("/receptionists")}>
+        <Button
+          startIcon={<BackIcon />}
+          onClick={() => navigate("/receptionists")}
+        >
           Back to Receptionists
         </Button>
       </Box>
@@ -95,7 +102,9 @@ function ReceptionistForm() {
             {id ? "Edit Receptionist" : "Add New Receptionist"}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {id ? "Update receptionist information" : "Enter receptionist details"}
+            {id
+              ? "Update receptionist information"
+              : "Enter receptionist details"}
           </Typography>
 
           <form onSubmit={handleSubmit}>

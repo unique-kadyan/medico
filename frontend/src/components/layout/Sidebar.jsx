@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Drawer,
   List,
@@ -8,7 +8,7 @@ import {
   Box,
   Divider,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
@@ -22,11 +22,11 @@ import {
   HowToReg as ApprovalIcon,
   MedicalServices as OTIcon,
   EmergencyShare as EmergencyIcon,
-} from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
-import dashboardService from '../../services/dashboardService';
+} from "@mui/icons-material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
+import dashboardService from "../../services/dashboardService";
 
 const drawerWidth = 260;
 
@@ -51,7 +51,7 @@ function Sidebar({ open }) {
         todayAppointments: data.todayAppointments || 0,
       });
     } catch (error) {
-      console.error('Error fetching sidebar stats:', error);
+      console.error("Error fetching sidebar stats:", error);
     }
   };
 
@@ -61,110 +61,128 @@ function Sidebar({ open }) {
 
   const allMenuItems = [
     {
-      text: 'Dashboard',
+      text: "Dashboard",
       icon: <DashboardIcon />,
-      path: '/dashboard',
-      show: true
+      path: "/dashboard",
+      show: true,
     },
     {
-      text: 'Patients',
+      text: "Patients",
       icon: <PeopleIcon />,
-      path: '/patients',
-      show: canAny([PERMISSIONS.VIEW_ALL_PATIENTS, PERMISSIONS.VIEW_ASSIGNED_PATIENTS, PERMISSIONS.VIEW_OWN_PROFILE])
+      path: "/patients",
+      show: canAny([
+        PERMISSIONS.VIEW_ALL_PATIENTS,
+        PERMISSIONS.VIEW_ASSIGNED_PATIENTS,
+        PERMISSIONS.VIEW_OWN_PROFILE,
+      ]),
     },
     {
-      text: 'Doctors',
+      text: "Doctors",
       icon: <DoctorIcon />,
-      path: '/doctors',
-      show: can(PERMISSIONS.VIEW_DOCTORS)
+      path: "/doctors",
+      show: can(PERMISSIONS.VIEW_DOCTORS),
     },
     {
-      text: 'Nurses',
+      text: "Nurses",
       icon: <NurseIcon />,
-      path: '/nurses',
-      show: can(PERMISSIONS.VIEW_NURSES)
+      path: "/nurses",
+      show: can(PERMISSIONS.VIEW_NURSES),
     },
     {
-      text: 'Pharmacists',
+      text: "Pharmacists",
       icon: <AssignmentIcon />,
-      path: '/pharmacists',
-      show: can(PERMISSIONS.VIEW_PHARMACISTS)
+      path: "/pharmacists",
+      show: can(PERMISSIONS.VIEW_PHARMACISTS),
     },
     {
-      text: 'Lab Technicians',
+      text: "Lab Technicians",
       icon: <LabIcon />,
-      path: '/lab-technicians',
-      show: can(PERMISSIONS.VIEW_LAB_TECHNICIANS)
+      path: "/lab-technicians",
+      show: can(PERMISSIONS.VIEW_LAB_TECHNICIANS),
     },
     {
-      text: 'Receptionists',
+      text: "Receptionists",
       icon: <AssignmentIcon />,
-      path: '/receptionists',
-      show: can(PERMISSIONS.VIEW_RECEPTIONISTS)
+      path: "/receptionists",
+      show: can(PERMISSIONS.VIEW_RECEPTIONISTS),
     },
     {
-      text: 'Doctor Assignments',
+      text: "Doctor Assignments",
       icon: <AssignmentIcon />,
-      path: '/doctor-assignments',
-      show: can(PERMISSIONS.ASSIGN_DOCTOR_TO_PATIENT)
+      path: "/doctor-assignments",
+      show: can(PERMISSIONS.ASSIGN_DOCTOR_TO_PATIENT),
     },
     {
-      text: 'Nurse Assignments',
+      text: "Nurse Assignments",
       icon: <AssignmentIcon />,
-      path: '/nurse-assignments',
-      show: can(PERMISSIONS.ASSIGN_DOCTOR_TO_PATIENT)
+      path: "/nurse-assignments",
+      show: can(PERMISSIONS.ASSIGN_DOCTOR_TO_PATIENT),
     },
     {
-      text: 'Appointments',
+      text: "Appointments",
       icon: <CalendarIcon />,
-      path: '/appointments',
-      show: canAny([PERMISSIONS.VIEW_APPOINTMENTS, PERMISSIONS.VIEW_OWN_APPOINTMENTS])
+      path: "/appointments",
+      show: canAny([
+        PERMISSIONS.VIEW_APPOINTMENTS,
+        PERMISSIONS.VIEW_OWN_APPOINTMENTS,
+      ]),
     },
     {
-      text: 'Medications',
+      text: "Medications",
       icon: <MedicationIcon />,
-      path: '/medications',
-      show: can(PERMISSIONS.VIEW_MEDICATIONS) || isAnyRole(['PHARMACIST', 'ADMIN'])
+      path: "/medications",
+      show:
+        can(PERMISSIONS.VIEW_MEDICATIONS) || isAnyRole(["PHARMACIST", "ADMIN"]),
     },
     {
-      text: 'Med Requests',
+      text: "Med Requests",
       icon: <AssignmentIcon />,
-      path: '/medication-requests',
-      show: canAny([PERMISSIONS.VIEW_MEDICATION_REQUESTS, PERMISSIONS.APPROVE_MEDICATION_REQUEST])
+      path: "/medication-requests",
+      show: canAny([
+        PERMISSIONS.VIEW_MEDICATION_REQUESTS,
+        PERMISSIONS.APPROVE_MEDICATION_REQUEST,
+      ]),
     },
     {
-      text: 'Lab Tests',
+      text: "Lab Tests",
       icon: <LabIcon />,
-      path: '/lab-tests',
-      show: canAny([PERMISSIONS.VIEW_LAB_TESTS, PERMISSIONS.VIEW_OWN_LAB_TESTS, PERMISSIONS.UPLOAD_LAB_RESULTS])
+      path: "/lab-tests",
+      show: canAny([
+        PERMISSIONS.VIEW_LAB_TESTS,
+        PERMISSIONS.VIEW_OWN_LAB_TESTS,
+        PERMISSIONS.UPLOAD_LAB_RESULTS,
+      ]),
     },
     {
-      text: 'OT Requests',
+      text: "OT Requests",
       icon: <OTIcon />,
-      path: '/ot-requests',
-      show: isAnyRole(['DOCTOR', 'NURSE', 'ADMIN'])
+      path: "/ot-requests",
+      show: isAnyRole(["DOCTOR", "NURSE", "ADMIN"]),
     },
     {
-      text: 'Emergency',
+      text: "Emergency",
       icon: <EmergencyIcon />,
-      path: '/emergency',
-      show: isAnyRole(['DOCTOR', 'NURSE', 'ADMIN'])
+      path: "/emergency",
+      show: isAnyRole(["DOCTOR", "NURSE", "ADMIN"]),
     },
     {
-      text: 'Pending Approvals',
+      text: "Pending Approvals",
       icon: <ApprovalIcon />,
-      path: '/approvals',
-      show: can(PERMISSIONS.VIEW_PENDING_REGISTRATIONS)
+      path: "/approvals",
+      show: can(PERMISSIONS.VIEW_PENDING_REGISTRATIONS),
     },
     {
-      text: 'Reports',
+      text: "Reports",
       icon: <ReportsIcon />,
-      path: '/reports',
-      show: canAny([PERMISSIONS.VIEW_PATIENT_REPORTS, PERMISSIONS.VIEW_MONITORING])
+      path: "/reports",
+      show: canAny([
+        PERMISSIONS.VIEW_PATIENT_REPORTS,
+        PERMISSIONS.VIEW_MONITORING,
+      ]),
     },
   ];
 
-  const menuItems = allMenuItems.filter(item => item.show);
+  const menuItems = allMenuItems.filter((item) => item.show);
 
   return (
     <Drawer
@@ -172,15 +190,15 @@ function Sidebar({ open }) {
       sx={{
         width: open ? drawerWidth : 0,
         flexShrink: 0,
-        '& .MuiDrawer-paper': {
+        "& .MuiDrawer-paper": {
           width: drawerWidth,
-          boxSizing: 'border-box',
-          bgcolor: 'background.paper',
-          borderRight: '1px solid',
-          borderColor: 'divider',
-          transform: open ? 'translateX(0)' : `translateX(-${drawerWidth}px)`,
+          boxSizing: "border-box",
+          bgcolor: "background.paper",
+          borderRight: "1px solid",
+          borderColor: "divider",
+          transform: open ? "translateX(0)" : `translateX(-${drawerWidth}px)`,
           transition: (theme) =>
-            theme.transitions.create('transform', {
+            theme.transitions.create("transform", {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.enteringScreen,
             }),
@@ -189,10 +207,10 @@ function Sidebar({ open }) {
     >
       <Box sx={{ height: 64 }} />
 
-      <Box sx={{ overflow: 'auto', pt: 2 }}>
+      <Box sx={{ overflow: "auto", pt: 2 }}>
         <Typography
           variant="caption"
-          sx={{ px: 3, py: 1, color: 'text.secondary', fontWeight: 600 }}
+          sx={{ px: 3, py: 1, color: "text.secondary", fontWeight: 600 }}
         >
           MAIN MENU
         </Typography>
@@ -207,23 +225,21 @@ function Sidebar({ open }) {
                   mx: 1.5,
                   mb: 0.5,
                   borderRadius: 2,
-                  bgcolor: isActive ? 'primary.main' : 'transparent',
-                  color: isActive ? 'white' : 'text.primary',
-                  '&:hover': {
-                    bgcolor: isActive ? 'primary.dark' : 'action.hover',
+                  bgcolor: isActive ? "primary.main" : "transparent",
+                  color: isActive ? "white" : "text.primary",
+                  "&:hover": {
+                    bgcolor: isActive ? "primary.dark" : "action.hover",
                   },
-                  '& .MuiListItemIcon-root': {
-                    color: isActive ? 'white' : 'text.secondary',
+                  "& .MuiListItemIcon-root": {
+                    color: isActive ? "white" : "text.secondary",
                   },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  {item.icon}
-                </ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
                 <ListItemText
                   primary={item.text}
                   primaryTypographyProps={{
-                    fontSize: '0.875rem',
+                    fontSize: "0.875rem",
                     fontWeight: isActive ? 600 : 500,
                   }}
                 />
@@ -238,14 +254,16 @@ function Sidebar({ open }) {
           <Typography variant="caption" color="text.secondary" fontWeight={600}>
             QUICK STATS
           </Typography>
-          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box
+            sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1.5 }}
+          >
             <Box
               sx={{
                 p: 2,
                 borderRadius: 2,
-                bgcolor: 'primary.50',
-                border: '1px solid',
-                borderColor: 'primary.100',
+                bgcolor: "primary.50",
+                border: "1px solid",
+                borderColor: "primary.100",
               }}
             >
               <Typography variant="h4" color="primary.main" fontWeight={700}>
@@ -259,9 +277,9 @@ function Sidebar({ open }) {
               sx={{
                 p: 2,
                 borderRadius: 2,
-                bgcolor: 'success.50',
-                border: '1px solid',
-                borderColor: 'success.100',
+                bgcolor: "success.50",
+                border: "1px solid",
+                borderColor: "success.100",
               }}
             >
               <Typography variant="h4" color="success.main" fontWeight={700}>

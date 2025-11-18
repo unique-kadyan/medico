@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -15,18 +15,18 @@ import {
   Chip,
   IconButton,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import api from '../../services/api';
-import { usePermissions } from '../../hooks/usePermissions';
-import { PERMISSIONS } from '../../utils/permissions';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import api from "../../services/api";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../utils/permissions";
 
 function NurseList() {
   const navigate = useNavigate();
@@ -42,35 +42,40 @@ function NurseList() {
     try {
       setLoading(true);
       // Fetch all users and filter by NURSE role
-      const response = await api.get('/users');
-      const nurseUsers = response.data.filter(user => user.role === 'NURSE');
+      const response = await api.get("/users");
+      const nurseUsers = response.data.filter((user) => user.role === "NURSE");
       setNurses(nurseUsers);
     } catch (error) {
-      toast.error('Failed to load nurses');
-      console.error('Error fetching nurses:', error);
+      toast.error("Failed to load nurses");
+      console.error("Error fetching nurses:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this nurse?')) {
+    if (!window.confirm("Are you sure you want to delete this nurse?")) {
       return;
     }
 
     try {
       await api.delete(`/users/${id}`);
-      toast.success('Nurse deleted successfully');
+      toast.success("Nurse deleted successfully");
       fetchNurses();
     } catch (error) {
-      toast.error('Failed to delete nurse');
-      console.error('Error deleting nurse:', error);
+      toast.error("Failed to delete nurse");
+      console.error("Error deleting nurse:", error);
     }
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -78,7 +83,12 @@ function NurseList() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" fontWeight={600}>
           Nurses
         </Typography>
@@ -86,7 +96,7 @@ function NurseList() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/nurses/new')}
+            onClick={() => navigate("/nurses/new")}
           >
             Add Nurse
           </Button>
@@ -99,13 +109,26 @@ function NurseList() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>ID</strong></TableCell>
-                  <TableCell><strong>Name</strong></TableCell>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Phone</strong></TableCell>
-                  <TableCell><strong>Status</strong></TableCell>
-                  {(can(PERMISSIONS.EDIT_NURSE) || can(PERMISSIONS.DELETE_NURSE)) && (
-                    <TableCell align="center"><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>ID</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Email</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Phone</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Status</strong>
+                  </TableCell>
+                  {(can(PERMISSIONS.EDIT_NURSE) ||
+                    can(PERMISSIONS.DELETE_NURSE)) && (
+                    <TableCell align="center">
+                      <strong>Actions</strong>
+                    </TableCell>
                   )}
                 </TableRow>
               </TableHead>
@@ -126,21 +149,24 @@ function NurseList() {
                         {nurse.firstName} {nurse.lastName}
                       </TableCell>
                       <TableCell>{nurse.email}</TableCell>
-                      <TableCell>{nurse.phone || '-'}</TableCell>
+                      <TableCell>{nurse.phone || "-"}</TableCell>
                       <TableCell>
                         <Chip
-                          label={nurse.enabled ? 'Active' : 'Inactive'}
+                          label={nurse.enabled ? "Active" : "Inactive"}
                           size="small"
-                          color={nurse.enabled ? 'success' : 'default'}
+                          color={nurse.enabled ? "success" : "default"}
                         />
                       </TableCell>
-                      {(can(PERMISSIONS.EDIT_NURSE) || can(PERMISSIONS.DELETE_NURSE)) && (
+                      {(can(PERMISSIONS.EDIT_NURSE) ||
+                        can(PERMISSIONS.DELETE_NURSE)) && (
                         <TableCell align="center">
                           <Box display="flex" gap={0.5} justifyContent="center">
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => navigate(`/nurses/${nurse.userId}`)}
+                              onClick={() =>
+                                navigate(`/nurses/${nurse.userId}`)
+                              }
                             >
                               <ViewIcon />
                             </IconButton>
@@ -148,7 +174,9 @@ function NurseList() {
                               <IconButton
                                 size="small"
                                 color="primary"
-                                onClick={() => navigate(`/nurses/edit/${nurse.userId}`)}
+                                onClick={() =>
+                                  navigate(`/nurses/edit/${nurse.userId}`)
+                                }
                               >
                                 <EditIcon />
                               </IconButton>
