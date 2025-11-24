@@ -12,9 +12,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Performance monitoring with AOP for async operations
- */
 @Aspect
 @Component
 @Slf4j
@@ -139,15 +136,9 @@ public class PerformanceMonitor {
         @Override
         public String toString() {
             return String.format(
-                "Metrics{calls=%d, success=%d, failure=%d, successRate=%.2f%%, avgDuration=%.2fms, min=%dms, max=%dms}",
-                getTotalCalls(),
-                getSuccessCount(),
-                getFailureCount(),
-                getSuccessRate(),
-                getAverageDuration(),
-                getMinDuration(),
-                getMaxDuration()
-            );
+                    "Metrics{calls=%d, success=%d, failure=%d, successRate=%.2f%%, avgDuration=%.2fms, min=%dms, max=%dms}",
+                    getTotalCalls(), getSuccessCount(), getFailureCount(), getSuccessRate(), getAverageDuration(),
+                    getMinDuration(), getMaxDuration());
         }
     }
 }

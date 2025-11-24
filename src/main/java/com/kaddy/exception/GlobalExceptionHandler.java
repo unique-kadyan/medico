@@ -13,10 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Global exception handler with secure error messaging
- * Prevents information disclosure by not exposing stack traces or internal details
- */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -25,16 +21,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         String errorId = UUID.randomUUID().toString();
 
-        // Log full details internally
         log.warn("Resource not found [Error ID: {}]: {}", errorId, ex.getMessage());
 
-        // Return safe error message to client
-        ErrorResponse errorResponse = new ErrorResponse(
-            HttpStatus.NOT_FOUND.value(),
-            "Resource not found",
-            errorId,
-            LocalDateTime.now()
-        );
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Resource not found", errorId,
+                LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
@@ -42,22 +32,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         String errorId = UUID.randomUUID().toString();
 
-        // Log full details internally
         log.warn("Invalid argument [Error ID: {}]: {}", errorId, ex.getMessage());
 
-        // Return safe error message to client
-        ErrorResponse errorResponse = new ErrorResponse(
-            HttpStatus.BAD_REQUEST.value(),
-            "Invalid request parameters",
-            errorId,
-            LocalDateTime.now()
-        );
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid request parameters",
+                errorId, LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
 
         String errorId = UUID.randomUUID().toString();
         Map<String, String> errors = new HashMap<>();
@@ -70,13 +53,8 @@ public class GlobalExceptionHandler {
 
         log.warn("Validation failed [Error ID: {}]: {} validation errors", errorId, errors.size());
 
-        ValidationErrorResponse response = new ValidationErrorResponse(
-            HttpStatus.BAD_REQUEST.value(),
-            "Validation failed",
-            errorId,
-            LocalDateTime.now(),
-            errors
-        );
+        ValidationErrorResponse response = new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                "Validation failed", errorId, LocalDateTime.now(), errors);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -87,15 +65,10 @@ public class GlobalExceptionHandler {
 
         String errorId = UUID.randomUUID().toString();
 
-        // Log security violation
         log.warn("Access denied [Error ID: {}]: {}", errorId, ex.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(
-            HttpStatus.FORBIDDEN.value(),
-            "Access denied",
-            errorId,
-            LocalDateTime.now()
-        );
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Access denied", errorId,
+                LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
@@ -103,39 +76,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
         String errorId = UUID.randomUUID().toString();
 
-        // Log full details internally (including stack trace for debugging)
         log.error("Unexpected error [Error ID: {}]", errorId, ex);
 
-        // Return GENERIC message to client (NO stack trace or internal details)
-        ErrorResponse errorResponse = new ErrorResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            "An unexpected error occurred. Please contact support with error ID: " + errorId,
-            errorId,
-            LocalDateTime.now()
-        );
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An unexpected error occurred. Please contact support with error ID: " + errorId, errorId,
+                LocalDateTime.now());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * Secure error response that includes error ID for tracking
-     * but doesn't expose internal implementation details
-     */
-    public record ErrorResponse(
-        int status,
-        String message,
-        String errorId,
-        LocalDateTime timestamp
-    ) {}
+    public record ErrorResponse(int status, String message, String errorId, LocalDateTime timestamp) {
+    }
 
-    /**
-     * Validation error response with field-level errors
-     */
-    public record ValidationErrorResponse(
-        int status,
-        String message,
-        String errorId,
-        LocalDateTime timestamp,
-        Map<String, String> errors
-    ) {}
+    public record ValidationErrorResponse(int status, String message, String errorId, LocalDateTime timestamp,
+            Map<String, String> errors) {
+    }
 }

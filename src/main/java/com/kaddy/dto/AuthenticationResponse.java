@@ -24,4 +24,9 @@ public class AuthenticationResponse {
     private Long userId;
     private List<String> permissions;
     private Boolean enabled;
+
+    private Long hospitalId;
+    private String hospitalName;
+    private String hospitalCode;
+    private String hospitalLogoUrl;
 }

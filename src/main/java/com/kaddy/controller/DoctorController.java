@@ -3,7 +3,6 @@ package com.kaddy.controller;
 import com.kaddy.dto.DoctorDTO;
 import com.kaddy.service.DoctorService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,9 +60,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DoctorDTO> updateDoctor(
-            @PathVariable Long id,
-            @Valid @RequestBody DoctorDTO doctorDTO) {
+    public ResponseEntity<DoctorDTO> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorDTO doctorDTO) {
         return ResponseEntity.ok(doctorService.updateDoctor(id, doctorDTO));
     }
 
@@ -74,9 +71,7 @@ public class DoctorController {
     }
 
     @PatchMapping("/{id}/availability")
-    public ResponseEntity<DoctorDTO> updateAvailability(
-            @PathVariable Long id,
-            @RequestParam boolean available) {
+    public ResponseEntity<DoctorDTO> updateAvailability(@PathVariable Long id, @RequestParam boolean available) {
         return ResponseEntity.ok(doctorService.updateAvailability(id, available));
     }
 

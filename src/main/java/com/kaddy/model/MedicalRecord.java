@@ -30,7 +30,7 @@ public class MedicalRecord extends BaseEntity {
     private LocalDateTime recordDate = LocalDateTime.now();
 
     @Column(nullable = false)
-    private String recordType; // e.g., Consultation, Lab Report, Surgery, etc.
+    private String recordType;
 
     @Column(columnDefinition = "TEXT")
     private String chiefComplaint;
@@ -50,7 +50,6 @@ public class MedicalRecord extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    // Vital signs
     @Column
     private String bloodPressure;
 

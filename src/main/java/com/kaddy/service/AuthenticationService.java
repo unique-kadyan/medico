@@ -63,20 +63,15 @@ public class AuthenticationService {
         log.info("Authenticating user with email: {}", request.getEmail());
 
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
+            authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (Exception e) {
             log.error("Authentication failed for user: {}", request.getEmail(), e);
             throw new RuntimeException("Invalid credentials. Please check your email/username and password.");
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .or(() -> userRepository.findByUsername(request.getEmail()))
-                .orElseThrow(() -> {
+                .or(() -> userRepository.findByUsername(request.getEmail())).orElseThrow(() -> {
                     log.error("User not found after successful authentication: {}", request.getEmail());
                     return new RuntimeException("User not found");
                 });
@@ -90,15 +85,16 @@ public class AuthenticationService {
     }
 
     private AuthenticationResponse buildAuthenticationResponse(User user, String token) {
-        return AuthenticationResponse.builder()
-                .token(token)
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .role(user.getRole())
-                .userId(user.getId())
-                .permissions(permissionService.getPermissionsForRole(user.getRole()))
-                .build();
+        AuthenticationResponse.AuthenticationResponseBuilder builder = AuthenticationResponse.builder().token(token)
+                .username(user.getUsername()).email(user.getEmail()).firstName(user.getFirstName())
+                .lastName(user.getLastName()).role(user.getRole()).userId(user.getId())
+                .permissions(permissionService.getPermissionsForRole(user.getRole()));
+
+        if (user.getHospital() != null) {
+            builder.hospitalId(user.getHospital().getId()).hospitalName(user.getHospital().getName())
+                    .hospitalCode(user.getHospital().getCode()).hospitalLogoUrl(user.getHospital().getLogoUrl());
+        }
+
+        return builder.build();
     }
 }

@@ -35,26 +35,21 @@ public class OTRequestService {
 
     @Transactional
     public OTRequestDTO createOTRequest(OTRequestDTO otRequestDTO) {
-        Patient patient = patientRepository.findById(otRequestDTO.getPatientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + otRequestDTO.getPatientId()));
+        Patient patient = patientRepository.findById(otRequestDTO.getPatientId()).orElseThrow(
+                () -> new ResourceNotFoundException("Patient not found with id: " + otRequestDTO.getPatientId()));
 
-        Doctor surgeon = doctorRepository.findById(otRequestDTO.getSurgeonId())
-                .orElseThrow(() -> new ResourceNotFoundException("Surgeon not found with id: " + otRequestDTO.getSurgeonId()));
+        Doctor surgeon = doctorRepository.findById(otRequestDTO.getSurgeonId()).orElseThrow(
+                () -> new ResourceNotFoundException("Surgeon not found with id: " + otRequestDTO.getSurgeonId()));
 
-        // Check for scheduling conflicts if room number and time are provided
-        if (otRequestDTO.getOtRoomNumber() != null &&
-            otRequestDTO.getScheduledStartTime() != null &&
-            otRequestDTO.getScheduledEndTime() != null) {
+        if (otRequestDTO.getOtRoomNumber() != null && otRequestDTO.getScheduledStartTime() != null
+                && otRequestDTO.getScheduledEndTime() != null) {
 
-            List<OTRequest> conflicts = otRequestRepository.findConflictingRequests(
-                otRequestDTO.getOtRoomNumber(),
-                otRequestDTO.getScheduledStartTime(),
-                otRequestDTO.getScheduledEndTime()
-            );
+            List<OTRequest> conflicts = otRequestRepository.findConflictingRequests(otRequestDTO.getOtRoomNumber(),
+                    otRequestDTO.getScheduledStartTime(), otRequestDTO.getScheduledEndTime());
 
             if (!conflicts.isEmpty()) {
-                throw new DuplicateResourceException("OT Room " + otRequestDTO.getOtRoomNumber() +
-                    " is already booked for the requested time slot");
+                throw new DuplicateResourceException(
+                        "OT Room " + otRequestDTO.getOtRoomNumber() + " is already booked for the requested time slot");
             }
         }
 
@@ -78,9 +73,7 @@ public class OTRequestService {
     }
 
     public List<OTRequestDTO> getAllOTRequests() {
-        return otRequestRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return otRequestRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public OTRequestDTO getOTRequestById(Long id) {
@@ -90,21 +83,15 @@ public class OTRequestService {
     }
 
     public List<OTRequestDTO> getOTRequestsBySurgeon(Long surgeonId) {
-        return otRequestRepository.findBySurgeonId(surgeonId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return otRequestRepository.findBySurgeonId(surgeonId).stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<OTRequestDTO> getOTRequestsByPatient(Long patientId) {
-        return otRequestRepository.findByPatientId(patientId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return otRequestRepository.findByPatientId(patientId).stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<OTRequestDTO> getOTRequestsByStatus(OTRequestStatus status) {
-        return otRequestRepository.findByStatus(status).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return otRequestRepository.findByStatus(status).stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<OTRequestDTO> getPendingOTRequests() {
@@ -112,14 +99,12 @@ public class OTRequestService {
     }
 
     public List<OTRequestDTO> getEmergencyPendingRequests() {
-        return otRequestRepository.findEmergencyPendingRequests().stream()
-                .map(this::mapToDTO)
+        return otRequestRepository.findEmergencyPendingRequests().stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<OTRequestDTO> getOTRequestsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        return otRequestRepository.findByScheduledStartTimeBetween(startDate, endDate).stream()
-                .map(this::mapToDTO)
+        return otRequestRepository.findByScheduledStartTimeBetween(startDate, endDate).stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -274,7 +259,8 @@ public class OTRequestService {
 
         if (otRequest.getApprovedBy() != null) {
             dto.setApprovedById(otRequest.getApprovedBy().getId());
-            dto.setApprovedByName(otRequest.getApprovedBy().getFirstName() + " " + otRequest.getApprovedBy().getLastName());
+            dto.setApprovedByName(
+                    otRequest.getApprovedBy().getFirstName() + " " + otRequest.getApprovedBy().getLastName());
         }
 
         return dto;

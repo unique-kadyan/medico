@@ -84,8 +84,7 @@ public class EmergencyPatientController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'NURSE', 'ADMIN')")
-    public ResponseEntity<EmergencyPatientDTO> updateEmergencyPatient(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyPatientDTO> updateEmergencyPatient(@PathVariable Long id,
             @RequestBody EmergencyPatientDTO dto) {
         EmergencyPatientDTO updated = emergencyPatientService.updateEmergencyPatient(id, dto);
         return ResponseEntity.ok(updated);
@@ -93,8 +92,7 @@ public class EmergencyPatientController {
 
     @PutMapping("/{id}/condition")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'NURSE', 'ADMIN')")
-    public ResponseEntity<EmergencyPatientDTO> updateCondition(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyPatientDTO> updateCondition(@PathVariable Long id,
             @RequestBody Map<String, String> body) {
         PatientCondition condition = PatientCondition.valueOf(body.get("condition"));
         EmergencyPatientDTO updated = emergencyPatientService.updateCondition(id, condition);
@@ -103,8 +101,7 @@ public class EmergencyPatientController {
 
     @PutMapping("/{id}/discharge")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'ADMIN')")
-    public ResponseEntity<EmergencyPatientDTO> dischargePatient(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyPatientDTO> dischargePatient(@PathVariable Long id,
             @RequestBody(required = false) Map<String, String> body) {
         String dischargeNotes = body != null ? body.get("dischargeNotes") : null;
         EmergencyPatientDTO discharged = emergencyPatientService.dischargePatient(id, dischargeNotes);
@@ -113,8 +110,7 @@ public class EmergencyPatientController {
 
     @PutMapping("/{id}/transfer")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'NURSE', 'ADMIN')")
-    public ResponseEntity<EmergencyPatientDTO> transferToRoom(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyPatientDTO> transferToRoom(@PathVariable Long id,
             @RequestBody Map<String, Long> body) {
         Long newRoomId = body.get("newRoomId");
         EmergencyPatientDTO transferred = emergencyPatientService.transferToRoom(id, newRoomId);

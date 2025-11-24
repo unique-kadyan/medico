@@ -44,7 +44,6 @@ public class FollowUpDTO {
 
     private Integer durationMinutes;
 
-    // Additional fields for display
     private String patientName;
     private String doctorName;
 }

@@ -16,8 +16,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query("SELECT p FROM Patient p WHERE p.user.id = :userId")
     Optional<Patient> findByUserId(@Param("userId") Long userId);
 
-    List<Patient> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-        String firstName, String lastName);
+    List<Patient> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String firstName, String lastName);
 
     @Query("SELECT p FROM Patient p WHERE p.phone = :phone")
     Optional<Patient> findByPhone(String phone);

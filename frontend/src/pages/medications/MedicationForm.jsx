@@ -26,6 +26,7 @@ const CATEGORIES = [
   "ANTISEPTIC",
   "ANTI_INFLAMMATORY",
   "OTHER",
+  "General",
 ];
 const DOSAGE_FORMS = [
   "TABLET",
@@ -37,6 +38,7 @@ const DOSAGE_FORMS = [
   "DROPS",
   "INHALER",
   "OTHER",
+  "Tablet",
 ];
 
 function MedicationForm() {
@@ -67,17 +69,23 @@ function MedicationForm() {
   const fetchMedication = useCallback(async () => {
     try {
       const data = await medicationService.getMedicationById(id);
+      const fetchedCategory = data.category || "OTHER";
+      const fetchedDosageForm = data.dosageForm || "TABLET";
       setFormData({
         medicationCode: data.medicationCode || "",
         name: data.name || "",
         genericName: data.genericName || "",
-        category: data.category || "ANTIBIOTIC",
+        category: CATEGORIES.includes(fetchedCategory)
+          ? fetchedCategory
+          : "OTHER",
         manufacturer: data.manufacturer || "",
         description: data.description || "",
-        dosageForm: data.dosageForm || "TABLET",
+        dosageForm: DOSAGE_FORMS.includes(fetchedDosageForm)
+          ? fetchedDosageForm
+          : "OTHER",
         strength: data.strength || "",
         unitPrice: data.unitPrice || "",
-        stockQuantity: data.stockQuantity || "",
+        stockQuantity: data.stockQuantity ?? "",
         reorderLevel: data.reorderLevel || "",
         reorderQuantity: data.reorderQuantity || "",
         expiryDate: data.expiryDate || "",

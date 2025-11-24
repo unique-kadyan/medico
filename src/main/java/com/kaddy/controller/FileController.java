@@ -26,8 +26,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFile(
-            @RequestParam("file") MultipartFile file,
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,
             @RequestParam(value = "subDirectory", defaultValue = "lab-tests") String subDirectory) {
         try {
             String filePath = fileStorageService.storeFile(file, subDirectory);
@@ -63,8 +62,7 @@ public class FileController {
                 contentType = "application/octet-stream";
             }
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFileName() + "\"")
                     .body(resource);
         } catch (Exception e) {

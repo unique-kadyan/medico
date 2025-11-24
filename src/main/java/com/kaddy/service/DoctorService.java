@@ -24,63 +24,61 @@ public class DoctorService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorDTO> getAllDoctors() {
-        return doctorRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return doctorRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorDTO> getAllActiveDoctors() {
-        return doctorRepository.findAllActiveDoctorsOrderedByExperience().stream()
-                .map(this::convertToDTO)
+        return doctorRepository.findAllActiveDoctorsOrderedByExperience().stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorDTO> getAvailableDoctors() {
-        return doctorRepository.findAllAvailableDoctors().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return doctorRepository.findAllAvailableDoctors().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public DoctorDTO getDoctorById(Long id) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
         return convertToDTO(doctor);
     }
 
+    @Transactional(readOnly = true)
     public DoctorDTO getDoctorByDoctorId(String doctorId) {
         Doctor doctor = doctorRepository.findByDoctorId(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with doctor ID: " + doctorId));
         return convertToDTO(doctor);
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorDTO> getDoctorsBySpecialization(String specialization) {
-        return doctorRepository.findBySpecialization(specialization).stream()
-                .map(this::convertToDTO)
+        return doctorRepository.findBySpecialization(specialization).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorDTO> getDoctorsByDepartment(String department) {
-        return doctorRepository.findByDepartment(department).stream()
-                .map(this::convertToDTO)
+        return doctorRepository.findByDepartment(department).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public DoctorDTO createDoctor(DoctorDTO doctorDTO) {
-        // Check for duplicate doctor ID
         if (doctorRepository.existsByDoctorId(doctorDTO.getDoctorId())) {
             throw new DuplicateResourceException("Doctor with ID " + doctorDTO.getDoctorId() + " already exists");
         }
 
-        // Check for duplicate license number
-        if (doctorDTO.getLicenseNumber() != null &&
-            doctorRepository.existsByLicenseNumber(doctorDTO.getLicenseNumber())) {
-            throw new DuplicateResourceException("Doctor with license number " + doctorDTO.getLicenseNumber() + " already exists");
+        if (doctorDTO.getLicenseNumber() != null
+                && doctorRepository.existsByLicenseNumber(doctorDTO.getLicenseNumber())) {
+            throw new DuplicateResourceException(
+                    "Doctor with license number " + doctorDTO.getLicenseNumber() + " already exists");
         }
 
         Doctor doctor = convertToEntity(doctorDTO);
 
-        // Set defaults if not provided
         if (doctor.getYearsOfExperience() == null) {
             doctor.setYearsOfExperience(0);
         }
@@ -99,20 +97,18 @@ public class DoctorService {
         Doctor existingDoctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
 
-        // Check for duplicate doctor ID if changed
-        if (!existingDoctor.getDoctorId().equals(doctorDTO.getDoctorId()) &&
-            doctorRepository.existsByDoctorId(doctorDTO.getDoctorId())) {
+        if (!existingDoctor.getDoctorId().equals(doctorDTO.getDoctorId())
+                && doctorRepository.existsByDoctorId(doctorDTO.getDoctorId())) {
             throw new DuplicateResourceException("Doctor with ID " + doctorDTO.getDoctorId() + " already exists");
         }
 
-        // Check for duplicate license number if changed
-        if (doctorDTO.getLicenseNumber() != null &&
-            !doctorDTO.getLicenseNumber().equals(existingDoctor.getLicenseNumber()) &&
-            doctorRepository.existsByLicenseNumber(doctorDTO.getLicenseNumber())) {
-            throw new DuplicateResourceException("Doctor with license number " + doctorDTO.getLicenseNumber() + " already exists");
+        if (doctorDTO.getLicenseNumber() != null
+                && !doctorDTO.getLicenseNumber().equals(existingDoctor.getLicenseNumber())
+                && doctorRepository.existsByLicenseNumber(doctorDTO.getLicenseNumber())) {
+            throw new DuplicateResourceException(
+                    "Doctor with license number " + doctorDTO.getLicenseNumber() + " already exists");
         }
 
-        // Update fields
         existingDoctor.setDoctorId(doctorDTO.getDoctorId());
         existingDoctor.setFirstName(doctorDTO.getFirstName());
         existingDoctor.setLastName(doctorDTO.getLastName());

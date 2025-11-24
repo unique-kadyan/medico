@@ -18,32 +18,17 @@ public class RateLimitingConfig {
     }
 
     private Bucket createNewBucket() {
-        Bandwidth limit = Bandwidth.builder()
-                .capacity(100)
-                .refillIntervally(100, Duration.ofMinutes(1))
-                .build();
-        return Bucket.builder()
-                .addLimit(limit)
-                .build();
+        Bandwidth limit = Bandwidth.builder().capacity(500).refillIntervally(500, Duration.ofMinutes(1)).build();
+        return Bucket.builder().addLimit(limit).build();
     }
 
     public Bucket createAuthBucket() {
-        Bandwidth limit = Bandwidth.builder()
-                .capacity(10)
-                .refillIntervally(10, Duration.ofMinutes(1))
-                .build();
-        return Bucket.builder()
-                .addLimit(limit)
-                .build();
+        Bandwidth limit = Bandwidth.builder().capacity(30).refillIntervally(30, Duration.ofMinutes(1)).build();
+        return Bucket.builder().addLimit(limit).build();
     }
 
     public Bucket createBatchBucket() {
-        Bandwidth limit = Bandwidth.builder()
-                .capacity(5)
-                .refillIntervally(5, Duration.ofMinutes(1))
-                .build();
-        return Bucket.builder()
-                .addLimit(limit)
-                .build();
+        Bandwidth limit = Bandwidth.builder().capacity(20).refillIntervally(20, Duration.ofMinutes(1)).build();
+        return Bucket.builder().addLimit(limit).build();
     }
 }

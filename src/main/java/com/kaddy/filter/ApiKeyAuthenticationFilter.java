@@ -25,12 +25,8 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     @Value("${app.api.enabled:true}")
     private boolean apiKeyEnabled;
 
-    private static final List<String> EXCLUDED_PATHS = Arrays.asList(
-            "/api/auth/login",
-            "/api/auth/register",
-            // "/swagger-ui",
-            "/v3/api-docs",
-            "/actuator");
+    private static final List<String> EXCLUDED_PATHS = Arrays.asList("/api/auth/login", "/api/auth/register",
+            "/v3/api-docs", "/actuator");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

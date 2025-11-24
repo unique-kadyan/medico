@@ -52,7 +52,6 @@ public class LabTestDTO {
 
     private Boolean urgent;
 
-    // Additional fields for display
     private String patientName;
     private String doctorName;
     private String labTechnicianName;

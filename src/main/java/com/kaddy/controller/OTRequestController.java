@@ -89,17 +89,14 @@ public class OTRequestController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'ADMIN')")
-    public ResponseEntity<OTRequestDTO> updateOTRequest(
-            @PathVariable Long id,
-            @RequestBody OTRequestDTO otRequestDTO) {
+    public ResponseEntity<OTRequestDTO> updateOTRequest(@PathVariable Long id, @RequestBody OTRequestDTO otRequestDTO) {
         OTRequestDTO updated = otRequestService.updateOTRequest(id, otRequestDTO);
         return ResponseEntity.ok(updated);
     }
 
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'NURSE')")
-    public ResponseEntity<OTRequestDTO> approveOTRequest(
-            @PathVariable Long id,
+    public ResponseEntity<OTRequestDTO> approveOTRequest(@PathVariable Long id,
             @RequestBody(required = false) Map<String, String> body) {
         String notes = body != null ? body.get("notes") : null;
         OTRequestDTO approved = otRequestService.approveOTRequest(id, notes);
@@ -108,9 +105,7 @@ public class OTRequestController {
 
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'NURSE')")
-    public ResponseEntity<OTRequestDTO> rejectOTRequest(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> body) {
+    public ResponseEntity<OTRequestDTO> rejectOTRequest(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String reason = body.get("rejectionReason");
         OTRequestDTO rejected = otRequestService.rejectOTRequest(id, reason);
         return ResponseEntity.ok(rejected);
@@ -125,8 +120,7 @@ public class OTRequestController {
 
     @PutMapping("/{id}/complete")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'ADMIN')")
-    public ResponseEntity<OTRequestDTO> completeSurgery(
-            @PathVariable Long id,
+    public ResponseEntity<OTRequestDTO> completeSurgery(@PathVariable Long id,
             @RequestBody(required = false) Map<String, String> body) {
         String notes = body != null ? body.get("postOperativeNotes") : null;
         OTRequestDTO completed = otRequestService.completeSurgery(id, notes);
@@ -135,8 +129,7 @@ public class OTRequestController {
 
     @PutMapping("/{id}/cancel")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'ADMIN')")
-    public ResponseEntity<OTRequestDTO> cancelOTRequest(
-            @PathVariable Long id,
+    public ResponseEntity<OTRequestDTO> cancelOTRequest(@PathVariable Long id,
             @RequestBody(required = false) Map<String, String> body) {
         String reason = body != null ? body.get("reason") : null;
         OTRequestDTO cancelled = otRequestService.cancelOTRequest(id, reason);

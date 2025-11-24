@@ -91,8 +91,7 @@ public class EmergencyRoomController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('NURSE', 'ADMIN')")
-    public ResponseEntity<EmergencyRoomDTO> updateEmergencyRoom(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyRoomDTO> updateEmergencyRoom(@PathVariable Long id,
             @RequestBody EmergencyRoomDTO dto) {
         EmergencyRoomDTO updated = emergencyRoomService.updateEmergencyRoom(id, dto);
         return ResponseEntity.ok(updated);
@@ -100,8 +99,7 @@ public class EmergencyRoomController {
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAnyAuthority('NURSE', 'ADMIN')")
-    public ResponseEntity<EmergencyRoomDTO> updateRoomStatus(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyRoomDTO> updateRoomStatus(@PathVariable Long id,
             @RequestBody Map<String, String> body) {
         EmergencyRoomStatus status = EmergencyRoomStatus.valueOf(body.get("status"));
         EmergencyRoomDTO updated = emergencyRoomService.updateRoomStatus(id, status);
@@ -110,8 +108,7 @@ public class EmergencyRoomController {
 
     @PutMapping("/{id}/occupancy")
     @PreAuthorize("hasAnyAuthority('NURSE', 'ADMIN')")
-    public ResponseEntity<EmergencyRoomDTO> updateOccupancy(
-            @PathVariable Long id,
+    public ResponseEntity<EmergencyRoomDTO> updateOccupancy(@PathVariable Long id,
             @RequestBody Map<String, Integer> body) {
         Integer occupancy = body.get("occupancy");
         EmergencyRoomDTO updated = emergencyRoomService.updateOccupancy(id, occupancy);

@@ -8,9 +8,6 @@ import com.kaddy.model.User;
 import com.kaddy.model.enums.UserRole;
 import com.kaddy.security.SecurityUtils;
 import com.kaddy.service.PendingUserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +21,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/pending-users")
 @RequiredArgsConstructor
-@Tag(name = "Pending Users", description = "Registration approval management")
-@SecurityRequirement(name = "bearerAuth")
 public class PendingUserController {
 
     private final PendingUserService pendingUserService;
@@ -33,29 +28,22 @@ public class PendingUserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('VIEW_PENDING_REGISTRATIONS')")
-    @Operation(summary = "Get all pending registrations")
     public ResponseEntity<List<PendingUserDTO>> getAllPendingUsers() {
         List<PendingUser> pendingUsers = pendingUserService.getAllPendingUsers();
-        List<PendingUserDTO> dtos = pendingUsers.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<PendingUserDTO> dtos = pendingUsers.stream().map(this::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/role/{role}")
     @PreAuthorize("hasAuthority('VIEW_PENDING_REGISTRATIONS')")
-    @Operation(summary = "Get pending registrations by role")
     public ResponseEntity<List<PendingUserDTO>> getPendingUsersByRole(@PathVariable UserRole role) {
         List<PendingUser> pendingUsers = pendingUserService.getPendingUsersByRole(role);
-        List<PendingUserDTO> dtos = pendingUsers.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<PendingUserDTO> dtos = pendingUsers.stream().map(this::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('VIEW_PENDING_REGISTRATIONS')")
-    @Operation(summary = "Get pending user by ID")
     public ResponseEntity<PendingUserDTO> getPendingUserById(@PathVariable Long id) {
         PendingUser pendingUser = pendingUserService.getPendingUserById(id);
         return ResponseEntity.ok(convertToDTO(pendingUser));
@@ -63,7 +51,6 @@ public class PendingUserController {
 
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_DOCTOR_REGISTRATION') or hasAuthority('APPROVE_NURSE_REGISTRATION') or hasAuthority('APPROVE_RECEPTIONIST_REGISTRATION') or hasAuthority('APPROVE_SUPERVISOR_REGISTRATION')")
-    @Operation(summary = "Approve a pending registration")
     public ResponseEntity<?> approveRegistration(@PathVariable Long id) {
         try {
             Long currentUserId = securityUtils.getCurrentUserId()
@@ -78,48 +65,37 @@ public class PendingUserController {
             }
 
             User approvedUser = pendingUserService.approveRegistration(id, currentUserId);
-            return ResponseEntity.ok(Map.of(
-                    "message", "Registration approved successfully",
-                    "userId", approvedUser.getId()
-            ));
+            return ResponseEntity
+                    .ok(Map.of("message", "Registration approved successfully", "userId", approvedUser.getId()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @PostMapping("/{id}/reject")
     @PreAuthorize("hasAuthority('REJECT_REGISTRATION')")
-    @Operation(summary = "Reject a pending registration")
-    public ResponseEntity<?> rejectRegistration(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> request) {
+    public ResponseEntity<?> rejectRegistration(@PathVariable Long id, @RequestBody Map<String, String> request) {
         try {
             Long currentUserId = securityUtils.getCurrentUserId()
                     .orElseThrow(() -> new RuntimeException("User not authenticated"));
             String reason = request.get("reason");
 
             if (reason == null || reason.trim().isEmpty()) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("message", "Rejection reason is required"));
+                return ResponseEntity.badRequest().body(Map.of("message", "Rejection reason is required"));
             }
 
             pendingUserService.rejectRegistration(id, currentUserId, reason);
             return ResponseEntity.ok(Map.of("message", "Registration rejected successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @GetMapping("/{id}/documents")
     @PreAuthorize("hasAuthority('VIEW_PENDING_REGISTRATIONS')")
-    @Operation(summary = "Get documents for a pending user")
     public ResponseEntity<List<DocumentDTO>> getDocuments(@PathVariable Long id) {
         List<Document> documents = pendingUserService.getDocumentsForPendingUser(id);
-        List<DocumentDTO> dtos = documents.stream()
-                .map(this::convertDocumentToDTO)
-                .collect(Collectors.toList());
+        List<DocumentDTO> dtos = documents.stream().map(this::convertDocumentToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
@@ -139,8 +115,7 @@ public class PendingUserController {
         dto.setRequestedAt(pendingUser.getRequestedAt());
         dto.setReviewedAt(pendingUser.getReviewedAt());
 
-        List<DocumentDTO> documentDTOs = pendingUser.getDocuments().stream()
-                .map(this::convertDocumentToDTO)
+        List<DocumentDTO> documentDTOs = pendingUser.getDocuments().stream().map(this::convertDocumentToDTO)
                 .collect(Collectors.toList());
         dto.setDocuments(documentDTOs);
         dto.setDocumentCount(documentDTOs.size());

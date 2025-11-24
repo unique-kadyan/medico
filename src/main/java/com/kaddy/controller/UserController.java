@@ -4,8 +4,6 @@ import com.kaddy.dto.AuthenticationResponse;
 import com.kaddy.model.User;
 import com.kaddy.repository.UserRepository;
 import com.kaddy.service.PermissionService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "User Management", description = "APIs for user profile and account management")
 public class UserController {
 
     private final UserRepository userRepository;
     private final PermissionService permissionService;
 
     @GetMapping
-    @Operation(summary = "Get all users", description = "Get all users (Admin only)")
     public ResponseEntity<?> getAllUsers(@RequestParam(required = false) String role) {
         log.info("Fetching all users" + (role != null ? " with role: " + role : ""));
 
@@ -32,8 +28,7 @@ public class UserController {
         if (role != null && !role.isEmpty()) {
             try {
                 com.kaddy.model.enums.UserRole userRole = com.kaddy.model.enums.UserRole.valueOf(role.toUpperCase());
-                users = userRepository.findAll().stream()
-                        .filter(u -> u.getRole() == userRole)
+                users = userRepository.findAll().stream().filter(u -> u.getRole() == userRole)
                         .collect(java.util.stream.Collectors.toList());
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.badRequest().body("Invalid role: " + role);
@@ -43,16 +38,10 @@ public class UserController {
         }
 
         java.util.List<AuthenticationResponse> responses = users.stream()
-                .map(user -> AuthenticationResponse.builder()
-                        .userId(user.getId())
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .phone(user.getPhone())
-                        .role(user.getRole())
-                        .permissions(permissionService.getPermissionsForRole(user.getRole()))
-                        .enabled(user.getEnabled())
+                .map(user -> AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername())
+                        .email(user.getEmail()).firstName(user.getFirstName()).lastName(user.getLastName())
+                        .phone(user.getPhone()).role(user.getRole())
+                        .permissions(permissionService.getPermissionsForRole(user.getRole())).enabled(user.getEnabled())
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
@@ -60,61 +49,44 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    @Operation(summary = "Get current user profile", description = "Get the profile of the currently logged-in user")
     public ResponseEntity<AuthenticationResponse> getCurrentUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         log.info("Fetching profile for user: {}", username);
 
-        User user = userRepository.findByUsername(username)
-                .or(() -> userRepository.findByEmail(username))
+        User user = userRepository.findByUsername(username).or(() -> userRepository.findByEmail(username))
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .userId(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .permissions(permissionService.getPermissionsForRole(user.getRole()))
-                .enabled(user.getEnabled())
+        AuthenticationResponse response = AuthenticationResponse.builder().userId(user.getId())
+                .username(user.getUsername()).email(user.getEmail()).firstName(user.getFirstName())
+                .lastName(user.getLastName()).phone(user.getPhone()).role(user.getRole())
+                .permissions(permissionService.getPermissionsForRole(user.getRole())).enabled(user.getEnabled())
                 .build();
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Get current user info", description = "Alternative endpoint to get current user information")
     public ResponseEntity<AuthenticationResponse> getCurrentUser() {
         return getCurrentUserProfile();
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get user by ID", description = "Get user information by ID (Admin only)")
     public ResponseEntity<AuthenticationResponse> getUserById(@PathVariable Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .userId(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .permissions(permissionService.getPermissionsForRole(user.getRole()))
-                .enabled(user.getEnabled())
+        AuthenticationResponse response = AuthenticationResponse.builder().userId(user.getId())
+                .username(user.getUsername()).email(user.getEmail()).firstName(user.getFirstName())
+                .lastName(user.getLastName()).phone(user.getPhone()).role(user.getRole())
+                .permissions(permissionService.getPermissionsForRole(user.getRole())).enabled(user.getEnabled())
                 .build();
 
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update user by ID", description = "Update user information by ID (Admin only)")
     public ResponseEntity<AuthenticationResponse> updateUser(@PathVariable Long id,
             @RequestBody UpdateUserRequest updateRequest) {
         log.info("Updating user with id: {}", id);
@@ -141,23 +113,16 @@ public class UserController {
         User updatedUser = userRepository.save(user);
         log.info("User {} updated successfully", id);
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .userId(updatedUser.getId())
-                .username(updatedUser.getUsername())
-                .email(updatedUser.getEmail())
-                .firstName(updatedUser.getFirstName())
-                .lastName(updatedUser.getLastName())
-                .phone(updatedUser.getPhone())
-                .role(updatedUser.getRole())
+        AuthenticationResponse response = AuthenticationResponse.builder().userId(updatedUser.getId())
+                .username(updatedUser.getUsername()).email(updatedUser.getEmail()).firstName(updatedUser.getFirstName())
+                .lastName(updatedUser.getLastName()).phone(updatedUser.getPhone()).role(updatedUser.getRole())
                 .permissions(permissionService.getPermissionsForRole(updatedUser.getRole()))
-                .enabled(updatedUser.getEnabled())
-                .build();
+                .enabled(updatedUser.getEnabled()).build();
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete user by ID", description = "Delete user by ID (Admin only)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         log.info("Deleting user with id: {}", id);
 
@@ -171,7 +136,6 @@ public class UserController {
     }
 
     @PutMapping("/{id}/promote-to-admin")
-    @Operation(summary = "Promote user to Admin", description = "Promote a user to Admin role (Admin only)")
     public ResponseEntity<AuthenticationResponse> promoteToAdmin(@PathVariable Long id) {
         log.info("Promoting user {} to Admin role", id);
 
@@ -186,17 +150,11 @@ public class UserController {
         User updatedUser = userRepository.save(user);
         log.info("User {} promoted to Admin successfully", id);
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .userId(updatedUser.getId())
-                .username(updatedUser.getUsername())
-                .email(updatedUser.getEmail())
-                .firstName(updatedUser.getFirstName())
-                .lastName(updatedUser.getLastName())
-                .phone(updatedUser.getPhone())
-                .role(updatedUser.getRole())
+        AuthenticationResponse response = AuthenticationResponse.builder().userId(updatedUser.getId())
+                .username(updatedUser.getUsername()).email(updatedUser.getEmail()).firstName(updatedUser.getFirstName())
+                .lastName(updatedUser.getLastName()).phone(updatedUser.getPhone()).role(updatedUser.getRole())
                 .permissions(permissionService.getPermissionsForRole(updatedUser.getRole()))
-                .enabled(updatedUser.getEnabled())
-                .build();
+                .enabled(updatedUser.getEnabled()).build();
 
         return ResponseEntity.ok(response);
     }

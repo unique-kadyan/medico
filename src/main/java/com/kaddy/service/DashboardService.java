@@ -35,26 +35,18 @@ public class DashboardService {
 
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1);
-        Long todayAppointments = (long) appointmentRepository
-                .findAppointmentsBetweenDates(startOfDay, endOfDay)
-                .size();
+        Long todayAppointments = (long) appointmentRepository.findAppointmentsBetweenDates(startOfDay, endOfDay).size();
 
-        Long lowStockMedications = medicationRepository.findAll().stream()
-                .filter(med -> med.getStockQuantity() < 10)
+        Long lowStockMedications = medicationRepository.findAll().stream().filter(med -> med.getStockQuantity() < 10)
                 .count();
 
         List<DashboardStatsDTO.MonthlyPatientCount> monthlyPatients = getMonthlyPatientCounts();
 
         List<DashboardStatsDTO.AppointmentTypeCount> appointmentsByType = getAppointmentTypeDistribution();
 
-        return DashboardStatsDTO.builder()
-                .totalPatients(totalPatients)
-                .totalDoctors(totalDoctors)
-                .todayAppointments(todayAppointments)
-                .lowStockMedications(lowStockMedications)
-                .monthlyPatients(monthlyPatients)
-                .appointmentsByType(appointmentsByType)
-                .build();
+        return DashboardStatsDTO.builder().totalPatients(totalPatients).totalDoctors(totalDoctors)
+                .todayAppointments(todayAppointments).lowStockMedications(lowStockMedications)
+                .monthlyPatients(monthlyPatients).appointmentsByType(appointmentsByType).build();
     }
 
     private List<DashboardStatsDTO.MonthlyPatientCount> getMonthlyPatientCounts() {
@@ -65,18 +57,12 @@ public class DashboardService {
             LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
             LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
-            long count = patientRepository.findAll().stream()
-                    .filter(p -> p.getCreatedAt() != null
-                            && !p.getCreatedAt().isBefore(startOfMonth)
-                            && !p.getCreatedAt().isAfter(endOfMonth))
-                    .count();
+            long count = patientRepository.findAll().stream().filter(p -> p.getCreatedAt() != null
+                    && !p.getCreatedAt().isBefore(startOfMonth) && !p.getCreatedAt().isAfter(endOfMonth)).count();
 
             String monthName = yearMonth.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
 
-            monthlyCounts.add(DashboardStatsDTO.MonthlyPatientCount.builder()
-                    .month(monthName)
-                    .patients(count)
-                    .build());
+            monthlyCounts.add(DashboardStatsDTO.MonthlyPatientCount.builder().month(monthName).patients(count).build());
         }
 
         return monthlyCounts;
@@ -86,10 +72,8 @@ public class DashboardService {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         LocalDateTime now = LocalDateTime.now();
 
-        List<String> appointmentReasons = appointmentRepository
-                .findAppointmentsBetweenDates(thirtyDaysAgo, now)
-                .stream()
-                .map(appointment -> {
+        List<String> appointmentReasons = appointmentRepository.findAppointmentsBetweenDates(thirtyDaysAgo, now)
+                .stream().map(appointment -> {
                     String reason = appointment.getReasonForVisit();
                     if (reason == null || reason.trim().isEmpty()) {
                         return "General Checkup";
@@ -106,17 +90,12 @@ public class DashboardService {
                     } else {
                         return "Other";
                     }
-                })
-                .toList();
+                }).toList();
 
         Map<String, Long> typeCounts = appointmentReasons.stream()
                 .collect(Collectors.groupingBy(type -> type, Collectors.counting()));
 
-        return typeCounts.entrySet().stream()
-                .map(entry -> DashboardStatsDTO.AppointmentTypeCount.builder()
-                        .name(entry.getKey())
-                        .value(entry.getValue())
-                        .build())
-                .collect(Collectors.toList());
+        return typeCounts.entrySet().stream().map(entry -> DashboardStatsDTO.AppointmentTypeCount.builder()
+                .name(entry.getKey()).value(entry.getValue()).build()).collect(Collectors.toList());
     }
 }

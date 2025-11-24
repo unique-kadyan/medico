@@ -101,7 +101,6 @@ function Login() {
         }}
       >
         <CardContent sx={{ p: 4 }}>
-          {/* Logo and Title */}
           <Box sx={{ textAlign: "center", mb: 4 }}>
             <Box
               sx={{
@@ -125,14 +124,12 @@ function Login() {
             </Typography>
           </Box>
 
-          {/* Error Alert */}
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {error}
             </Alert>
           )}
 
-          {/* Login Form */}
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
@@ -208,6 +205,16 @@ function Login() {
                   sx={{ color: "primary.main", fontWeight: 600 }}
                 >
                   Sign Up
+                </Link>
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                Want to register your hospital?{" "}
+                <Link
+                  href="/hospital-registration"
+                  underline="hover"
+                  sx={{ color: "secondary.main", fontWeight: 600 }}
+                >
+                  Start Free Trial
                 </Link>
               </Typography>
             </Box>

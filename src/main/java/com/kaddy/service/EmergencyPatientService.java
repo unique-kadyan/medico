@@ -37,26 +37,21 @@ public class EmergencyPatientService {
         Patient patient = patientRepository.findById(dto.getPatientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + dto.getPatientId()));
 
-        EmergencyRoom room = emergencyRoomRepository.findById(dto.getEmergencyRoomId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Emergency room not found with id: " + dto.getEmergencyRoomId()));
+        EmergencyRoom room = emergencyRoomRepository.findById(dto.getEmergencyRoomId()).orElseThrow(
+                () -> new ResourceNotFoundException("Emergency room not found with id: " + dto.getEmergencyRoomId()));
 
-        // Check if room has capacity
         if (room.getCurrentOccupancy() >= room.getCapacity()) {
             throw new IllegalStateException("Emergency room is at full capacity");
         }
 
-        // Check if patient already has an active emergency admission
-        emergencyPatientRepository.findActiveByPatientId(dto.getPatientId())
-                .ifPresent(ep -> {
-                    throw new IllegalStateException("Patient already has an active emergency admission");
-                });
+        emergencyPatientRepository.findActiveByPatientId(dto.getPatientId()).ifPresent(ep -> {
+            throw new IllegalStateException("Patient already has an active emergency admission");
+        });
 
         Doctor attendingDoctor = null;
         if (dto.getAttendingDoctorId() != null) {
-            attendingDoctor = doctorRepository.findById(dto.getAttendingDoctorId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Doctor not found with id: " + dto.getAttendingDoctorId()));
+            attendingDoctor = doctorRepository.findById(dto.getAttendingDoctorId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Doctor not found with id: " + dto.getAttendingDoctorId()));
         }
 
         EmergencyPatient emergencyPatient = new EmergencyPatient();
@@ -81,44 +76,36 @@ public class EmergencyPatientService {
     }
 
     public List<EmergencyPatientDTO> getAllEmergencyPatients() {
-        return emergencyPatientRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return emergencyPatientRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<EmergencyPatientDTO> getCurrentPatients() {
-        return emergencyPatientRepository.findCurrentPatients().stream()
-                .map(this::mapToDTO)
+        return emergencyPatientRepository.findCurrentPatients().stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<EmergencyPatientDTO> getPatientsByRoom(Long roomId) {
-        return emergencyPatientRepository.findActivePatientsByRoom(roomId).stream()
-                .map(this::mapToDTO)
+        return emergencyPatientRepository.findActivePatientsByRoom(roomId).stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<EmergencyPatientDTO> getPatientsByCondition(PatientCondition condition) {
-        return emergencyPatientRepository.findActivePatientsByCondition(condition).stream()
-                .map(this::mapToDTO)
+        return emergencyPatientRepository.findActivePatientsByCondition(condition).stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<EmergencyPatientDTO> getPatientsRequiringMonitoring() {
-        return emergencyPatientRepository.findPatientsRequiringMonitoring().stream()
-                .map(this::mapToDTO)
+        return emergencyPatientRepository.findPatientsRequiringMonitoring().stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<EmergencyPatientDTO> getPatientsByDoctor(Long doctorId) {
-        return emergencyPatientRepository.findByAttendingDoctorId(doctorId).stream()
-                .map(this::mapToDTO)
+        return emergencyPatientRepository.findByAttendingDoctorId(doctorId).stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<EmergencyPatientDTO> getPatientHistory(Long patientId) {
-        return emergencyPatientRepository.findByPatientId(patientId).stream()
-                .map(this::mapToDTO)
+        return emergencyPatientRepository.findByPatientId(patientId).stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -137,11 +124,10 @@ public class EmergencyPatientService {
             throw new IllegalStateException("Cannot update discharged patient record");
         }
 
-        if (dto.getAttendingDoctorId() != null && !dto.getAttendingDoctorId().equals(
-                existing.getAttendingDoctor() != null ? existing.getAttendingDoctor().getId() : null)) {
-            Doctor doctor = doctorRepository.findById(dto.getAttendingDoctorId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Doctor not found with id: " + dto.getAttendingDoctorId()));
+        if (dto.getAttendingDoctorId() != null && !dto.getAttendingDoctorId()
+                .equals(existing.getAttendingDoctor() != null ? existing.getAttendingDoctor().getId() : null)) {
+            Doctor doctor = doctorRepository.findById(dto.getAttendingDoctorId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Doctor not found with id: " + dto.getAttendingDoctorId()));
             existing.setAttendingDoctor(doctor);
         }
 
@@ -202,7 +188,6 @@ public class EmergencyPatientService {
 
         EmergencyPatient updated = emergencyPatientRepository.save(emergencyPatient);
 
-        // Update room occupancy
         EmergencyRoom room = emergencyPatient.getEmergencyRoom();
         if (room.getCurrentOccupancy() > 0) {
             emergencyRoomService.updateOccupancy(room.getId(), room.getCurrentOccupancy() - 1);
@@ -229,7 +214,6 @@ public class EmergencyPatientService {
 
         EmergencyRoom oldRoom = emergencyPatient.getEmergencyRoom();
 
-        // Update occupancy for both rooms
         emergencyRoomService.updateOccupancy(oldRoom.getId(), oldRoom.getCurrentOccupancy() - 1);
         emergencyRoomService.updateOccupancy(newRoom.getId(), newRoom.getCurrentOccupancy() + 1);
 
@@ -249,8 +233,8 @@ public class EmergencyPatientService {
 
         if (emergencyPatient.getAttendingDoctor() != null) {
             dto.setAttendingDoctorId(emergencyPatient.getAttendingDoctor().getId());
-            dto.setAttendingDoctorName(emergencyPatient.getAttendingDoctor().getFirstName() + " " +
-                    emergencyPatient.getAttendingDoctor().getLastName());
+            dto.setAttendingDoctorName(emergencyPatient.getAttendingDoctor().getFirstName() + " "
+                    + emergencyPatient.getAttendingDoctor().getLastName());
         }
 
         return dto;

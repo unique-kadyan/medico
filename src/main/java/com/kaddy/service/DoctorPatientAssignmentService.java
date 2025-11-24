@@ -32,11 +32,11 @@ public class DoctorPatientAssignmentService {
     public DoctorPatientAssignmentDTO assignDoctorToPatient(DoctorPatientAssignmentDTO assignmentDTO) {
         log.info("Assigning doctor {} to patient {}", assignmentDTO.getDoctorId(), assignmentDTO.getPatientId());
 
-        Doctor doctor = doctorRepository.findById(assignmentDTO.getDoctorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + assignmentDTO.getDoctorId()));
+        Doctor doctor = doctorRepository.findById(assignmentDTO.getDoctorId()).orElseThrow(
+                () -> new ResourceNotFoundException("Doctor not found with id: " + assignmentDTO.getDoctorId()));
 
-        Patient patient = patientRepository.findById(assignmentDTO.getPatientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + assignmentDTO.getPatientId()));
+        Patient patient = patientRepository.findById(assignmentDTO.getPatientId()).orElseThrow(
+                () -> new ResourceNotFoundException("Patient not found with id: " + assignmentDTO.getPatientId()));
 
         DoctorPatientAssignment assignment = new DoctorPatientAssignment();
         assignment.setDoctor(doctor);
@@ -50,26 +50,26 @@ public class DoctorPatientAssignmentService {
         return convertToDTO(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorPatientAssignmentDTO> getDoctorAssignments(Long doctorId) {
         log.info("Getting assignments for doctor {}", doctorId);
-        return assignmentRepository.findActiveAssignmentsByDoctorId(doctorId)
-                .stream()
-                .map(this::convertToDTO)
+        return assignmentRepository.findActiveAssignmentsByDoctorId(doctorId).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<DoctorPatientAssignmentDTO> getPatientAssignments(Long patientId) {
         log.info("Getting assignments for patient {}", patientId);
-        return assignmentRepository.findActiveAssignmentsByPatientId(patientId)
-                .stream()
-                .map(this::convertToDTO)
+        return assignmentRepository.findActiveAssignmentsByPatientId(patientId).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<Long> getPatientIdsForDoctor(Long doctorId) {
         return assignmentRepository.findPatientIdsByDoctorId(doctorId);
     }
 
+    @Transactional(readOnly = true)
     public long getPatientCountForDoctor(Long doctorId) {
         log.info("Getting patient count for doctor {}", doctorId);
         return assignmentRepository.findPatientIdsByDoctorId(doctorId).size();
