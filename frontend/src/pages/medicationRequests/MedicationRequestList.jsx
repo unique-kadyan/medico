@@ -47,7 +47,9 @@ function MedicationRequestList() {
 
   const userRole = user?.role;
   const isDoctor =
-    userRole === "DOCTOR" || userRole === "DOCTOR_SUPERVISOR" || userRole === "ADMIN";
+    userRole === "DOCTOR" ||
+    userRole === "DOCTOR_SUPERVISOR" ||
+    userRole === "ADMIN";
   const canApprove = userRole === "ADMIN" || userRole === "PHARMACIST";
 
   const fetchRequests = async () => {

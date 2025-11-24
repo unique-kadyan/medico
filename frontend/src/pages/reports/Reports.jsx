@@ -292,7 +292,11 @@ function Reports() {
           variant="scrollable"
           scrollButtons="auto"
         >
-          <Tab label="Overview" icon={<TrendingUpIcon />} iconPosition="start" />
+          <Tab
+            label="Overview"
+            icon={<TrendingUpIcon />}
+            iconPosition="start"
+          />
           <Tab label="Patients" icon={<PeopleIcon />} iconPosition="start" />
           <Tab label="Appointments" icon={<EventIcon />} iconPosition="start" />
           <Tab
@@ -457,9 +461,13 @@ function Reports() {
                           <TableCell>{patient.phone || "-"}</TableCell>
                           <TableCell>
                             <Chip
-                              label={patient.active !== false ? "Active" : "Inactive"}
+                              label={
+                                patient.active !== false ? "Active" : "Inactive"
+                              }
                               size="small"
-                              color={patient.active !== false ? "success" : "default"}
+                              color={
+                                patient.active !== false ? "success" : "default"
+                              }
                             />
                           </TableCell>
                         </TableRow>
@@ -528,7 +536,9 @@ function Reports() {
                         <TableRow key={apt.id}>
                           <TableCell>
                             {apt.appointmentDate
-                              ? new Date(apt.appointmentDate).toLocaleDateString()
+                              ? new Date(
+                                  apt.appointmentDate
+                                ).toLocaleDateString()
                               : "-"}
                           </TableCell>
                           <TableCell>{apt.appointmentTime || "-"}</TableCell>
@@ -645,7 +655,9 @@ function Reports() {
                           <TableCell>{med.name}</TableCell>
                           <TableCell>{med.category || "-"}</TableCell>
                           <TableCell>{med.stockQuantity || 0}</TableCell>
-                          <TableCell>${med.unitPrice?.toFixed(2) || "0.00"}</TableCell>
+                          <TableCell>
+                            ${med.unitPrice?.toFixed(2) || "0.00"}
+                          </TableCell>
                           <TableCell>
                             {med.expiryDate
                               ? new Date(med.expiryDate).toLocaleDateString()
@@ -762,15 +774,18 @@ function Reports() {
                   <Box display="flex" flexDirection="column" gap={1}>
                     <Typography variant="body2">
                       <strong>Total Claimed:</strong> $
-                      {insuranceReport.totalClaimedAmount?.toLocaleString() || 0}
+                      {insuranceReport.totalClaimedAmount?.toLocaleString() ||
+                        0}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Total Settled:</strong> $
-                      {insuranceReport.totalSettledAmount?.toLocaleString() || 0}
+                      {insuranceReport.totalSettledAmount?.toLocaleString() ||
+                        0}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Total Rejected:</strong> $
-                      {insuranceReport.totalRejectedAmount?.toLocaleString() || 0}
+                      {insuranceReport.totalRejectedAmount?.toLocaleString() ||
+                        0}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Pending Claims:</strong>{" "}
@@ -790,8 +805,8 @@ function Reports() {
             <Grid item xs={12}>
               <Paper sx={{ p: 4, textAlign: "center" }}>
                 <Typography color="text.secondary">
-                  Select a date range and click &quot;Generate Report&quot; to view
-                  financial data.
+                  Select a date range and click &quot;Generate Report&quot; to
+                  view financial data.
                 </Typography>
               </Paper>
             </Grid>
