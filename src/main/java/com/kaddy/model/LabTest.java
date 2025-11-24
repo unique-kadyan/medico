@@ -70,18 +70,10 @@ public class LabTest extends BaseEntity {
     private Boolean urgent = false;
 
     public enum TestStatus {
-        ORDERED,
-        SAMPLE_COLLECTED,
-        IN_PROGRESS,
-        COMPLETED,
-        CANCELLED,
-        REJECTED
+        ORDERED, SAMPLE_COLLECTED, IN_PROGRESS, COMPLETED, CANCELLED, REJECTED
     }
 
     public enum TestPriority {
-        ROUTINE,
-        NORMAL,
-        URGENT,
-        STAT
+        ROUTINE, NORMAL, URGENT, STAT
     }
 }

@@ -20,13 +20,11 @@ public interface OTRequestRepository extends JpaRepository<OTRequest, Long> {
     List<OTRequest> findByStatus(OTRequestStatus status);
 
     @Query("SELECT o FROM OTRequest o WHERE o.scheduledStartTime BETWEEN :startDate AND :endDate ORDER BY o.scheduledStartTime")
-    List<OTRequest> findByScheduledStartTimeBetween(
-            @Param("startDate") LocalDateTime startDate,
+    List<OTRequest> findByScheduledStartTimeBetween(@Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT o FROM OTRequest o WHERE o.surgeon.id = :surgeonId AND o.status = :status")
-    List<OTRequest> findBySurgeonIdAndStatus(
-            @Param("surgeonId") Long surgeonId,
+    List<OTRequest> findBySurgeonIdAndStatus(@Param("surgeonId") Long surgeonId,
             @Param("status") OTRequestStatus status);
 
     @Query("SELECT o FROM OTRequest o WHERE o.status IN (:statuses) ORDER BY o.scheduledStartTime")
@@ -35,11 +33,9 @@ public interface OTRequestRepository extends JpaRepository<OTRequest, Long> {
     @Query("SELECT o FROM OTRequest o WHERE o.isEmergency = true AND o.status = 'PENDING' ORDER BY o.createdAt DESC")
     List<OTRequest> findEmergencyPendingRequests();
 
-    @Query("SELECT o FROM OTRequest o WHERE o.otRoomNumber = :roomNumber " +
-           "AND o.status IN ('APPROVED', 'IN_PROGRESS') " +
-           "AND o.scheduledStartTime BETWEEN :startTime AND :endTime")
-    List<OTRequest> findConflictingRequests(
-            @Param("roomNumber") String roomNumber,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+    @Query("SELECT o FROM OTRequest o WHERE o.otRoomNumber = :roomNumber "
+            + "AND o.status IN ('APPROVED', 'IN_PROGRESS') "
+            + "AND o.scheduledStartTime BETWEEN :startTime AND :endTime")
+    List<OTRequest> findConflictingRequests(@Param("roomNumber") String roomNumber,
+            @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }

@@ -38,8 +38,6 @@ public class DoctorPatientAssignment extends BaseEntity {
     private AssignmentStatus status = AssignmentStatus.ACTIVE;
 
     public enum AssignmentStatus {
-        ACTIVE,
-        COMPLETED,
-        TRANSFERRED
+        ACTIVE, COMPLETED, TRANSFERRED
     }
 }

@@ -18,8 +18,7 @@ public class SecurityHeadersConfig {
         return new OncePerRequestFilter() {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                    FilterChain filterChain)
-                    throws ServletException, IOException {
+                    FilterChain filterChain) throws ServletException, IOException {
 
                 response.setHeader("X-Frame-Options", "DENY");
 
@@ -30,20 +29,12 @@ public class SecurityHeadersConfig {
                 response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 
                 response.setHeader("Content-Security-Policy",
-                        "default-src 'self'; " +
-                                "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-                                "style-src 'self' 'unsafe-inline'; " +
-                                "img-src 'self' data: https:; " +
-                                "font-src 'self' data:; " +
-                                "connect-src 'self'; " +
-                                "frame-ancestors 'none'");
+                        "default-src 'self'; " + "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+                                + "style-src 'self' 'unsafe-inline'; " + "img-src 'self' data: https:; "
+                                + "font-src 'self' data:; " + "connect-src 'self'; " + "frame-ancestors 'none'");
 
                 response.setHeader("Permissions-Policy",
-                        "geolocation=(), " +
-                                "microphone=(), " +
-                                "camera=(), " +
-                                "payment=(), " +
-                                "usb=()");
+                        "geolocation=(), " + "microphone=(), " + "camera=(), " + "payment=(), " + "usb=()");
 
                 if (request.isSecure()) {
                     response.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");

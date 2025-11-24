@@ -23,7 +23,6 @@ public interface NursePatientAssignmentRepository extends JpaRepository<NursePat
     long countActiveAssignmentsByNurse(@Param("nurseId") Long nurseId);
 
     @Query("SELECT n FROM NursePatientAssignment n WHERE n.nurse.id = :nurseId AND n.patient.id = :patientId")
-    List<NursePatientAssignment> findByNurseIdAndPatientId(
-            @Param("nurseId") Long nurseId,
+    List<NursePatientAssignment> findByNurseIdAndPatientId(@Param("nurseId") Long nurseId,
             @Param("patientId") Long patientId);
 }

@@ -26,6 +26,7 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
+    @Transactional(readOnly = true)
     public NotificationDTO getNotificationById(Long id) {
         log.info("Fetching notification with ID: {}", id);
         Notification notification = notificationRepository.findById(id)
@@ -33,28 +34,27 @@ public class NotificationService {
         return convertToDTO(notification);
     }
 
+    @Transactional(readOnly = true)
     public List<NotificationDTO> getNotificationsByUser(Long userId) {
         log.info("Fetching all notifications for user ID: {}", userId);
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with ID: " + userId);
         }
-        return notificationRepository.findByUserIdOrderBySentAtDesc(userId)
-                .stream()
-                .map(this::convertToDTO)
+        return notificationRepository.findByUserIdOrderBySentAtDesc(userId).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<NotificationDTO> getUnreadNotifications(Long userId) {
         log.info("Fetching unread notifications for user ID: {}", userId);
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with ID: " + userId);
         }
-        return notificationRepository.findByUserIdAndReadOrderBySentAtDesc(userId, false)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return notificationRepository.findByUserIdAndReadOrderBySentAtDesc(userId, false).stream()
+                .map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Long getUnreadNotificationCount(Long userId) {
         log.info("Counting unread notifications for user ID: {}", userId);
         if (!userRepository.existsById(userId)) {
@@ -66,8 +66,8 @@ public class NotificationService {
     public NotificationDTO createNotification(NotificationDTO notificationDTO) {
         log.info("Creating notification for user ID: {}", notificationDTO.getUserId());
 
-        User user = userRepository.findById(notificationDTO.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + notificationDTO.getUserId()));
+        User user = userRepository.findById(notificationDTO.getUserId()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found with ID: " + notificationDTO.getUserId()));
 
         Notification notification = convertToEntity(notificationDTO);
         notification.setUser(user);
@@ -81,7 +81,7 @@ public class NotificationService {
     }
 
     public NotificationDTO createNotification(Long userId, String title, String message,
-                                            Notification.NotificationType type, String referenceType, Long referenceId) {
+            Notification.NotificationType type, String referenceType, Long referenceId) {
         log.info("Creating notification for user ID: {} with type: {}", userId, type);
 
         User user = userRepository.findById(userId)
@@ -121,7 +121,8 @@ public class NotificationService {
     public void markAllAsRead(Long userId) {
         log.info("Marking all notifications as read for user ID: {}", userId);
 
-        List<Notification> unreadNotifications = notificationRepository.findByUserIdAndReadOrderBySentAtDesc(userId, false);
+        List<Notification> unreadNotifications = notificationRepository.findByUserIdAndReadOrderBySentAtDesc(userId,
+                false);
 
         unreadNotifications.forEach(notification -> {
             notification.setRead(true);

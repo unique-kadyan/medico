@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Card,
@@ -20,20 +21,21 @@ import {
   DialogActions,
   TextField,
   CircularProgress,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import {
   CheckCircle as ApproveIcon,
   Cancel as RejectIcon,
   Visibility as ViewIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
-import api from "../../services/api";
-import { usePermissions } from "../../hooks/usePermissions";
-import { PERMISSIONS } from "../../utils/permissions";
+import medicationRequestService from "../../services/medicationRequestService";
 
 function MedicationRequestList() {
-  const { can } = usePermissions();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,16 +43,25 @@ function MedicationRequestList() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [reviewAction, setReviewAction] = useState("");
   const [reviewNotes, setReviewNotes] = useState("");
+  const [tabValue, setTabValue] = useState(0);
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
+  const userRole = user?.role;
+  const isDoctor =
+    userRole === "DOCTOR" || userRole === "DOCTOR_SUPERVISOR" || userRole === "ADMIN";
+  const canApprove = userRole === "ADMIN" || userRole === "PHARMACIST";
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/medication-requests");
-      setRequests(response.data);
+      let data;
+      if (tabValue === 0) {
+        data = await medicationRequestService.getAll();
+      } else if (tabValue === 1) {
+        data = await medicationRequestService.getPending();
+      } else if (tabValue === 2) {
+        data = await medicationRequestService.getMyRequests();
+      }
+      setRequests(data);
     } catch (error) {
       toast.error("Failed to load medication requests");
       console.error("Error fetching medication requests:", error);
@@ -58,6 +69,11 @@ function MedicationRequestList() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabValue]);
 
   const handleReviewClick = (request, action) => {
     setSelectedRequest(request);
@@ -68,11 +84,11 @@ function MedicationRequestList() {
 
   const handleReviewSubmit = async () => {
     try {
-      const endpoint = reviewAction === "approve" ? "approve" : "reject";
-      await api.put(`/medication-requests/${selectedRequest.id}/${endpoint}`, {
-        reviewerId: user.userId,
-        reviewNotes: reviewNotes,
-      });
+      if (reviewAction === "approve") {
+        await medicationRequestService.approve(selectedRequest.id, reviewNotes);
+      } else {
+        await medicationRequestService.reject(selectedRequest.id, reviewNotes);
+      }
       toast.success(`Request ${reviewAction}d successfully`);
       setReviewDialogOpen(false);
       setSelectedRequest(null);
@@ -121,10 +137,31 @@ function MedicationRequestList() {
         <Typography variant="h4" fontWeight={600}>
           Medication Requests
         </Typography>
+        {isDoctor && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => navigate("/medication-requests/new")}
+          >
+            Request New Medication
+          </Button>
+        )}
       </Box>
 
       <Card>
         <CardContent>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+            <Tabs
+              value={tabValue}
+              onChange={(e, newValue) => setTabValue(newValue)}
+            >
+              <Tab label="All Requests" />
+              {canApprove && <Tab label="Pending Approval" />}
+              {isDoctor && <Tab label="My Requests" />}
+            </Tabs>
+          </Box>
+
           <TableContainer component={Paper} elevation={0}>
             <Table>
               <TableHead>
@@ -136,13 +173,13 @@ function MedicationRequestList() {
                     <strong>Medication</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Patient</strong>
+                    <strong>Dosage</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Doctor</strong>
+                    <strong>Requested By</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Quantity</strong>
+                    <strong>Reason</strong>
                   </TableCell>
                   <TableCell>
                     <strong>Request Date</strong>
@@ -169,18 +206,35 @@ function MedicationRequestList() {
                     <TableRow key={request.id}>
                       <TableCell>#{request.id}</TableCell>
                       <TableCell>
-                        {request.medicationName ||
-                          `Med ID: ${request.medicationId}`}
+                        <Typography variant="body2" fontWeight={500}>
+                          {request.medicationName}
+                        </Typography>
+                        {request.manufacturer && (
+                          <Typography variant="caption" color="text.secondary">
+                            {request.manufacturer}
+                          </Typography>
+                        )}
                       </TableCell>
                       <TableCell>
-                        {request.patientName ||
-                          `Patient ID: ${request.patientId}`}
+                        {request.dosageForm && request.strength
+                          ? `${request.dosageForm} - ${request.strength}`
+                          : request.dosageForm || request.strength || "-"}
                       </TableCell>
+                      <TableCell>{request.requestedByName || "-"}</TableCell>
                       <TableCell>
-                        {request.doctorName ||
-                          `Doctor ID: ${request.requestedBy}`}
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            maxWidth: 200,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          title={request.requestReason}
+                        >
+                          {request.requestReason || "-"}
+                        </Typography>
                       </TableCell>
-                      <TableCell>{request.quantity}</TableCell>
                       <TableCell>
                         {request.requestDate
                           ? new Date(request.requestDate).toLocaleDateString()
@@ -195,34 +249,37 @@ function MedicationRequestList() {
                       </TableCell>
                       <TableCell align="center">
                         <Box display="flex" gap={0.5} justifyContent="center">
-                          <IconButton size="small" color="primary">
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            title="View Details"
+                          >
                             <ViewIcon />
                           </IconButton>
-                          {can(PERMISSIONS.APPROVE_MEDICATION_REQUEST) &&
-                            request.status === "PENDING" && (
-                              <>
-                                <IconButton
-                                  size="small"
-                                  color="success"
-                                  onClick={() =>
-                                    handleReviewClick(request, "approve")
-                                  }
-                                  title="Approve"
-                                >
-                                  <ApproveIcon />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() =>
-                                    handleReviewClick(request, "reject")
-                                  }
-                                  title="Reject"
-                                >
-                                  <RejectIcon />
-                                </IconButton>
-                              </>
-                            )}
+                          {canApprove && request.status === "PENDING" && (
+                            <>
+                              <IconButton
+                                size="small"
+                                color="success"
+                                onClick={() =>
+                                  handleReviewClick(request, "approve")
+                                }
+                                title="Approve"
+                              >
+                                <ApproveIcon />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() =>
+                                  handleReviewClick(request, "reject")
+                                }
+                                title="Reject"
+                              >
+                                <RejectIcon />
+                              </IconButton>
+                            </>
+                          )}
                         </Box>
                       </TableCell>
                     </TableRow>

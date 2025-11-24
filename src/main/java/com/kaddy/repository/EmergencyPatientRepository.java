@@ -35,8 +35,7 @@ public interface EmergencyPatientRepository extends JpaRepository<EmergencyPatie
     List<EmergencyPatient> findActivePatientsByCondition(@Param("condition") PatientCondition condition);
 
     @Query("SELECT e FROM EmergencyPatient e WHERE e.admissionTime BETWEEN :startDate AND :endDate ORDER BY e.admissionTime DESC")
-    List<EmergencyPatient> findByAdmissionTimeBetween(
-            @Param("startDate") LocalDateTime startDate,
+    List<EmergencyPatient> findByAdmissionTimeBetween(@Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT e FROM EmergencyPatient e WHERE e.requiresMonitoring = true AND e.dischargeTime IS NULL ORDER BY e.triageLevel")

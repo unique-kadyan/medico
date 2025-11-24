@@ -45,12 +45,10 @@ public class NursePatientAssignmentService {
                 .findByNurseIdAndPatientId(dto.getNurseId(), dto.getPatientId());
 
         if (!existingAssignments.isEmpty()) {
-            boolean hasActiveAssignment = existingAssignments.stream()
-                    .anyMatch(NursePatientAssignment::isActive);
+            boolean hasActiveAssignment = existingAssignments.stream().anyMatch(NursePatientAssignment::isActive);
             if (hasActiveAssignment) {
-                throw new DuplicateResourceException(
-                        "Active assignment already exists between nurse " + dto.getNurseId() +
-                                " and patient " + dto.getPatientId());
+                throw new DuplicateResourceException("Active assignment already exists between nurse "
+                        + dto.getNurseId() + " and patient " + dto.getPatientId());
             }
         }
 
@@ -67,48 +65,42 @@ public class NursePatientAssignmentService {
         return convertToDTO(savedAssignment);
     }
 
+    @Transactional(readOnly = true)
     public List<NursePatientAssignmentDTO> getAssignmentsByNurse(Long nurseId) {
         log.info("Fetching assignments for nurse: {}", nurseId);
         List<NursePatientAssignment> assignments = assignmentRepository.findByNurseId(nurseId);
-        return assignments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return assignments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<NursePatientAssignmentDTO> getActiveAssignmentsByNurse(Long nurseId) {
         log.info("Fetching active assignments for nurse: {}", nurseId);
-        List<NursePatientAssignment> assignments = assignmentRepository
-                .findByNurseIdAndActive(nurseId, true);
-        return assignments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<NursePatientAssignment> assignments = assignmentRepository.findByNurseIdAndActive(nurseId, true);
+        return assignments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<NursePatientAssignmentDTO> getAssignmentsByPatient(Long patientId) {
         log.info("Fetching assignments for patient: {}", patientId);
         List<NursePatientAssignment> assignments = assignmentRepository.findByPatientId(patientId);
-        return assignments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return assignments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<NursePatientAssignmentDTO> getActiveAssignmentsByPatient(Long patientId) {
         log.info("Fetching active assignments for patient: {}", patientId);
-        List<NursePatientAssignment> assignments = assignmentRepository
-                .findByPatientIdAndActive(patientId, true);
-        return assignments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<NursePatientAssignment> assignments = assignmentRepository.findByPatientIdAndActive(patientId, true);
+        return assignments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<NursePatientAssignmentDTO> getAllAssignments() {
         log.info("Fetching all nurse-patient assignments");
         List<NursePatientAssignment> assignments = assignmentRepository.findAll();
-        return assignments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return assignments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public NursePatientAssignmentDTO getAssignmentById(Long id) {
         log.info("Fetching assignment with id: {}", id);
         NursePatientAssignment assignment = assignmentRepository.findById(id)
@@ -134,27 +126,20 @@ public class NursePatientAssignmentService {
         log.info("Successfully deleted assignment {}", id);
     }
 
+    @Transactional(readOnly = true)
     public long getActivePatientCountForNurse(Long nurseId) {
         log.info("Getting active patient count for nurse: {}", nurseId);
         return assignmentRepository.countActiveAssignmentsByNurse(nurseId);
     }
 
     private NursePatientAssignmentDTO convertToDTO(NursePatientAssignment assignment) {
-        return NursePatientAssignmentDTO.builder()
-                .id(assignment.getId())
-                .nurseId(assignment.getNurse().getId())
-                .nurseFirstName(assignment.getNurse().getFirstName())
-                .nurseLastName(assignment.getNurse().getLastName())
-                .nurseEmail(assignment.getNurse().getEmail())
-                .patientId(assignment.getPatient().getId())
+        return NursePatientAssignmentDTO.builder().id(assignment.getId()).nurseId(assignment.getNurse().getId())
+                .nurseFirstName(assignment.getNurse().getFirstName()).nurseLastName(assignment.getNurse().getLastName())
+                .nurseEmail(assignment.getNurse().getEmail()).patientId(assignment.getPatient().getId())
                 .patientFirstName(assignment.getPatient().getFirstName())
                 .patientLastName(assignment.getPatient().getLastName())
-                .patientIdentifier(assignment.getPatient().getPatientId())
-                .assignedAs(assignment.getAssignedAs())
-                .notes(assignment.getNotes())
-                .active(assignment.isActive())
-                .createdAt(assignment.getCreatedAt())
-                .updatedAt(assignment.getUpdatedAt())
-                .build();
+                .patientIdentifier(assignment.getPatient().getPatientId()).assignedAs(assignment.getAssignedAs())
+                .notes(assignment.getNotes()).active(assignment.isActive()).createdAt(assignment.getCreatedAt())
+                .updatedAt(assignment.getUpdatedAt()).build();
     }
 }

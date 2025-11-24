@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Layout from "./components/layout/Layout";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import HospitalRegistration from "./pages/auth/HospitalRegistration";
 import Dashboard from "./pages/dashboard/Dashboard";
 import PatientList from "./pages/patients/PatientList";
 import PatientDetail from "./pages/patients/PatientDetail";
@@ -26,6 +27,7 @@ import DoctorAssignmentList from "./pages/assignments/DoctorAssignmentList";
 import NurseAssignmentList from "./pages/assignments/NurseAssignmentList";
 import LabTestList from "./pages/labTests/LabTestList";
 import MedicationRequestList from "./pages/medicationRequests/MedicationRequestList";
+import MedicationRequestForm from "./pages/medicationRequests/MedicationRequestForm";
 import PendingApprovals from "./pages/approvals/PendingApprovals";
 import Reports from "./pages/reports/Reports";
 import OTRequestList from "./pages/otRequests/OTRequestList";
@@ -72,6 +74,14 @@ function App() {
         element={
           <PublicRoute>
             <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/hospital-registration"
+        element={
+          <PublicRoute>
+            <HospitalRegistration />
           </PublicRoute>
         }
       />
@@ -152,6 +162,7 @@ function App() {
 
         <Route path="medication-requests">
           <Route index element={<MedicationRequestList />} />
+          <Route path="new" element={<MedicationRequestForm />} />
         </Route>
 
         <Route path="approvals">

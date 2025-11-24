@@ -29,6 +29,7 @@ public class FollowUpService {
     private final DoctorRepository doctorRepository;
     private final ModelMapper modelMapper;
 
+    @Transactional(readOnly = true)
     public FollowUpDTO getFollowUpById(Long id) {
         log.info("Fetching follow-up with ID: {}", id);
         FollowUp followUp = followUpRepository.findById(id)
@@ -36,64 +37,57 @@ public class FollowUpService {
         return convertToDTO(followUp);
     }
 
+    @Transactional(readOnly = true)
     public List<FollowUpDTO> getAllFollowUps() {
         log.info("Fetching all follow-ups");
-        return followUpRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return followUpRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<FollowUpDTO> getFollowUpsByPatient(Long patientId) {
         log.info("Fetching follow-ups for patient ID: {}", patientId);
         if (!patientRepository.existsById(patientId)) {
             throw new ResourceNotFoundException("Patient not found with ID: " + patientId);
         }
-        return followUpRepository.findByPatientId(patientId)
-                .stream()
-                .map(this::convertToDTO)
+        return followUpRepository.findByPatientId(patientId).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<FollowUpDTO> getFollowUpsByDoctor(Long doctorId) {
         log.info("Fetching follow-ups for doctor ID: {}", doctorId);
         if (!doctorRepository.existsById(doctorId)) {
             throw new ResourceNotFoundException("Doctor not found with ID: " + doctorId);
         }
-        return followUpRepository.findByDoctorId(doctorId)
-                .stream()
-                .map(this::convertToDTO)
+        return followUpRepository.findByDoctorId(doctorId).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<FollowUpDTO> getFollowUpsByStatus(FollowUp.FollowUpStatus status) {
         log.info("Fetching follow-ups with status: {}", status);
-        return followUpRepository.findByStatus(status)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return followUpRepository.findByStatus(status).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<FollowUpDTO> getFollowUpsByPatientAndStatus(Long patientId, FollowUp.FollowUpStatus status) {
         log.info("Fetching follow-ups for patient ID: {} with status: {}", patientId, status);
         if (!patientRepository.existsById(patientId)) {
             throw new ResourceNotFoundException("Patient not found with ID: " + patientId);
         }
-        return followUpRepository.findByPatientIdAndStatusOrderByFollowupDateDesc(patientId, status)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return followUpRepository.findByPatientIdAndStatusOrderByFollowupDateDesc(patientId, status).stream()
+                .map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public FollowUpDTO scheduleFollowUp(FollowUpDTO followUpDTO) {
-        log.info("Scheduling follow-up for patient ID: {} with doctor ID: {}",
-                followUpDTO.getPatientId(), followUpDTO.getDoctorId());
+        log.info("Scheduling follow-up for patient ID: {} with doctor ID: {}", followUpDTO.getPatientId(),
+                followUpDTO.getDoctorId());
 
-        Patient patient = patientRepository.findById(followUpDTO.getPatientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + followUpDTO.getPatientId()));
+        Patient patient = patientRepository.findById(followUpDTO.getPatientId()).orElseThrow(
+                () -> new ResourceNotFoundException("Patient not found with ID: " + followUpDTO.getPatientId()));
 
-        Doctor doctor = doctorRepository.findById(followUpDTO.getDoctorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with ID: " + followUpDTO.getDoctorId()));
+        Doctor doctor = doctorRepository.findById(followUpDTO.getDoctorId()).orElseThrow(
+                () -> new ResourceNotFoundException("Doctor not found with ID: " + followUpDTO.getDoctorId()));
 
         FollowUp followUp = convertToEntity(followUpDTO);
         followUp.setPatient(patient);
@@ -116,7 +110,6 @@ public class FollowUpService {
         FollowUp existingFollowUp = followUpRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Follow-up not found with ID: " + id));
 
-        // Update fields
         existingFollowUp.setFollowupDate(followUpDTO.getFollowupDate());
         existingFollowUp.setReason(followUpDTO.getReason());
         existingFollowUp.setDiagnosis(followUpDTO.getDiagnosis());
@@ -128,16 +121,17 @@ public class FollowUpService {
         existingFollowUp.setStatus(followUpDTO.getStatus());
         existingFollowUp.setDurationMinutes(followUpDTO.getDurationMinutes());
 
-        // Update patient and doctor if needed
-        if (followUpDTO.getPatientId() != null && !followUpDTO.getPatientId().equals(existingFollowUp.getPatient().getId())) {
-            Patient patient = patientRepository.findById(followUpDTO.getPatientId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + followUpDTO.getPatientId()));
+        if (followUpDTO.getPatientId() != null
+                && !followUpDTO.getPatientId().equals(existingFollowUp.getPatient().getId())) {
+            Patient patient = patientRepository.findById(followUpDTO.getPatientId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Patient not found with ID: " + followUpDTO.getPatientId()));
             existingFollowUp.setPatient(patient);
         }
 
-        if (followUpDTO.getDoctorId() != null && !followUpDTO.getDoctorId().equals(existingFollowUp.getDoctor().getId())) {
-            Doctor doctor = doctorRepository.findById(followUpDTO.getDoctorId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with ID: " + followUpDTO.getDoctorId()));
+        if (followUpDTO.getDoctorId() != null
+                && !followUpDTO.getDoctorId().equals(existingFollowUp.getDoctor().getId())) {
+            Doctor doctor = doctorRepository.findById(followUpDTO.getDoctorId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Doctor not found with ID: " + followUpDTO.getDoctorId()));
             existingFollowUp.setDoctor(doctor);
         }
 

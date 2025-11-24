@@ -52,7 +52,6 @@ public class DoctorDTO {
 
     private String updatedAt;
 
-    // Computed field
     private String fullName;
 
     public String getFullName() {

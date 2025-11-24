@@ -87,26 +87,55 @@ function Header({ onMenuClick }) {
         </IconButton>
 
         <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              fontWeight: 700,
-              background: "linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)",
-              backgroundClip: "text",
-              textFillColor: "transparent",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            🏥 Medico
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{ ml: 1, display: { xs: "none", sm: "block" } }}
-          >
-            Hospital Management System
-          </Typography>
+          {user?.hospitalLogoUrl ? (
+            <Avatar
+              src={user.hospitalLogoUrl}
+              alt={user.hospitalName || "Hospital"}
+              variant="rounded"
+              sx={{ width: 40, height: 40, mr: 1.5 }}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 1,
+                bgcolor: "primary.main",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mr: 1.5,
+              }}
+            >
+              <Typography sx={{ fontSize: 20 }}>🏥</Typography>
+            </Box>
+          )}
+          <Box>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                fontWeight: 700,
+                lineHeight: 1.2,
+                background: "linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)",
+                backgroundClip: "text",
+                textFillColor: "transparent",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              {user?.hospitalName || "Medico"}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ display: { xs: "none", sm: "block" }, lineHeight: 1 }}
+              color="text.secondary"
+            >
+              {user?.hospitalCode
+                ? `Code: ${user.hospitalCode}`
+                : "Hospital Management System"}
+            </Typography>
+          </Box>
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

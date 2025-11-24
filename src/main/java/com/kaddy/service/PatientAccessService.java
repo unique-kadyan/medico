@@ -13,14 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Service to handle patient data access based on user roles
- * Ensures doctors and nurses can only see their assigned patients
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,6 +28,7 @@ public class PatientAccessService {
     private final DoctorRepository doctorRepository;
     private final DoctorPatientAssignmentRepository assignmentRepository;
 
+    @Transactional(readOnly = true)
     public List<Patient> getAccessiblePatients() {
         User currentUser = getCurrentUser();
 
@@ -47,6 +45,7 @@ public class PatientAccessService {
         return List.of();
     }
 
+    @Transactional(readOnly = true)
     public boolean canAccessPatient(Long patientId) {
         User currentUser = getCurrentUser();
 
@@ -61,6 +60,7 @@ public class PatientAccessService {
         return false;
     }
 
+    @Transactional(readOnly = true)
     public Patient getAccessiblePatient(Long patientId) {
         if (!canAccessPatient(patientId)) {
             throw new RuntimeException("Access denied: You do not have permission to view this patient");
@@ -71,17 +71,15 @@ public class PatientAccessService {
     }
 
     private List<Patient> getAssignedPatients(User user) {
-        var doctorOpt = doctorRepository.findAll().stream()
-                .filter(d -> {
-                    if (d.getUser() != null && d.getUser().getId().equals(user.getId())) {
-                        return true;
-                    }
-                    if (d.getEmail() != null && d.getEmail().equalsIgnoreCase(user.getEmail())) {
-                        return true;
-                    }
-                    return false;
-                })
-                .findFirst();
+        var doctorOpt = doctorRepository.findAll().stream().filter(d -> {
+            if (d.getUser() != null && d.getUser().getId().equals(user.getId())) {
+                return true;
+            }
+            if (d.getEmail() != null && d.getEmail().equalsIgnoreCase(user.getEmail())) {
+                return true;
+            }
+            return false;
+        }).findFirst();
 
         if (doctorOpt.isEmpty()) {
             log.warn("No doctor profile found for user: {}", user.getUsername());
@@ -92,27 +90,22 @@ public class PatientAccessService {
 
         List<DoctorPatientAssignment> assignments = assignmentRepository.findAll().stream()
                 .filter(a -> a.getDoctor() != null && a.getDoctor().getId().equals(doctorId))
-                .filter(a -> a.getActive() != null && a.getActive())
-                .collect(Collectors.toList());
+                .filter(a -> a.getActive() != null && a.getActive()).collect(Collectors.toList());
 
-        return assignments.stream()
-                .map(DoctorPatientAssignment::getPatient)
-                .filter(p -> p != null)
+        return assignments.stream().map(DoctorPatientAssignment::getPatient).filter(p -> p != null)
                 .collect(Collectors.toList());
     }
 
     private boolean isPatientAssignedToUser(Long patientId, User user) {
         List<Patient> assignedPatients = getAssignedPatients(user);
-        return assignedPatients.stream()
-                .anyMatch(p -> p.getId().equals(patientId));
+        return assignedPatients.stream().anyMatch(p -> p.getId().equals(patientId));
     }
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        return userRepository.findByUsername(username)
-                .or(() -> userRepository.findByEmail(username))
+        return userRepository.findByUsername(username).or(() -> userRepository.findByEmail(username))
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 }

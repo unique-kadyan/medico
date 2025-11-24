@@ -47,4 +47,11 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean enabled = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hospital_id")
+    private Hospital hospital;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isHospitalAdmin = false;
 }

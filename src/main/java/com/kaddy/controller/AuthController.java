@@ -7,8 +7,6 @@ import com.kaddy.model.PendingUser;
 import com.kaddy.model.enums.UserRole;
 import com.kaddy.service.AuthenticationService;
 import com.kaddy.service.PendingUserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,63 +24,45 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Authentication", description = "Authentication management APIs")
 public class AuthController {
 
     private final AuthenticationService authenticationService;
     private final PendingUserService pendingUserService;
 
     @PostMapping("/login")
-    @Operation(summary = "User login", description = "Authenticate user and return JWT token")
-    public ResponseEntity<AuthenticationResponse> login(
-            @Valid @RequestBody AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         log.info("Login request received for email: {}", request.getEmail());
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     @PostMapping("/register")
-    @Operation(summary = "User registration", description = "Register a new user - For public self-registration only")
-    public ResponseEntity<AuthenticationResponse> register(
-            @Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
         log.info("Registration request received for username: {}", request.getUsername());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authenticationService.register(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.register(request));
     }
 
     @PostMapping("/admin/create-user")
-    @Operation(summary = "Admin creates user", description = "Admin directly creates a user without approval (Admin only)")
     public ResponseEntity<?> adminCreateUser(@Valid @RequestBody RegisterRequest request) {
         try {
-            log.info("Admin user creation request received for username: {} with role: {}",
-                    request.getUsername(), request.getRole());
+            log.info("Admin user creation request received for username: {} with role: {}", request.getUsername(),
+                    request.getRole());
 
             AuthenticationResponse response = authenticationService.register(request);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of(
-                            "message", "User created successfully",
-                            "userId", response.getUserId(),
-                            "username", response.getUsername(),
-                            "email", response.getEmail(),
-                            "role", response.getRole()
-                    ));
+                    .body(Map.of("message", "User created successfully", "userId", response.getUserId(), "username",
+                            response.getUsername(), "email", response.getEmail(), "role", response.getRole()));
         } catch (Exception e) {
             log.error("Error creating user by admin for username: {}", request.getUsername(), e);
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
     @PostMapping(value = "/register-with-documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Register with documents", description = "Register a new user with government ID documents (requires approval)")
-    public ResponseEntity<?> registerWithDocuments(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam("email") String email,
-            @RequestParam("firstName") String firstName,
-            @RequestParam("lastName") String lastName,
-            @RequestParam(value = "phone", required = false) String phone,
-            @RequestParam("role") UserRole role,
+    public ResponseEntity<?> registerWithDocuments(@RequestParam("username") String username,
+            @RequestParam("password") String password, @RequestParam("email") String email,
+            @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
+            @RequestParam(value = "phone", required = false) String phone, @RequestParam("role") UserRole role,
             @RequestParam("documents") List<MultipartFile> documents) {
 
         try {
@@ -112,14 +92,11 @@ public class AuthController {
             log.info("Pending registration created successfully for username: {}", username);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of(
-                            "message", "Registration submitted successfully. Your account is pending approval.",
-                            "pendingUserId", savedPendingUser.getId(),
-                            "status", "PENDING"));
+                    .body(Map.of("message", "Registration submitted successfully. Your account is pending approval.",
+                            "pendingUserId", savedPendingUser.getId(), "status", "PENDING"));
         } catch (Exception e) {
             log.error("Error during registration with documents for username: {}", username, e);
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 }

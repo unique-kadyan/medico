@@ -59,10 +59,6 @@ public class FollowUp extends BaseEntity {
     private Integer durationMinutes;
 
     public enum FollowUpStatus {
-        SCHEDULED,
-        COMPLETED,
-        CANCELLED,
-        NO_SHOW,
-        RESCHEDULED
+        SCHEDULED, COMPLETED, CANCELLED, NO_SHOW, RESCHEDULED
     }
 }

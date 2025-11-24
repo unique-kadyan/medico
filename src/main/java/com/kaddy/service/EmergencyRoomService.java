@@ -25,7 +25,8 @@ public class EmergencyRoomService {
     @Transactional
     public EmergencyRoomDTO createEmergencyRoom(EmergencyRoomDTO dto) {
         if (emergencyRoomRepository.existsByRoomNumber(dto.getRoomNumber())) {
-            throw new DuplicateResourceException("Emergency room with number " + dto.getRoomNumber() + " already exists");
+            throw new DuplicateResourceException(
+                    "Emergency room with number " + dto.getRoomNumber() + " already exists");
         }
 
         EmergencyRoom room = new EmergencyRoom();
@@ -44,32 +45,23 @@ public class EmergencyRoomService {
     }
 
     public List<EmergencyRoomDTO> getAllEmergencyRooms() {
-        return emergencyRoomRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return emergencyRoomRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<EmergencyRoomDTO> getActiveEmergencyRooms() {
-        return emergencyRoomRepository.findByIsActiveTrue().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return emergencyRoomRepository.findByIsActiveTrue().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<EmergencyRoomDTO> getAvailableRooms() {
-        return emergencyRoomRepository.findAvailableRooms().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return emergencyRoomRepository.findAvailableRooms().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<EmergencyRoomDTO> getRoomsByStatus(EmergencyRoomStatus status) {
-        return emergencyRoomRepository.findByStatus(status).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return emergencyRoomRepository.findByStatus(status).stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public List<EmergencyRoomDTO> getRoomsByFloor(Integer floorNumber) {
-        return emergencyRoomRepository.findByFloorNumber(floorNumber).stream()
-                .map(this::mapToDTO)
+        return emergencyRoomRepository.findByFloorNumber(floorNumber).stream().map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -80,8 +72,8 @@ public class EmergencyRoomService {
     }
 
     public EmergencyRoomDTO getEmergencyRoomByNumber(String roomNumber) {
-        EmergencyRoom room = emergencyRoomRepository.findByRoomNumber(roomNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("Emergency room not found with number: " + roomNumber));
+        EmergencyRoom room = emergencyRoomRepository.findByRoomNumber(roomNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Emergency room not found with number: " + roomNumber));
         return mapToDTO(room);
     }
 

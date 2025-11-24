@@ -26,66 +26,56 @@ public class PatientService {
     private final DoctorPatientAssignmentService assignmentService;
     private final com.kaddy.security.SecurityUtils securityUtils;
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "patients", key = "#id")
     public PatientDTO getPatientById(Long id) {
         log.info("Fetching patient with ID: {}", id);
         Patient patient = patientRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
         return convertToDTO(patient);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "patients", key = "#patientId")
     public PatientDTO getPatientByPatientId(String patientId) {
         log.info("Fetching patient with Patient ID: {}", patientId);
         Patient patient = patientRepository.findByPatientId(patientId)
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found with Patient ID: " + patientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with Patient ID: " + patientId));
         return convertToDTO(patient);
     }
 
+    @Transactional(readOnly = true)
     public List<PatientDTO> getAllPatients() {
         log.info("Fetching all patients");
 
-        // If user is ADMIN, return all patients
         if (securityUtils.isAdmin()) {
-            return patientRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+            return patientRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
         }
 
-        // If user is DOCTOR, return only assigned patients
         if (securityUtils.isDoctor()) {
             Long doctorId = securityUtils.getCurrentDoctorId().orElse(null);
             if (doctorId != null) {
                 List<Long> patientIds = assignmentService.getPatientIdsForDoctor(doctorId);
-                return patientRepository.findAllById(patientIds)
-                    .stream()
-                    .map(this::convertToDTO)
-                    .collect(Collectors.toList());
+                return patientRepository.findAllById(patientIds).stream().map(this::convertToDTO)
+                        .collect(Collectors.toList());
             }
         }
 
-        // For other roles (NURSE, PHARMACIST), return empty list or implement custom logic
-        log.warn("User with role {} attempted to access all patients",
-                securityUtils.getCurrentUserRole().orElse(null));
+        log.warn("User with role {} attempted to access all patients", securityUtils.getCurrentUserRole().orElse(null));
         return List.of();
     }
 
+    @Transactional(readOnly = true)
     public List<PatientDTO> getAllActivePatients() {
         log.info("Fetching all active patients");
-        return patientRepository.findAllActivePatients()
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return patientRepository.findAllActivePatients().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<PatientDTO> searchPatientsByName(String name) {
         log.info("Searching patients by name: {}", name);
-        return patientRepository
-            .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name)
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return patientRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name).stream()
+                .map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @CacheEvict(value = "patients", allEntries = true)
@@ -108,9 +98,8 @@ public class PatientService {
         log.info("Updating patient with ID: {}", id);
 
         Patient existingPatient = patientRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
 
-        // Update fields
         existingPatient.setFirstName(patientDTO.getFirstName());
         existingPatient.setLastName(patientDTO.getLastName());
         existingPatient.setDateOfBirth(patientDTO.getDateOfBirth());
@@ -135,7 +124,7 @@ public class PatientService {
         log.info("Deleting patient with ID: {}", id);
 
         Patient patient = patientRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
 
         patient.setActive(false);
         patientRepository.save(patient);

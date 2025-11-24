@@ -2,7 +2,6 @@ package com.kaddy.dto;
 
 import com.kaddy.model.enums.MedicationRequestStatus;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 public class MedicationRequestDTO {
     private Long id;
 
-    @NotNull(message = "Requested by user ID is required")
     private Long requestedById;
 
     @NotBlank(message = "Medication name is required")
@@ -42,10 +40,8 @@ public class MedicationRequestDTO {
 
     private String reviewNotes;
 
-    @NotNull(message = "Status is required")
     private MedicationRequestStatus status;
 
-    // Additional fields for display
     private String requestedByName;
     private String reviewedByName;
 }

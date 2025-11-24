@@ -19,7 +19,8 @@ public interface DoctorPatientAssignmentRepository extends JpaRepository<DoctorP
     List<DoctorPatientAssignment> findActiveAssignmentsByPatientId(@Param("patientId") Long patientId);
 
     @Query("SELECT a FROM DoctorPatientAssignment a WHERE a.doctor.id = :doctorId AND a.patient.id = :patientId AND a.status = 'ACTIVE'")
-    Optional<DoctorPatientAssignment> findActiveAssignment(@Param("doctorId") Long doctorId, @Param("patientId") Long patientId);
+    Optional<DoctorPatientAssignment> findActiveAssignment(@Param("doctorId") Long doctorId,
+            @Param("patientId") Long patientId);
 
     @Query("SELECT DISTINCT a.patient.id FROM DoctorPatientAssignment a WHERE a.doctor.id = :doctorId AND a.status = 'ACTIVE'")
     List<Long> findPatientIdsByDoctorId(@Param("doctorId") Long doctorId);

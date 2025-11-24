@@ -37,6 +37,7 @@ public class AppointmentService {
     private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
 
+    @Transactional(readOnly = true)
     public List<AppointmentDTO> getAllAppointments() {
         log.info("Fetching all appointments");
 
@@ -59,11 +60,10 @@ public class AppointmentService {
             appointments = appointmentRepository.findAll();
         }
 
-        return appointments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public AppointmentDTO getAppointmentById(Long id) {
         log.info("Fetching appointment with id: {}", id);
         Appointment appointment = appointmentRepository.findById(id)
@@ -71,55 +71,47 @@ public class AppointmentService {
         return convertToDTO(appointment);
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentDTO> getAppointmentsByPatient(Long patientId) {
         log.info("Fetching appointments for patient: {}", patientId);
         List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
-        return appointments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentDTO> getAppointmentsByDoctor(Long doctorId) {
         log.info("Fetching appointments for doctor: {}", doctorId);
         List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId);
-        return appointments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentDTO> getTodaysAppointments() {
         log.info("Fetching today's appointments");
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
 
-        List<Appointment> appointments = appointmentRepository
-                .findAppointmentsBetweenDates(startOfDay, endOfDay);
+        List<Appointment> appointments = appointmentRepository.findAppointmentsBetweenDates(startOfDay, endOfDay);
 
-        return appointments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentDTO> getUpcomingAppointments() {
         log.info("Fetching upcoming appointments");
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime futureDate = now.plusMonths(3);
 
-        List<Appointment> appointments = appointmentRepository
-                .findAppointmentsBetweenDates(now, futureDate);
+        List<Appointment> appointments = appointmentRepository.findAppointmentsBetweenDates(now, futureDate);
 
-        return appointments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return appointments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public AppointmentDTO createAppointment(AppointmentRequest request) {
-        log.info("Creating appointment for patient {} with doctor {}",
-                request.getPatientId(), request.getDoctorId());
+        log.info("Creating appointment for patient {} with doctor {}", request.getPatientId(), request.getDoctorId());
 
-        Patient patient = patientRepository.findById(request.getPatientId())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
+        Patient patient = patientRepository.findById(request.getPatientId()).orElseThrow(
+                () -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
 
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + request.getDoctorId()));
@@ -148,16 +140,14 @@ public class AppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
 
         if (request.getPatientId() != null) {
-            Patient patient = patientRepository.findById(request.getPatientId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Patient not found with id: " + request.getPatientId()));
+            Patient patient = patientRepository.findById(request.getPatientId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
             appointment.setPatient(patient);
         }
 
         if (request.getDoctorId() != null) {
-            Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                    .orElseThrow(
-                            () -> new ResourceNotFoundException("Doctor not found with id: " + request.getDoctorId()));
+            Doctor doctor = doctorRepository.findById(request.getDoctorId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Doctor not found with id: " + request.getDoctorId()));
             appointment.setDoctor(doctor);
         }
 
@@ -225,26 +215,17 @@ public class AppointmentService {
     }
 
     private AppointmentDTO convertToDTO(Appointment appointment) {
-        return AppointmentDTO.builder()
-                .id(appointment.getId())
-                .patientId(appointment.getPatient().getId())
+        return AppointmentDTO.builder().id(appointment.getId()).patientId(appointment.getPatient().getId())
                 .patientName(appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName())
                 .doctorId(appointment.getDoctor().getId())
                 .doctorName(
                         "Dr. " + appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName())
                 .appointmentDate(appointment.getAppointmentDateTime())
-                .appointmentDateTime(appointment.getAppointmentDateTime())
-                .status(appointment.getStatus())
+                .appointmentDateTime(appointment.getAppointmentDateTime()).status(appointment.getStatus())
                 .type(appointment.getReasonForVisit() != null ? "Consultation" : "General")
-                .reasonForVisit(appointment.getReasonForVisit())
-                .symptoms(appointment.getSymptoms())
-                .diagnosis(appointment.getDiagnosis())
-                .notes(appointment.getNotes())
-                .duration(appointment.getDuration())
-                .actualStartTime(appointment.getActualStartTime())
-                .actualEndTime(appointment.getActualEndTime())
-                .createdAt(appointment.getCreatedAt())
-                .updatedAt(appointment.getUpdatedAt())
-                .build();
+                .reasonForVisit(appointment.getReasonForVisit()).symptoms(appointment.getSymptoms())
+                .diagnosis(appointment.getDiagnosis()).notes(appointment.getNotes()).duration(appointment.getDuration())
+                .actualStartTime(appointment.getActualStartTime()).actualEndTime(appointment.getActualEndTime())
+                .createdAt(appointment.getCreatedAt()).updatedAt(appointment.getUpdatedAt()).build();
     }
 }

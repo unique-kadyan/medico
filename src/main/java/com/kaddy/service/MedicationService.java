@@ -25,77 +25,71 @@ public class MedicationService {
     private final MedicationRepository medicationRepository;
     private final ModelMapper modelMapper;
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "medications", key = "#id")
     public MedicationDTO getMedicationById(Long id) {
         log.info("Fetching medication with ID: {}", id);
         Medication medication = medicationRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
         return convertToDTO(medication);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "medications", key = "#medicationCode")
     public MedicationDTO getMedicationByCode(String medicationCode) {
         log.info("Fetching medication with code: {}", medicationCode);
         Medication medication = medicationRepository.findByMedicationCode(medicationCode)
-            .orElseThrow(() -> new ResourceNotFoundException("Medication not found with code: " + medicationCode));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with code: " + medicationCode));
         return convertToDTO(medication);
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> getAllMedications() {
         log.info("Fetching all medications");
-        return medicationRepository.findAll()
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> getAllActiveMedications() {
         log.info("Fetching all active medications");
-        return medicationRepository.findAllActiveMedications()
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findAllActiveMedications().stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> searchMedicationsByName(String name) {
         log.info("Searching medications by name: {}", name);
-        return medicationRepository.findByNameContainingIgnoreCase(name)
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findByNameContainingIgnoreCase(name).stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> getMedicationsByCategory(String category) {
         log.info("Fetching medications by category: {}", category);
-        return medicationRepository.findByCategory(category)
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findByCategory(category).stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> getLowStockMedications() {
         log.info("Fetching low stock medications");
-        return medicationRepository.findLowStockMedications()
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findLowStockMedications().stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> getExpiredMedications() {
         log.info("Fetching expired medications");
-        return medicationRepository.findExpiredMedications(LocalDate.now())
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findExpiredMedications(LocalDate.now()).stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MedicationDTO> getExpiringSoonMedications() {
         log.info("Fetching medications expiring within 3 months");
         LocalDate threeMonthsLater = LocalDate.now().plusMonths(3);
-        return medicationRepository.findMedicationsExpiringBetween(LocalDate.now(), threeMonthsLater)
-            .stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return medicationRepository.findMedicationsExpiringBetween(LocalDate.now(), threeMonthsLater).stream()
+                .map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @CacheEvict(value = "medications", allEntries = true)
@@ -103,7 +97,8 @@ public class MedicationService {
         log.info("Creating new medication with code: {}", medicationDTO.getMedicationCode());
 
         if (medicationRepository.existsByMedicationCode(medicationDTO.getMedicationCode())) {
-            throw new IllegalArgumentException("Medication with code " + medicationDTO.getMedicationCode() + " already exists");
+            throw new IllegalArgumentException(
+                    "Medication with code " + medicationDTO.getMedicationCode() + " already exists");
         }
 
         Medication medication = convertToEntity(medicationDTO);
@@ -118,9 +113,8 @@ public class MedicationService {
         log.info("Updating medication with ID: {}", id);
 
         Medication existingMedication = medicationRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
 
-        // Update fields
         existingMedication.setName(medicationDTO.getName());
         existingMedication.setGenericName(medicationDTO.getGenericName());
         existingMedication.setCategory(medicationDTO.getCategory());
@@ -150,7 +144,7 @@ public class MedicationService {
         log.info("Updating stock for medication ID: {} with quantity: {}", id, quantity);
 
         Medication medication = medicationRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
 
         medication.setStockQuantity(medication.getStockQuantity() + quantity);
         Medication updatedMedication = medicationRepository.save(medication);
@@ -164,7 +158,7 @@ public class MedicationService {
         log.info("Deleting medication with ID: {}", id);
 
         Medication medication = medicationRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with ID: " + id));
 
         medication.setActive(false);
         medicationRepository.save(medication);

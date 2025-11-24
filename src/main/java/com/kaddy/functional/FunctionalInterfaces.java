@@ -2,11 +2,7 @@ package com.kaddy.functional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.*;
 
-/**
- * Custom functional interfaces for hospital operations
- */
 public class FunctionalInterfaces {
 
     @FunctionalInterface

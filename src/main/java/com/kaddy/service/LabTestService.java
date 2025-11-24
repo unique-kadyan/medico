@@ -34,6 +34,7 @@ public class LabTestService {
     private final NotificationService notificationService;
     private final ModelMapper modelMapper;
 
+    @Transactional(readOnly = true)
     public LabTestDTO getLabTestById(Long id) {
         log.info("Fetching lab test with ID: {}", id);
         LabTest labTest = labTestRepository.findById(id)
@@ -41,53 +42,45 @@ public class LabTestService {
         return convertToDTO(labTest);
     }
 
+    @Transactional(readOnly = true)
     public List<LabTestDTO> getAllLabTests() {
         log.info("Fetching all lab tests");
-        return labTestRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return labTestRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<LabTestDTO> getTestsByPatient(Long patientId) {
         log.info("Fetching lab tests for patient ID: {}", patientId);
         if (!patientRepository.existsById(patientId)) {
             throw new ResourceNotFoundException("Patient not found with ID: " + patientId);
         }
-        return labTestRepository.findByPatientIdOrderByOrderedDateDesc(patientId)
-                .stream()
-                .map(this::convertToDTO)
+        return labTestRepository.findByPatientIdOrderByOrderedDateDesc(patientId).stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<LabTestDTO> getTestsByDoctor(Long doctorId) {
         log.info("Fetching lab tests for doctor ID: {}", doctorId);
         if (!doctorRepository.existsById(doctorId)) {
             throw new ResourceNotFoundException("Doctor not found with ID: " + doctorId);
         }
-        return labTestRepository.findByDoctorId(doctorId)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return labTestRepository.findByDoctorId(doctorId).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<LabTestDTO> getTestsByStatus(LabTest.TestStatus status) {
         log.info("Fetching lab tests with status: {}", status);
-        return labTestRepository.findByStatus(status)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return labTestRepository.findByStatus(status).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public LabTestDTO orderTest(LabTestDTO labTestDTO) {
-        log.info("Ordering lab test: {} for patient ID: {}",
-                labTestDTO.getTestName(), labTestDTO.getPatientId());
+        log.info("Ordering lab test: {} for patient ID: {}", labTestDTO.getTestName(), labTestDTO.getPatientId());
 
-        Patient patient = patientRepository.findById(labTestDTO.getPatientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + labTestDTO.getPatientId()));
+        Patient patient = patientRepository.findById(labTestDTO.getPatientId()).orElseThrow(
+                () -> new ResourceNotFoundException("Patient not found with ID: " + labTestDTO.getPatientId()));
 
-        Doctor doctor = doctorRepository.findById(labTestDTO.getDoctorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with ID: " + labTestDTO.getDoctorId()));
+        Doctor doctor = doctorRepository.findById(labTestDTO.getDoctorId()).orElseThrow(
+                () -> new ResourceNotFoundException("Doctor not found with ID: " + labTestDTO.getDoctorId()));
 
         LabTest labTest = convertToEntity(labTestDTO);
         labTest.setPatient(patient);
@@ -118,7 +111,6 @@ public class LabTestService {
         LabTest existingLabTest = labTestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lab test not found with ID: " + id));
 
-        // Update fields
         existingLabTest.setTestName(labTestDTO.getTestName());
         existingLabTest.setTestType(labTestDTO.getTestType());
         existingLabTest.setSampleCollectedDate(labTestDTO.getSampleCollectedDate());
@@ -132,10 +124,10 @@ public class LabTestService {
         existingLabTest.setPriority(labTestDTO.getPriority());
         existingLabTest.setUrgent(labTestDTO.getUrgent());
 
-        // Update lab technician if provided
         if (labTestDTO.getLabTechnicianId() != null) {
             User labTechnician = userRepository.findById(labTestDTO.getLabTechnicianId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Lab technician not found with ID: " + labTestDTO.getLabTechnicianId()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Lab technician not found with ID: " + labTestDTO.getLabTechnicianId()));
             existingLabTest.setLabTechnician(labTechnician);
         }
 
@@ -160,7 +152,6 @@ public class LabTestService {
         LabTest updatedLabTest = labTestRepository.save(labTest);
         log.info("Lab test results uploaded successfully with ID: {}", updatedLabTest.getId());
 
-        // Create notifications for patient and doctor
         createResultNotifications(updatedLabTest);
 
         return convertToDTO(updatedLabTest);
@@ -169,47 +160,28 @@ public class LabTestService {
     private void createResultNotifications(LabTest labTest) {
         log.info("Creating notifications for lab test results with ID: {}", labTest.getId());
 
-        // Find user ID associated with the patient (if exists)
-        // Note: In a real scenario, you might need to link Patient to User
-        // For now, we'll create notifications if the patient/doctor has a User account
-
-        // Notification for the doctor
         try {
-            User doctorUser = userRepository.findByEmail(labTest.getDoctor().getEmail())
-                    .orElse(null);
+            User doctorUser = userRepository.findByEmail(labTest.getDoctor().getEmail()).orElse(null);
 
             if (doctorUser != null) {
-                notificationService.createNotification(
-                        doctorUser.getId(),
-                        "Lab Test Results Available",
-                        String.format("Lab test results for %s (Patient: %s) are now available.",
-                                labTest.getTestName(),
+                notificationService.createNotification(doctorUser.getId(), "Lab Test Results Available",
+                        String.format("Lab test results for %s (Patient: %s) are now available.", labTest.getTestName(),
                                 labTest.getPatient().getFullName()),
-                        Notification.NotificationType.LAB_RESULT_AVAILABLE,
-                        "LAB_TEST",
-                        labTest.getId()
-                );
+                        Notification.NotificationType.LAB_RESULT_AVAILABLE, "LAB_TEST", labTest.getId());
                 log.info("Notification created for doctor ID: {}", doctorUser.getId());
             }
         } catch (Exception e) {
             log.warn("Could not create notification for doctor: {}", e.getMessage());
         }
 
-        // Notification for the patient (if patient has a user account)
         try {
-            User patientUser = userRepository.findByEmail(labTest.getPatient().getEmail())
-                    .orElse(null);
+            User patientUser = userRepository.findByEmail(labTest.getPatient().getEmail()).orElse(null);
 
             if (patientUser != null) {
-                notificationService.createNotification(
-                        patientUser.getId(),
-                        "Your Lab Test Results Are Ready",
+                notificationService.createNotification(patientUser.getId(), "Your Lab Test Results Are Ready",
                         String.format("Your %s test results are now available. Please consult with your doctor.",
                                 labTest.getTestName()),
-                        Notification.NotificationType.LAB_RESULT_AVAILABLE,
-                        "LAB_TEST",
-                        labTest.getId()
-                );
+                        Notification.NotificationType.LAB_RESULT_AVAILABLE, "LAB_TEST", labTest.getId());
                 log.info("Notification created for patient user ID: {}", patientUser.getId());
             }
         } catch (Exception e) {
@@ -237,8 +209,8 @@ public class LabTestService {
 
         if (labTest.getLabTechnician() != null) {
             dto.setLabTechnicianId(labTest.getLabTechnician().getId());
-            dto.setLabTechnicianName(labTest.getLabTechnician().getFirstName() + " " +
-                    labTest.getLabTechnician().getLastName());
+            dto.setLabTechnicianName(
+                    labTest.getLabTechnician().getFirstName() + " " + labTest.getLabTechnician().getLastName());
         }
 
         return dto;

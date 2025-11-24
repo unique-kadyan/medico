@@ -138,10 +138,12 @@ function Sidebar({ open }) {
       text: "Med Requests",
       icon: <AssignmentIcon />,
       path: "/medication-requests",
-      show: canAny([
-        PERMISSIONS.VIEW_MEDICATION_REQUESTS,
-        PERMISSIONS.APPROVE_MEDICATION_REQUEST,
-      ]),
+      show:
+        canAny([
+          PERMISSIONS.VIEW_MEDICATION_REQUESTS,
+          PERMISSIONS.CREATE_MEDICATION_REQUEST,
+          PERMISSIONS.APPROVE_MEDICATION_REQUEST,
+        ]) || isAnyRole(["DOCTOR", "DOCTOR_SUPERVISOR", "PHARMACIST", "ADMIN"]),
     },
     {
       text: "Lab Tests",

@@ -46,14 +46,6 @@ public class Notification extends BaseEntity {
     private LocalDateTime sentAt = LocalDateTime.now();
 
     public enum NotificationType {
-        LAB_RESULT_AVAILABLE,
-        APPOINTMENT_REMINDER,
-        FOLLOWUP_DUE,
-        PRESCRIPTION_READY,
-        MEDICATION_REQUEST_APPROVED,
-        MEDICATION_REQUEST_REJECTED,
-        GENERAL,
-        ALERT,
-        INFO
+        LAB_RESULT_AVAILABLE, APPOINTMENT_REMINDER, FOLLOWUP_DUE, PRESCRIPTION_READY, MEDICATION_REQUEST_APPROVED, MEDICATION_REQUEST_REJECTED, GENERAL, ALERT, INFO
     }
 }

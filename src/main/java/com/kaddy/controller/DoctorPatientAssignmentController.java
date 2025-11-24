@@ -20,19 +20,16 @@ public class DoctorPatientAssignmentController {
     @PostMapping
     public ResponseEntity<DoctorPatientAssignmentDTO> assignDoctorToPatient(
             @Valid @RequestBody DoctorPatientAssignmentDTO assignmentDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(assignmentService.assignDoctorToPatient(assignmentDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(assignmentService.assignDoctorToPatient(assignmentDTO));
     }
 
     @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<DoctorPatientAssignmentDTO>> getDoctorAssignments(
-            @PathVariable Long doctorId) {
+    public ResponseEntity<List<DoctorPatientAssignmentDTO>> getDoctorAssignments(@PathVariable Long doctorId) {
         return ResponseEntity.ok(assignmentService.getDoctorAssignments(doctorId));
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<DoctorPatientAssignmentDTO>> getPatientAssignments(
-            @PathVariable Long patientId) {
+    public ResponseEntity<List<DoctorPatientAssignmentDTO>> getPatientAssignments(@PathVariable Long patientId) {
         return ResponseEntity.ok(assignmentService.getPatientAssignments(patientId));
     }
 

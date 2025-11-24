@@ -72,17 +72,19 @@ public class PendingUserService {
         return savedPendingUser;
     }
 
+    @Transactional(readOnly = true)
     public List<PendingUser> getAllPendingUsers() {
         return pendingUserRepository.findByStatus("PENDING");
     }
 
+    @Transactional(readOnly = true)
     public List<PendingUser> getPendingUsersByRole(UserRole role) {
         return pendingUserRepository.findByStatusAndRequestedRole("PENDING", role);
     }
 
+    @Transactional(readOnly = true)
     public PendingUser getPendingUserById(Long id) {
-        return pendingUserRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pending user not found"));
+        return pendingUserRepository.findById(id).orElseThrow(() -> new RuntimeException("Pending user not found"));
     }
 
     @Transactional
@@ -141,6 +143,7 @@ public class PendingUserService {
         pendingUserRepository.save(pendingUser);
     }
 
+    @Transactional(readOnly = true)
     public boolean canApprove(UserRole approverRole, UserRole requestedRole) {
         if (approverRole == UserRole.ADMIN) {
             return true;
@@ -158,6 +161,7 @@ public class PendingUserService {
         return false;
     }
 
+    @Transactional(readOnly = true)
     public List<Document> getDocumentsForPendingUser(Long pendingUserId) {
         return documentRepository.findByPendingUserId(pendingUserId);
     }
