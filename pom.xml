@@ -23,10 +23,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>25</maven.compiler.source>
-    <maven.compiler.target>25</maven.compiler.target>
-    <maven.compiler.release>25</maven.compiler.release>
-    <java.version>25</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
+    <java.version>21</java.version>
     <lombok.version>1.18.40</lombok.version>
     <javafx.version>23.0.1</javafx.version>
     <jjwt.version>0.12.6</jjwt.version>
