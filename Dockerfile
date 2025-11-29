@@ -1,57 +1,45 @@
-# Multi-stage Docker build for Medico Hospital Management System
+# ============================
+# 1. Build React Frontend
+# ============================
+FROM node:18 AS frontend-build
+WORKDIR /app/frontend
 
-# Stage 1: Build stage
-FROM eclipse-temurin:25-jdk-alpine AS builder
+# Copy React project
+COPY frontend/package*.json ./
+RUN npm install
 
+COPY frontend/ ./
+RUN npm run build
+
+
+# ============================
+# 2. Build Spring Boot Backend
+# ============================
+FROM maven:3.9-eclipse-temurin-21 AS backend-build
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-
-# Download dependencies (cached layer)
-RUN ./mvnw dependency:go-offline -B
-
-# Copy source code
+# Copy backend code
+COPY pom.xml .
 COPY src ./src
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
+# Copy frontend build → Spring Boot static folder
+RUN mkdir -p src/main/resources/static
+COPY --from=frontend-build /app/frontend/build ./src/main/resources/static
 
-# Stage 2: Runtime stage
-FROM eclipse-temurin:25-jre-alpine
+# Build Spring Boot app (JAR)
+RUN mvn clean package -DskipTests
 
-# Add metadata
-LABEL maintainer="Medico Team"
-LABEL description="Medico Hospital Management System - Spring Boot Application"
-LABEL version="1.0.0"
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S medico && \
-    adduser -u 1001 -S medico -G medico
+# ============================
+# 3. Final Runtime Image
+# ============================
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Copy JAR from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+# Copy jar from previous stage
+COPY --from=backend-build /app/target/*.jar app.jar
 
-# Create directories for uploads and logs
-RUN mkdir -p /app/uploads /app/logs && \
-    chown -R medico:medico /app
-
-# Switch to non-root user
-USER medico
-
-# Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
-
-# Environment variables
-ENV JAVA_OPTS="-Xms512m -Xmx1024m" \
-    SPRING_PROFILES_ACTIVE=prod
-
-# Run the application
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["java", "-jar", "app.jar"]
