@@ -24,7 +24,7 @@ COPY src ./src
 
 # Copy frontend build → Spring Boot static folder
 RUN mkdir -p src/main/resources/static
-COPY --from=frontend-build /app/frontend/build ./src/main/resources/static
+COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
 
 # Build Spring Boot app (JAR)
 RUN mvn clean package -DskipTests
