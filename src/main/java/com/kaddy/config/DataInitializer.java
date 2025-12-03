@@ -24,155 +24,191 @@ import java.time.LocalDate;
 @Slf4j
 public class DataInitializer {
 
-    private final UserRepository userRepository;
-    private final DoctorRepository doctorRepository;
-    private final PatientRepository patientRepository;
-    private final PasswordEncoder passwordEncoder;
+        private final UserRepository userRepository;
+        private final DoctorRepository doctorRepository;
+        private final PatientRepository patientRepository;
+        private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    @Profile({"dev", "default"})
-    public CommandLineRunner initializeTestUsers() {
-        return args -> {
-            log.info("Initializing test users for development environment...");
+        @Bean
+        @Profile({ "dev", "default" })
+        public CommandLineRunner initializeTestUsers() {
+                return args -> {
+                        log.info("Initializing test users for development environment...");
 
-            createUserIfNotExists("admin", "admin@medico.com", "admin123", "Admin", "User", "+91 81684 81271",
-                    UserRole.ADMIN);
+                        createUserIfNotExists("admin", "admin@medico.com", "admin123", "Admin", "User",
+                                        "+91 81684 81271",
+                                        UserRole.ADMIN);
 
-            createUserIfNotExists("doctor", "doctor@medico.com", "doctor123", "John", "Doe", "+91 98765 43210",
-                    UserRole.DOCTOR);
+                        createUserIfNotExists("doctor", "doctor@medico.com", "doctor123", "John", "Doe",
+                                        "+91 98765 43210",
+                                        UserRole.DOCTOR);
 
-            createUserIfNotExists("nurse", "nurse@medico.com", "nurse123", "Jane", "Smith", "+91 98765 43211",
-                    UserRole.NURSE);
+                        createUserIfNotExists("nurse", "nurse@medico.com", "nurse123", "Jane", "Smith",
+                                        "+91 98765 43211",
+                                        UserRole.NURSE);
 
-            createUserIfNotExists("pharmacist", "pharmacist@medico.com", "pharmacist123", "Emily", "Johnson",
-                    "+91 98765 43212", UserRole.PHARMACIST);
+                        createUserIfNotExists("pharmacist", "pharmacist@medico.com", "pharmacist123", "Emily",
+                                        "Johnson",
+                                        "+91 98765 43212", UserRole.PHARMACIST);
 
-            createUserIfNotExists("labtech", "labtech@medico.com", "labtech123", "Michael", "Brown", "+91 98765 43213",
-                    UserRole.LAB_TECHNICIAN);
+                        createUserIfNotExists("labtech", "labtech@medico.com", "labtech123", "Michael", "Brown",
+                                        "+91 98765 43213",
+                                        UserRole.LAB_TECHNICIAN);
 
-            createUserIfNotExists("receptionist", "receptionist@medico.com", "receptionist123", "Sarah", "Wilson",
-                    "+91 98765 43214", UserRole.RECEPTIONIST);
+                        createUserIfNotExists("receptionist", "receptionist@medico.com", "receptionist123", "Sarah",
+                                        "Wilson",
+                                        "+91 98765 43214", UserRole.RECEPTIONIST);
 
-            log.info("Test users initialization completed!");
+                        // Create test patient user who can log in and make payments
+                        createUserIfNotExists("patient", "patient@medico.com", "patient123", "Alice", "Johnson",
+                                        "+91 98765 43220",
+                                        UserRole.PATIENT);
 
-            log.info("Initializing test doctors...");
-            createDoctorIfNotExists("DOC001", "John", "Doe", "Cardiology", "LIC-12345", "+91 98765 43210",
-                    "doctor@medico.com", "Cardiology", 10, "MBBS, MD (Cardiology)",
-                    "Experienced cardiologist with 10 years of practice");
+                        log.info("Test users initialization completed!");
 
-            createDoctorIfNotExists("DOC002", "Emily", "Smith", "Pediatrics", "LIC-67890", "+91 98765 43215",
-                    "emily.smith@medico.com", "Pediatrics", 8, "MBBS, DCH",
-                    "Pediatric specialist with focus on child healthcare");
+                        log.info("Initializing test doctors...");
+                        createDoctorIfNotExists("DOC001", "John", "Doe", "Cardiology", "LIC-12345", "+91 98765 43210",
+                                        "doctor@medico.com", "Cardiology", 10, "MBBS, MD (Cardiology)",
+                                        "Experienced cardiologist with 10 years of practice");
 
-            createDoctorIfNotExists("DOC003", "Michael", "Chen", "Orthopedics", "LIC-11223", "+91 98765 43216",
-                    "michael.chen@medico.com", "Orthopedics", 12, "MBBS, MS (Orthopedics)",
-                    "Expert in joint replacement and sports injuries");
+                        createDoctorIfNotExists("DOC002", "Emily", "Smith", "Pediatrics", "LIC-67890",
+                                        "+91 98765 43215",
+                                        "emily.smith@medico.com", "Pediatrics", 8, "MBBS, DCH",
+                                        "Pediatric specialist with focus on child healthcare");
 
-            log.info("Test doctors initialization completed!");
+                        createDoctorIfNotExists("DOC003", "Michael", "Chen", "Orthopedics", "LIC-11223",
+                                        "+91 98765 43216",
+                                        "michael.chen@medico.com", "Orthopedics", 12, "MBBS, MS (Orthopedics)",
+                                        "Expert in joint replacement and sports injuries");
 
-            log.info("Initializing test patients...");
-            createPatientIfNotExists("PAT001", "Alice", "Johnson", LocalDate.of(1990, 5, 15), Gender.FEMALE,
-                    "+91 98765 43220", "alice.johnson@email.com", "123 Main St, Mumbai", "Bob Johnson",
-                    "+91 98765 43221", BloodGroup.A_POSITIVE, "Penicillin", "Hypertension");
+                        log.info("Test doctors initialization completed!");
 
-            createPatientIfNotExists("PAT002", "Robert", "Williams", LocalDate.of(1985, 8, 20), Gender.MALE,
-                    "+91 98765 43222", "robert.williams@email.com", "456 Park Ave, Delhi", "Mary Williams",
-                    "+91 98765 43223", BloodGroup.O_POSITIVE, "None", "Diabetes Type 2");
+                        log.info("Initializing test patients...");
+                        createPatientIfNotExists("PAT001", "Alice", "Johnson", LocalDate.of(1990, 5, 15), Gender.FEMALE,
+                                        "+91 98765 43220", "patient@medico.com", "123 Main St, Mumbai", "Bob Johnson",
+                                        "+91 98765 43221", BloodGroup.A_POSITIVE, "Penicillin", "Hypertension");
 
-            createPatientIfNotExists("PAT003", "Sophia", "Martinez", LocalDate.of(2005, 3, 10), Gender.FEMALE,
-                    "+91 98765 43224", "sophia.martinez@email.com", "789 Lake Road, Bangalore", "Carlos Martinez",
-                    "+91 98765 43225", BloodGroup.B_POSITIVE, "Aspirin", "Asthma");
+                        createPatientIfNotExists("PAT002", "Robert", "Williams", LocalDate.of(1985, 8, 20), Gender.MALE,
+                                        "+91 98765 43222", "robert.williams@email.com", "456 Park Ave, Delhi",
+                                        "Mary Williams",
+                                        "+91 98765 43223", BloodGroup.O_POSITIVE, "None", "Diabetes Type 2");
 
-            createPatientIfNotExists("PAT004", "James", "Davis", LocalDate.of(1978, 12, 5), Gender.MALE,
-                    "+91 98765 43226", "james.davis@email.com", "321 Hill Street, Chennai", "Linda Davis",
-                    "+91 98765 43227", BloodGroup.AB_NEGATIVE, "None", "None");
+                        createPatientIfNotExists("PAT003", "Sophia", "Martinez", LocalDate.of(2005, 3, 10),
+                                        Gender.FEMALE,
+                                        "+91 98765 43224", "sophia.martinez@email.com", "789 Lake Road, Bangalore",
+                                        "Carlos Martinez",
+                                        "+91 98765 43225", BloodGroup.B_POSITIVE, "Aspirin", "Asthma");
 
-            log.info("Test patients initialization completed!");
-        };
-    }
+                        createPatientIfNotExists("PAT004", "James", "Davis", LocalDate.of(1978, 12, 5), Gender.MALE,
+                                        "+91 98765 43226", "james.davis@email.com", "321 Hill Street, Chennai",
+                                        "Linda Davis",
+                                        "+91 98765 43227", BloodGroup.AB_NEGATIVE, "None", "None");
 
-    private void createUserIfNotExists(String username, String email, String password, String firstName,
-            String lastName, String phone, UserRole role) {
-        var existingUserOptional = userRepository.findByUsername(username).or(() -> userRepository.findByEmail(email));
-
-        if (existingUserOptional.isEmpty()) {
-            User user = new User();
-            user.setUsername(username);
-            user.setEmail(email);
-            user.setPassword(passwordEncoder.encode(password));
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPhone(phone);
-            user.setRole(role);
-            user.setEnabled(true);
-
-            userRepository.save(user);
-            log.info("Created test user: {} ({}) with role: {}", username, email, role);
-        } else {
-            User existingUser = existingUserOptional.get();
-            String encodedPassword = passwordEncoder.encode(password);
-
-            existingUser.setPassword(encodedPassword);
-            existingUser.setEnabled(true);
-            userRepository.save(existingUser);
-            log.info("Updated password for existing test user: {} ({}) with role: {}", username, email, role);
+                        log.info("Test patients initialization completed!");
+                };
         }
-    }
 
-    private void createDoctorIfNotExists(String doctorId, String firstName, String lastName, String specialization,
-            String licenseNumber, String phone, String email, String department, Integer yearsOfExperience,
-            String qualification, String about) {
-        var existingDoctor = doctorRepository.findByDoctorId(doctorId);
-        if (existingDoctor.isEmpty()) {
-            var userOptional = userRepository.findByEmail(email);
+        private void createUserIfNotExists(String username, String email, String password, String firstName,
+                        String lastName, String phone, UserRole role) {
+                var existingUserOptional = userRepository.findByUsername(username)
+                                .or(() -> userRepository.findByEmail(email));
 
-            Doctor doctor = new Doctor();
-            doctor.setDoctorId(doctorId);
-            doctor.setFirstName(firstName);
-            doctor.setLastName(lastName);
-            doctor.setSpecialization(specialization);
-            doctor.setLicenseNumber(licenseNumber);
-            doctor.setPhone(phone);
-            doctor.setEmail(email);
-            doctor.setDepartment(department);
-            doctor.setYearsOfExperience(yearsOfExperience);
-            doctor.setQualification(qualification);
-            doctor.setAbout(about);
-            doctor.setAvailableForConsultation(true);
+                if (existingUserOptional.isEmpty()) {
+                        User user = new User();
+                        user.setUsername(username);
+                        user.setEmail(email);
+                        user.setPassword(passwordEncoder.encode(password));
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+                        user.setPhone(phone);
+                        user.setRole(role);
+                        user.setEnabled(true);
 
-            userOptional.ifPresent(doctor::setUser);
+                        userRepository.save(user);
+                        log.info("Created test user: {} ({}) with role: {}", username, email, role);
+                } else {
+                        User existingUser = existingUserOptional.get();
+                        String encodedPassword = passwordEncoder.encode(password);
 
-            doctorRepository.save(doctor);
-            log.info("Created test doctor: Dr. {} {} ({})", firstName, lastName, doctorId);
-        } else {
-            log.info("Doctor already exists: {}", doctorId);
+                        existingUser.setPassword(encodedPassword);
+                        existingUser.setEnabled(true);
+                        userRepository.save(existingUser);
+                        log.info("Updated password for existing test user: {} ({}) with role: {}", username, email,
+                                        role);
+                }
         }
-    }
 
-    private void createPatientIfNotExists(String patientId, String firstName, String lastName, LocalDate dateOfBirth,
-            Gender gender, String phone, String email, String address, String emergencyContact,
-            String emergencyContactPhone, BloodGroup bloodGroup, String allergies, String chronicConditions) {
-        var existingPatient = patientRepository.findByPatientId(patientId);
-        if (existingPatient.isEmpty()) {
-            Patient patient = new Patient();
-            patient.setPatientId(patientId);
-            patient.setFirstName(firstName);
-            patient.setLastName(lastName);
-            patient.setDateOfBirth(dateOfBirth);
-            patient.setGender(gender);
-            patient.setPhone(phone);
-            patient.setEmail(email);
-            patient.setAddress(address);
-            patient.setEmergencyContact(emergencyContact);
-            patient.setEmergencyContactPhone(emergencyContactPhone);
-            patient.setBloodGroup(bloodGroup);
-            patient.setAllergies(allergies);
-            patient.setChronicConditions(chronicConditions);
+        private void createDoctorIfNotExists(String doctorId, String firstName, String lastName, String specialization,
+                        String licenseNumber, String phone, String email, String department, Integer yearsOfExperience,
+                        String qualification, String about) {
+                var existingDoctor = doctorRepository.findByDoctorId(doctorId);
+                if (existingDoctor.isEmpty()) {
+                        var userOptional = userRepository.findByEmail(email);
 
-            patientRepository.save(patient);
-            log.info("Created test patient: {} {} ({})", firstName, lastName, patientId);
-        } else {
-            log.info("Patient already exists: {}", patientId);
+                        Doctor doctor = new Doctor();
+                        doctor.setDoctorId(doctorId);
+                        doctor.setFirstName(firstName);
+                        doctor.setLastName(lastName);
+                        doctor.setSpecialization(specialization);
+                        doctor.setLicenseNumber(licenseNumber);
+                        doctor.setPhone(phone);
+                        doctor.setEmail(email);
+                        doctor.setDepartment(department);
+                        doctor.setYearsOfExperience(yearsOfExperience);
+                        doctor.setQualification(qualification);
+                        doctor.setAbout(about);
+                        doctor.setAvailableForConsultation(true);
+
+                        userOptional.ifPresent(doctor::setUser);
+
+                        doctorRepository.save(doctor);
+                        log.info("Created test doctor: Dr. {} {} ({})", firstName, lastName, doctorId);
+                } else {
+                        log.info("Doctor already exists: {}", doctorId);
+                }
         }
-    }
+
+        private void createPatientIfNotExists(String patientId, String firstName, String lastName,
+                        LocalDate dateOfBirth,
+                        Gender gender, String phone, String email, String address, String emergencyContact,
+                        String emergencyContactPhone, BloodGroup bloodGroup, String allergies,
+                        String chronicConditions) {
+                var existingPatient = patientRepository.findByPatientId(patientId);
+                if (existingPatient.isEmpty()) {
+                        Patient patient = new Patient();
+                        patient.setPatientId(patientId);
+                        patient.setFirstName(firstName);
+                        patient.setLastName(lastName);
+                        patient.setDateOfBirth(dateOfBirth);
+                        patient.setGender(gender);
+                        patient.setPhone(phone);
+                        patient.setEmail(email);
+                        patient.setAddress(address);
+                        patient.setEmergencyContact(emergencyContact);
+                        patient.setEmergencyContactPhone(emergencyContactPhone);
+                        patient.setBloodGroup(bloodGroup);
+                        patient.setAllergies(allergies);
+                        patient.setChronicConditions(chronicConditions);
+
+                        var userOptional = userRepository.findByEmail(email);
+                        userOptional.ifPresent(patient::setUser);
+
+                        patientRepository.save(patient);
+                        log.info("Created test patient: {} {} ({}){}",
+                                        firstName, lastName, patientId,
+                                        userOptional.isPresent() ? " - linked to user account" : "");
+                } else {
+                        Patient patient = existingPatient.get();
+                        if (patient.getUser() == null) {
+                                var userOptional = userRepository.findByEmail(email);
+                                if (userOptional.isPresent()) {
+                                        patient.setUser(userOptional.get());
+                                        patient.setEmail(email);
+                                        patientRepository.save(patient);
+                                        log.info("Linked existing patient {} to user account", patientId);
+                                }
+                        }
+                        log.info("Patient already exists: {}", patientId);
+                }
+        }
 }

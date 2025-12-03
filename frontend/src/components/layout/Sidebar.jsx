@@ -22,6 +22,8 @@ import {
   HowToReg as ApprovalIcon,
   MedicalServices as OTIcon,
   EmergencyShare as EmergencyIcon,
+  ShoppingCart as OrderIcon,
+  Payment as PaymentIcon,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePermissions } from "../../hooks/usePermissions";
@@ -144,6 +146,18 @@ function Sidebar({ open }) {
           PERMISSIONS.CREATE_MEDICATION_REQUEST,
           PERMISSIONS.APPROVE_MEDICATION_REQUEST,
         ]) || isAnyRole(["DOCTOR", "DOCTOR_SUPERVISOR", "PHARMACIST", "ADMIN"]),
+    },
+    {
+      text: "Medicine Orders",
+      icon: <OrderIcon />,
+      path: "/medicine-orders",
+      show: isAnyRole(["PATIENT", "PHARMACIST", "RECEPTIONIST", "ADMIN"]),
+    },
+    {
+      text: "Payment Collection",
+      icon: <PaymentIcon />,
+      path: "/medicine-orders/payments",
+      show: isAnyRole(["RECEPTIONIST", "PHARMACIST", "ADMIN"]),
     },
     {
       text: "Lab Tests",
