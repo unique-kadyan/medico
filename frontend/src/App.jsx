@@ -37,6 +37,10 @@ import EmergencyDashboard from "./pages/emergency/EmergencyDashboard";
 import EmergencyAdmitForm from "./pages/emergency/EmergencyAdmitForm";
 import EmergencyRoomDetail from "./pages/emergency/EmergencyRoomDetail";
 import EmergencyPatientDetail from "./pages/emergency/EmergencyPatientDetail";
+import MedicineOrderList from "./pages/medicineOrders/MedicineOrderList";
+import MedicineOrderForm from "./pages/medicineOrders/MedicineOrderForm";
+import MedicineOrderDetail from "./pages/medicineOrders/MedicineOrderDetail";
+import MedicineOrderPayments from "./pages/medicineOrders/MedicineOrderPayments";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -184,6 +188,13 @@ function App() {
           <Route path="admit" element={<EmergencyAdmitForm />} />
           <Route path="rooms/:id" element={<EmergencyRoomDetail />} />
           <Route path="patients/:id" element={<EmergencyPatientDetail />} />
+        </Route>
+
+        <Route path="medicine-orders">
+          <Route index element={<MedicineOrderList />} />
+          <Route path="new" element={<MedicineOrderForm />} />
+          <Route path="payments" element={<MedicineOrderPayments />} />
+          <Route path=":id" element={<MedicineOrderDetail />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

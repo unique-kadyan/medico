@@ -32,7 +32,9 @@ public class PatientAccessService {
     public List<Patient> getAccessiblePatients() {
         User currentUser = getCurrentUser();
 
-        if (currentUser.getRole() == UserRole.ADMIN || currentUser.getRole() == UserRole.RECEPTIONIST) {
+        if (currentUser.getRole() == UserRole.ADMIN ||
+                currentUser.getRole() == UserRole.RECEPTIONIST ||
+                currentUser.getRole() == UserRole.PHARMACIST) {
             return patientRepository.findAll();
         }
 
@@ -49,7 +51,9 @@ public class PatientAccessService {
     public boolean canAccessPatient(Long patientId) {
         User currentUser = getCurrentUser();
 
-        if (currentUser.getRole() == UserRole.ADMIN || currentUser.getRole() == UserRole.RECEPTIONIST) {
+        if (currentUser.getRole() == UserRole.ADMIN ||
+                currentUser.getRole() == UserRole.RECEPTIONIST ||
+                currentUser.getRole() == UserRole.PHARMACIST) {
             return true;
         }
 

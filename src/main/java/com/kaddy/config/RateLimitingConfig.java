@@ -18,7 +18,7 @@ public class RateLimitingConfig {
     }
 
     private Bucket createNewBucket() {
-        Bandwidth limit = Bandwidth.builder().capacity(1).refillIntervally(1, Duration.ofSeconds(3)).build();
+        Bandwidth limit = Bandwidth.builder().capacity(150).refillIntervally(300, Duration.ofMinutes(1)).build();
         return Bucket.builder().addLimit(limit).build();
     }
 
