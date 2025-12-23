@@ -96,46 +96,55 @@ function MedicineOrderForm() {
     }
   }, [patientIdParam]);
 
-  const fetchPatientPrescriptions = useCallback(async (patientId) => {
-    try {
-      const data =
-        await prescriptionService.getUndispensedByPatientId(patientId);
-      setPrescriptions(data || []);
+  const fetchPatientPrescriptions = useCallback(
+    async (patientId) => {
+      try {
+        const data =
+          await prescriptionService.getUndispensedByPatientId(patientId);
+        setPrescriptions(data || []);
 
-      if (prescriptionIdParam) {
-        const prescription = data?.find(
-          (p) => p.id === parseInt(prescriptionIdParam)
-        );
-        if (prescription) {
-          setSelectedPrescription(prescription);
-          setFormData((prev) => ({ ...prev, prescriptionId: prescription.id }));
+        if (prescriptionIdParam) {
+          const prescription = data?.find(
+            (p) => p.id === parseInt(prescriptionIdParam)
+          );
+          if (prescription) {
+            setSelectedPrescription(prescription);
+            setFormData((prev) => ({
+              ...prev,
+              prescriptionId: prescription.id,
+            }));
+          }
         }
+      } catch (error) {
+        console.error("Error fetching prescriptions:", error);
+        setPrescriptions([]);
       }
-    } catch (error) {
-      console.error("Error fetching prescriptions:", error);
-      setPrescriptions([]);
-    }
-  }, [prescriptionIdParam]);
+    },
+    [prescriptionIdParam]
+  );
 
-  const loadPrescriptionItems = useCallback((prescription) => {
-    if (prescription?.items) {
-      const orderItems = prescription.items.map((item) => ({
-        medicationId: item.medicationId,
-        medicationName:
-          item.medicationName ||
-          medications.find((m) => m.id === item.medicationId)?.name,
-        prescriptionItemId: item.id,
-        quantity: item.quantity,
-        unitPrice:
-          medications.find((m) => m.id === item.medicationId)?.unitPrice || 0,
-        dosage: item.dosage,
-        frequency: item.frequency,
-        duration: item.duration,
-        instructions: item.instructions,
-      }));
-      setFormData((prev) => ({ ...prev, items: orderItems }));
-    }
-  }, [medications]);
+  const loadPrescriptionItems = useCallback(
+    (prescription) => {
+      if (prescription?.items) {
+        const orderItems = prescription.items.map((item) => ({
+          medicationId: item.medicationId,
+          medicationName:
+            item.medicationName ||
+            medications.find((m) => m.id === item.medicationId)?.name,
+          prescriptionItemId: item.id,
+          quantity: item.quantity,
+          unitPrice:
+            medications.find((m) => m.id === item.medicationId)?.unitPrice || 0,
+          dosage: item.dosage,
+          frequency: item.frequency,
+          duration: item.duration,
+          instructions: item.instructions,
+        }));
+        setFormData((prev) => ({ ...prev, items: orderItems }));
+      }
+    },
+    [medications]
+  );
 
   useEffect(() => {
     fetchInitialData();
