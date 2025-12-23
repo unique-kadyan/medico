@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button, CircularProgress } from '@mui/material';
-import { Payment as PaymentIcon } from '@mui/icons-material';
-import razorpayService from '../../services/razorpayService';
+import { useState } from "react";
+import { Button, CircularProgress } from "@mui/material";
+import { Payment as PaymentIcon } from "@mui/icons-material";
+import razorpayService from "../../services/razorpayService";
 
 const RazorpayPaymentButton = ({
   orderId,
@@ -9,11 +9,11 @@ const RazorpayPaymentButton = ({
   onError,
   onCancel,
   disabled = false,
-  variant = 'contained',
-  color = 'primary',
-  size = 'medium',
+  variant = "contained",
+  color = "primary",
+  size = "medium",
   fullWidth = false,
-  label = 'Pay with UPI/Card',
+  label = "Pay with UPI/Card",
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -61,9 +61,15 @@ const RazorpayPaymentButton = ({
       fullWidth={fullWidth}
       disabled={disabled || loading}
       onClick={handlePayment}
-      startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <PaymentIcon />}
+      startIcon={
+        loading ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          <PaymentIcon />
+        )
+      }
     >
-      {loading ? 'Processing...' : label}
+      {loading ? "Processing..." : label}
     </Button>
   );
 };

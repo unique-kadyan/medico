@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./api";
 
 const razorpayService = {
   // Create a Razorpay order for a medicine order
@@ -9,7 +9,7 @@ const razorpayService = {
 
   // Verify payment after successful Razorpay checkout
   verifyPayment: async (paymentData) => {
-    const response = await api.post('/razorpay/verify-payment', paymentData);
+    const response = await api.post("/razorpay/verify-payment", paymentData);
     return response.data;
   },
 
@@ -27,11 +27,11 @@ const razorpayService = {
         return;
       }
 
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
       script.onload = () => resolve(true);
-      script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
+      script.onerror = () => reject(new Error("Failed to load Razorpay SDK"));
       document.body.appendChild(script);
     });
   },
@@ -43,20 +43,20 @@ const razorpayService = {
     const options = {
       key: orderData.keyId,
       amount: orderData.amount,
-      currency: orderData.currency || 'INR',
-      name: 'Medico Hospital',
+      currency: orderData.currency || "INR",
+      name: "Medico Hospital",
       description: `Payment for Order #${orderData.medicineOrderId}`,
       order_id: orderData.orderId,
       prefill: {
-        name: orderData.patientName || '',
-        email: orderData.patientEmail || '',
-        contact: orderData.patientPhone || '',
+        name: orderData.patientName || "",
+        email: orderData.patientEmail || "",
+        contact: orderData.patientPhone || "",
       },
       notes: {
         medicine_order_id: orderData.medicineOrderId,
       },
       theme: {
-        color: '#1976d2',
+        color: "#1976d2",
       },
       handler: async (response) => {
         try {
@@ -89,7 +89,7 @@ const razorpayService = {
 
     const razorpay = new window.Razorpay(options);
 
-    razorpay.on('payment.failed', (response) => {
+    razorpay.on("payment.failed", (response) => {
       if (callbacks.onError) {
         callbacks.onError({
           code: response.error.code,

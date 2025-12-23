@@ -15,10 +15,13 @@ const stripeService = {
 
   // Create Checkout Session for redirect-based payment
   createCheckoutSession: async (orderId, successUrl, cancelUrl) => {
-    const response = await api.post(`/stripe/create-checkout-session/${orderId}`, {
-      successUrl,
-      cancelUrl,
-    });
+    const response = await api.post(
+      `/stripe/create-checkout-session/${orderId}`,
+      {
+        successUrl,
+        cancelUrl,
+      }
+    );
     return response.data;
   },
 
