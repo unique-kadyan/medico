@@ -25,6 +25,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  ButtonGroup,
 } from "@mui/material";
 import {
   ArrowBack as BackIcon,
@@ -34,12 +35,14 @@ import {
   Cancel as CancelIcon,
   Payment as PaymentIcon,
   CreditCard as OnlinePaymentIcon,
+  AccountBalance as UpiIcon,
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import medicineOrderService from "../../services/medicineOrderService";
 import { usePermissions } from "../../hooks/usePermissions";
 import StripePaymentDialog from "../../components/payments/StripePaymentDialog";
+import razorpayService from "../../services/razorpayService";
 
 function MedicineOrderDetail() {
   const navigate = useNavigate();
@@ -50,6 +53,7 @@ function MedicineOrderDetail() {
   const [statusDialog, setStatusDialog] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [stripePaymentDialog, setStripePaymentDialog] = useState(false);
+  const [razorpayLoading, setRazorpayLoading] = useState(false);
 
   const isPharmacistOrAdmin = isAnyRole(["PHARMACIST", "ADMIN"]);
 
@@ -134,6 +138,31 @@ function MedicineOrderDetail() {
   const handleStripePaymentSuccess = () => {
     setStripePaymentDialog(false);
     fetchOrder();
+  };
+
+  const handleRazorpayPayment = async () => {
+    setRazorpayLoading(true);
+    try {
+      const orderData = await razorpayService.createOrder(order.id);
+      await razorpayService.openCheckout(orderData, {
+        onSuccess: () => {
+          setRazorpayLoading(false);
+          toast.success("Payment successful!");
+          fetchOrder();
+        },
+        onError: (error) => {
+          setRazorpayLoading(false);
+          toast.error(error.description || "Payment failed");
+        },
+        onDismiss: () => {
+          setRazorpayLoading(false);
+        },
+      });
+    } catch (error) {
+      setRazorpayLoading(false);
+      toast.error("Failed to initiate payment");
+      console.error(error);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -229,14 +258,23 @@ function MedicineOrderDetail() {
                     >
                       Mark as Paid
                     </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<OnlinePaymentIcon />}
-                      onClick={() => setStripePaymentDialog(true)}
-                    >
-                      Pay Online
-                    </Button>
+                    <ButtonGroup variant="contained">
+                      <Button
+                        color="primary"
+                        startIcon={<OnlinePaymentIcon />}
+                        onClick={() => setStripePaymentDialog(true)}
+                      >
+                        Card
+                      </Button>
+                      <Button
+                        color="secondary"
+                        startIcon={<UpiIcon />}
+                        onClick={handleRazorpayPayment}
+                        disabled={razorpayLoading}
+                      >
+                        {razorpayLoading ? "Processing..." : "UPI"}
+                      </Button>
+                    </ButtonGroup>
                   </>
                 )}
               </>
@@ -244,14 +282,23 @@ function MedicineOrderDetail() {
           {order.status !== "DELIVERED" && order.status !== "CANCELLED" && (
             <>
               {order.paymentStatus === "PENDING" && !isPharmacistOrAdmin && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<OnlinePaymentIcon />}
-                  onClick={() => setStripePaymentDialog(true)}
-                >
-                  Pay Now
-                </Button>
+                <ButtonGroup variant="contained">
+                  <Button
+                    color="primary"
+                    startIcon={<OnlinePaymentIcon />}
+                    onClick={() => setStripePaymentDialog(true)}
+                  >
+                    Pay with Card
+                  </Button>
+                  <Button
+                    color="secondary"
+                    startIcon={<UpiIcon />}
+                    onClick={handleRazorpayPayment}
+                    disabled={razorpayLoading}
+                  >
+                    {razorpayLoading ? "Processing..." : "Pay with UPI"}
+                  </Button>
+                </ButtonGroup>
               )}
               <Button
                 variant="outlined"
