@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -69,23 +69,7 @@ function MedicineOrderForm() {
     instructions: "",
   });
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
-
-  useEffect(() => {
-    if (selectedPatient) {
-      fetchPatientPrescriptions(selectedPatient.id);
-    }
-  }, [selectedPatient]);
-
-  useEffect(() => {
-    if (selectedPrescription) {
-      loadPrescriptionItems(selectedPrescription);
-    }
-  }, [selectedPrescription]);
-
-  const fetchInitialData = async () => {
+  const fetchInitialData = useCallback(async () => {
     setLoading(true);
     try {
       const [patientsData, medicationsData] = await Promise.all([
@@ -110,9 +94,9 @@ function MedicineOrderForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [patientIdParam]);
 
-  const fetchPatientPrescriptions = async (patientId) => {
+  const fetchPatientPrescriptions = useCallback(async (patientId) => {
     try {
       const data =
         await prescriptionService.getUndispensedByPatientId(patientId);
@@ -131,9 +115,9 @@ function MedicineOrderForm() {
       console.error("Error fetching prescriptions:", error);
       setPrescriptions([]);
     }
-  };
+  }, [prescriptionIdParam]);
 
-  const loadPrescriptionItems = (prescription) => {
+  const loadPrescriptionItems = useCallback((prescription) => {
     if (prescription?.items) {
       const orderItems = prescription.items.map((item) => ({
         medicationId: item.medicationId,
@@ -151,7 +135,23 @@ function MedicineOrderForm() {
       }));
       setFormData((prev) => ({ ...prev, items: orderItems }));
     }
-  };
+  }, [medications]);
+
+  useEffect(() => {
+    fetchInitialData();
+  }, [fetchInitialData]);
+
+  useEffect(() => {
+    if (selectedPatient) {
+      fetchPatientPrescriptions(selectedPatient.id);
+    }
+  }, [selectedPatient, fetchPatientPrescriptions]);
+
+  useEffect(() => {
+    if (selectedPrescription) {
+      loadPrescriptionItems(selectedPrescription);
+    }
+  }, [selectedPrescription, loadPrescriptionItems]);
 
   const handlePatientChange = (event, newValue) => {
     setSelectedPatient(newValue);

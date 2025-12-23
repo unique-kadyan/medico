@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -48,18 +48,7 @@ function PaymentDialog({ open, onClose, order, onPaymentSuccess }) {
     notes: "",
   });
 
-  useEffect(() => {
-    if (order && open) {
-      setFormData((prev) => ({
-        ...prev,
-        orderId: order.id,
-        amount: "",
-      }));
-      fetchPaymentDetails();
-    }
-  }, [order, open]);
-
-  const fetchPaymentDetails = async () => {
+  const fetchPaymentDetails = useCallback(async () => {
     if (!order) return;
     try {
       const [balance, paid] = await Promise.all([
@@ -75,7 +64,18 @@ function PaymentDialog({ open, onClose, order, onPaymentSuccess }) {
     } catch (error) {
       console.error("Error fetching payment details:", error);
     }
-  };
+  }, [order]);
+
+  useEffect(() => {
+    if (order && open) {
+      setFormData((prev) => ({
+        ...prev,
+        orderId: order.id,
+        amount: "",
+      }));
+      fetchPaymentDetails();
+    }
+  }, [order, open, fetchPaymentDetails]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

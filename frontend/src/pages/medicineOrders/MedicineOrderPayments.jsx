@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
   CardContent,
   Typography,
-  Button,
   TextField,
   Table,
   TableBody,
@@ -49,11 +48,7 @@ function MedicineOrderPayments() {
     todayCollection: 0,
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [tabValue]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       let ordersData;
@@ -99,7 +94,11 @@ function MedicineOrderPayments() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tabValue]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handlePaymentSuccess = () => {
     fetchData();
