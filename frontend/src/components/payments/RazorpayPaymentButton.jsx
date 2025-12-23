@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, CircularProgress } from '@mui/material';
 import { Payment as PaymentIcon } from '@mui/icons-material';
 import razorpayService from '../../services/razorpayService';
 
 const RazorpayPaymentButton = ({
   orderId,
-  amount,
   onSuccess,
   onError,
   onCancel,

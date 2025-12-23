@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -32,13 +32,11 @@ import {
   Search as SearchIcon,
   Visibility as ViewIcon,
   CheckCircle as ConfirmIcon,
-  LocalShipping as DeliverIcon,
   Cancel as CancelIcon,
   Payment as PaymentIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
 import medicineOrderService from "../../services/medicineOrderService";
 import { usePermissions } from "../../hooks/usePermissions";
 import PaymentDialog from "../../components/payments/PaymentDialog";
@@ -46,7 +44,6 @@ import PaymentDialog from "../../components/payments/PaymentDialog";
 function MedicineOrderList() {
   const navigate = useNavigate();
   const { isAnyRole } = usePermissions();
-  const { user } = useSelector((state) => state.auth);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -63,11 +60,7 @@ function MedicineOrderList() {
 
   const isPharmacistOrAdmin = isAnyRole(["PHARMACIST", "ADMIN"]);
 
-  useEffect(() => {
-    fetchOrders();
-  }, [tabValue]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       let data;
@@ -99,7 +92,11 @@ function MedicineOrderList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isPharmacistOrAdmin, tabValue]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleStatusUpdate = async () => {
     if (!statusDialog.order || !selectedStatus) return;

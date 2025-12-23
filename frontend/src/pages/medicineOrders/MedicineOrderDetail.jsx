@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -31,7 +31,6 @@ import {
   ArrowBack as BackIcon,
   Print as PrintIcon,
   CheckCircle as ConfirmIcon,
-  LocalShipping as DeliverIcon,
   Cancel as CancelIcon,
   Payment as PaymentIcon,
   CreditCard as OnlinePaymentIcon,
@@ -57,11 +56,7 @@ function MedicineOrderDetail() {
 
   const isPharmacistOrAdmin = isAnyRole(["PHARMACIST", "ADMIN"]);
 
-  useEffect(() => {
-    fetchOrder();
-  }, [id]);
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     setLoading(true);
     try {
       const data = await medicineOrderService.getOrderById(id);
@@ -72,7 +67,11 @@ function MedicineOrderDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchOrder();
+  }, [fetchOrder]);
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) return;

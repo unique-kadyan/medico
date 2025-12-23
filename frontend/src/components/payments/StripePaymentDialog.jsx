@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -107,13 +107,7 @@ function StripePaymentDialog({ open, onClose, order, onPaymentSuccess }) {
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (open && order) {
-      initializePayment();
-    }
-  }, [open, order]);
-
-  const initializePayment = async () => {
+  const initializePayment = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -134,7 +128,13 @@ function StripePaymentDialog({ open, onClose, order, onPaymentSuccess }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [order]);
+
+  useEffect(() => {
+    if (open && order) {
+      initializePayment();
+    }
+  }, [open, order, initializePayment]);
 
   const handleSuccess = (paymentIntent) => {
     onPaymentSuccess && onPaymentSuccess(paymentIntent);
